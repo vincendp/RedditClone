@@ -8,7 +8,7 @@ import java.util.Date;
 import java.util.UUID;
 
 @Entity
-@Table(indexes = { @Index(columnList = "username") })
+@Table(name = "User", indexes = { @Index(columnList = "username") })
 public class User {
 
     @Id
