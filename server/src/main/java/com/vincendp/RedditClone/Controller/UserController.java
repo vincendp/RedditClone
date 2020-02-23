@@ -1,11 +1,9 @@
 package com.vincendp.RedditClone.Controller;
 
 import com.vincendp.RedditClone.Dto.CreateUserRequest;
-import com.vincendp.RedditClone.Model.User;
-import com.vincendp.RedditClone.Model.UserAuthentication;
-import com.vincendp.RedditClone.Repository.UserAuthenticationRepository;
-import com.vincendp.RedditClone.Repository.UserRepository;
+import com.vincendp.RedditClone.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,34 +12,36 @@ import org.springframework.web.bind.annotation.RequestBody;
 @Controller
 public class UserController {
 
-    private UserRepository userRepository;
-    private UserAuthenticationRepository userAuthenticationRepository;
+    private UserService userService;
 
     @Autowired
-    public UserController(UserRepository userRepository, UserAuthenticationRepository userAuthenticationRepository){
-        this.userRepository = userRepository;
-        this.userAuthenticationRepository = userAuthenticationRepository;
+    public UserController(UserService userService){
+        this.userService = userService;
     }
 
     @GetMapping("/users")
     String getUsers(){
-        return "Users.";
+        return "hi";
     }
 
     @PostMapping("/users")
     String createUser(@RequestBody CreateUserRequest createUserRequest){
-        User u = new User();
-        UserAuthentication userAuthentication = new UserAuthentication();
+        if( createUserRequest.getUsername() == null
+            || createUserRequest.getPassword() == null
+            || createUserRequest.getVerify_password() == null
+            || createUserRequest.getUsername().length() <= 0
+            || createUserRequest.getPassword().length() <= 0
+            || createUserRequest.getVerify_password().length() <= 0){
 
-        u.setUsername(createUserRequest.getUsername());
-        userAuthentication.setPassword(createUserRequest.getPassword());
-        userAuthentication.setUser(u);
+            throw new IllegalArgumentException("Error: username or password cannot be empty.");
+        }
+        else if(!createUserRequest.getPassword().equals(createUserRequest.getVerify_password())){
+            throw new IllegalArgumentException("Error: passwords are not the same.");
+        }
 
-//        userRepository.save(u);
-        userAuthenticationRepository.save(userAuthentication);
+        userService.createUser(createUserRequest);
 
         return "Created.";
-
     }
 
 }

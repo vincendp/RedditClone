@@ -10,24 +10,23 @@ import java.util.UUID;
 public class UserAuthentication {
 
     @Id
-    @GeneratedValue(generator = "uuid4")
-    @GenericGenerator(name = "uuid4", strategy = "org.hibernate.id.UUIDGenerator")
     @Column(columnDefinition = "BINARY(16)", nullable = false)
-    private UUID id;
+    private UUID user_id;
 
     @Column(nullable = false)
     private String password;
 
     @OneToOne(cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "user_id")
+    @MapsId
     private User user;
 
-    public UUID getId() {
-        return id;
+
+    public UUID getUser_id() {
+        return user_id;
     }
 
-    public void setId(UUID id) {
-        this.id = id;
+    public void setUser_id(UUID user_id) {
+        this.user_id = user_id;
     }
 
     public String getPassword() {
