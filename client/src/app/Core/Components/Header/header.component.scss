@@ -1,5 +1,41 @@
-.icon {
-  width: 4.5rem;
-  height: 4.5rem;
-  fill: blue;
+@import "src/assets/abstracts/_variables.scss";
+
+.nav {
+  background-color: $color-primary;
+  color: $color-white;
+  height: 5rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+
+  &__button {
+    border: none;
+    cursor: pointer;
+    background: none;
+    color: $color-white;
+  }
+
+  &__home {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: inherit;
+    width: 15rem;
+
+    & .nav__icon {
+      margin: 0 0.5rem;
+    }
+  }
+
+  &__icon {
+    height: 3rem;
+    width: 3rem;
+  }
+
+  &__home-text {
+    font-size: 2rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
 }
