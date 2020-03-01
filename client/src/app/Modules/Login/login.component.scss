@@ -1,0 +1,57 @@
+@import "src/assets/abstracts/_variables.scss";
+
+.login {
+  height: 95vh;
+  width: 100%;
+  position: relative;
+
+  &__form-container {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    background-color: $color-grey-light;
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 25%;
+    height: 40%;
+    box-shadow: 0 0.3rem 1rem $color-grey-dark;
+  }
+  &__title {
+    text-align: center;
+    font-weight: 700;
+    font-size: 3rem;
+    text-transform: uppercase;
+    color: $color-primary-darker;
+  }
+  &__form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  &__input {
+    padding: 1rem 2rem;
+    border: 1px solid $color-grey-dark;
+    border-radius: 3px;
+    background-color: $color-grey-light;
+    color: $color-grey-darker;
+    width: 50%;
+
+    &:active,
+    &:focus {
+      border: 1px solid $color-primary;
+    }
+  }
+
+  &__input-label {
+    color: $color-primary-dark;
+    font-weight: 400;
+  }
+
+  &__submit {
+    border: none;
+    padding: 1rem 2rem;
+    background-color: $color-primary-dark;
+    color: $color-white;
+  }
+}

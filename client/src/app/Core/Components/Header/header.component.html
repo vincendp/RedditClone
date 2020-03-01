@@ -1,6 +1,10 @@
 <header class="nav">
   <div class="nav__home">
-    <button class="nav__svg-with-text nav__svg-button ">
+    <button
+      class="nav__svg-with-text nav__svg-button "
+      [routerLink]="['/']"
+      routerLinkActive
+    >
       <div class="nav__icon">
         <app-svg-icon icon_name="icon-home"> </app-svg-icon>
       </div>
@@ -15,13 +19,20 @@
   </div>
 
   <div class="nav__user">
-    <button class="nav__text nav__user-button nav__user-login">
-      Login
-    </button>
-    <button class="nav__text nav__user-button nav__user-signup">
-      Signup
-    </button>
-    <button class="nav__svg-button nav__icon">
+    <div class="nav__user-buttons">
+      <button
+        class="nav__text nav__user-button nav__user-login"
+        [routerLink]="['/Login']"
+        routerLinkActive
+      >
+        Login
+      </button>
+      <button class="nav__text nav__user-button nav__user-signup">
+        Signup
+      </button>
+    </div>
+
+    <button class="nav__svg-button nav__icon u-margin-right-s">
       <app-svg-icon icon_name="icon-person"> </app-svg-icon>
     </button>
   </div>
