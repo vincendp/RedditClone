@@ -1,16 +1,28 @@
 <header class="nav">
-  <button class="nav__home nav__button ">
-    <div class="nav__icon">
-      <app-svg-icon icon_name="icon-home"> </app-svg-icon>
-    </div>
-    <span class="nav__home-text"> Reddit </span>
-  </button>
+  <div class="nav__home">
+    <button class="nav__svg-with-text nav__svg-button ">
+      <div class="nav__icon">
+        <app-svg-icon icon_name="icon-home"> </app-svg-icon>
+      </div>
+      <span class="nav__text"> Reddit </span>
+    </button>
+  </div>
 
-  <button class="nav__button nav__icon">
-    <app-svg-icon icon_name="icon-search"> </app-svg-icon>
-  </button>
+  <div class="nav__search">
+    <button class="nav__svg-button nav__icon">
+      <app-svg-icon icon_name="icon-search"> </app-svg-icon>
+    </button>
+  </div>
 
-  <button class="nav__button nav__icon u-margin-right-s">
-    <app-svg-icon icon_name="icon-person"> </app-svg-icon>
-  </button>
+  <div class="nav__user">
+    <button class="nav__text nav__user-button nav__user-login">
+      Login
+    </button>
+    <button class="nav__text nav__user-button nav__user-signup">
+      Signup
+    </button>
+    <button class="nav__svg-button nav__icon">
+      <app-svg-icon icon_name="icon-person"> </app-svg-icon>
+    </button>
+  </div>
 </header>
