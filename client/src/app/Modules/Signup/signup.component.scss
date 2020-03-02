@@ -1,6 +1,6 @@
 @import "src/assets/abstracts/_variables.scss";
 
-.login {
+.signup {
   height: 95vh;
   width: 100%;
   position: relative;
@@ -14,7 +14,7 @@
     left: 50%;
     transform: translate(-50%, -50%);
     width: 25%;
-    height: 45%;
+    height: 50%;
     box-shadow: 0 0.3rem 1rem $color-grey-dark;
     color: $color-primary-darker;
   }
