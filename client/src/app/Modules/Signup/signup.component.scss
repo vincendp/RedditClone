@@ -58,5 +58,10 @@
     padding: 1rem 2rem;
     background-color: $color-primary-light;
     color: $color-white;
+
+    &:disabled {
+      background-color: #eaecee;
+      cursor: not-allowed;
+    }
   }
 }
