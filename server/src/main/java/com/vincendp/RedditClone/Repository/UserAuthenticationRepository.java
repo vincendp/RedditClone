@@ -8,4 +8,5 @@ import java.util.UUID;
 
 public interface UserAuthenticationRepository extends CrudRepository<UserAuthentication, UUID> {
 
+
 }

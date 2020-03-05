@@ -14,12 +14,15 @@ public class UserServiceImpl implements UserService {
 
     private UserAuthenticationRepository userAuthenticationRepository;
     private UserAuthenticationService userAuthenticationService;
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     public UserServiceImpl(UserAuthenticationRepository userAuthenticationRepository,
-                           UserAuthenticationService userAuthenticationService){
+                           UserAuthenticationService userAuthenticationService,
+                           PasswordEncoder passwordEncoder){
         this.userAuthenticationRepository = userAuthenticationRepository;
         this.userAuthenticationService = userAuthenticationService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -28,7 +31,14 @@ public class UserServiceImpl implements UserService {
         UserAuthentication userAuthentication = new UserAuthentication();
 
         u.setUsername(createUserRequest.getUsername());
-        userAuthentication.setPassword(createUserRequest.getPassword());
+        userAuthentication.setPassword(passwordEncoder.encode(createUserRequest.getPassword()));
+
+        String a = passwordEncoder.encode(createUserRequest.getPassword());
+
+        System.out.println("hi");
+        System.out.println(a.length());
+
+
         userAuthentication.setUser(u);
 
         userAuthentication = userAuthenticationRepository.save(userAuthentication);
@@ -39,8 +49,6 @@ public class UserServiceImpl implements UserService {
         u = userAuthentication.getUser();
         System.out.println(u.getId());
         System.out.println(u.getUsername());
-
-
 
 
         return new CreateUserResponse();

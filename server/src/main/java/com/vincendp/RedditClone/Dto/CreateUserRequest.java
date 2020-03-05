@@ -4,7 +4,7 @@ public class CreateUserRequest {
 
     private String username;
     private String password;
-    private String verify_password;
+    private String verifyPassword;
 
     public String getUsername() {
         return username;
@@ -22,11 +22,11 @@ public class CreateUserRequest {
         this.password = password;
     }
 
-    public String getVerify_password() {
-        return verify_password;
+    public String getVerifyPassword() {
+        return verifyPassword;
     }
 
-    public void setVerify_password(String verify_password) {
-        this.verify_password = verify_password;
+    public void setVerifyPassword(String verifyPassword) {
+        this.verifyPassword = verifyPassword;
     }
 }
