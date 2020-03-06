@@ -5,18 +5,19 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
-public class PasswordEncoder {
+public class PasswordEncoderConfiguration {
 
     @Bean
-    public org.springframework.security.crypto.password.PasswordEncoder createPasswordEncoder(){
-        org.springframework.security.crypto.password.PasswordEncoder defaults = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+    public PasswordEncoder createPasswordEncoder(){
+        PasswordEncoder defaults = PasswordEncoderFactories.createDelegatingPasswordEncoder();
         String encodingId = "bcrypt";
-        Map<String, org.springframework.security.crypto.password.PasswordEncoder> encoders = new HashMap<>();
+        Map<String, PasswordEncoder> encoders = new HashMap<>();
         encoders.put(encodingId, new BCryptPasswordEncoder());
 
         DelegatingPasswordEncoder result = new DelegatingPasswordEncoder(encodingId, encoders);

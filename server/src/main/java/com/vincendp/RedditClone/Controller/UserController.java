@@ -26,6 +26,8 @@ public class UserController {
     @GetMapping("/users")
     String getUsers(){
         MyUserDetails o = userRepository.findUserAndUserAuthentication("vince");
+        System.out.println(o.getUsername());
+        System.out.println(o.getPassword());
         return "hi";
     }
 
