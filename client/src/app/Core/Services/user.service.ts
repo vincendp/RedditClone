@@ -18,7 +18,8 @@ export class UserService {
   login(credentials: {}) {
     // api call
 
-    this.apiService.post("/users", credentials).subscribe(() => {
+    this.apiService.post("/auth/login", credentials).subscribe(data => {
+      console.log(data);
       this.isAuthenticatedSubject.next(true);
     });
   }
