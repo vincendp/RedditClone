@@ -20,13 +20,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
-        System.out.println(s);
         MyUserDetails myUserDetails = userRepository.findUserAndUserAuthentication(s);
         if (myUserDetails == null)
             throw new UsernameNotFoundException("Bad credentials");
 
-        System.out.println(myUserDetails.getUsername());
-        System.out.println(myUserDetails.getPassword());
         return myUserDetails;
     }
 }
