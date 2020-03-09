@@ -6,6 +6,15 @@ public class CreateUserRequest {
     private String password;
     private String verifyPassword;
 
+    public CreateUserRequest(){
+    }
+
+    public CreateUserRequest(String username, String password, String verifyPassword) {
+        this.username = username;
+        this.password = password;
+        this.verifyPassword = verifyPassword;
+    }
+
     public String getUsername() {
         return username;
     }

@@ -1,6 +1,6 @@
 package com.vincendp.RedditClone.Service;
 
-import com.vincendp.RedditClone.Model.MyUserDetails;
+import com.vincendp.RedditClone.Model.CustomUserDetails;
 import com.vincendp.RedditClone.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,10 +20,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
-        MyUserDetails myUserDetails = userRepository.findUserAndUserAuthentication(s);
-        if (myUserDetails == null)
+        CustomUserDetails customUserDetails = userRepository.findUserAndUserAuthentication(s);
+        if (customUserDetails == null)
             throw new UsernameNotFoundException("Bad credentials");
 
-        return myUserDetails;
+        return customUserDetails;
     }
 }

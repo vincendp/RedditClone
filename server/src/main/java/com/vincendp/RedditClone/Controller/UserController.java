@@ -1,16 +1,16 @@
 package com.vincendp.RedditClone.Controller;
 
 import com.vincendp.RedditClone.Dto.CreateUserRequest;
-import com.vincendp.RedditClone.Model.MyUserDetails;
+import com.vincendp.RedditClone.Model.CustomUserDetails;
+import com.vincendp.RedditClone.Model.User;
+import com.vincendp.RedditClone.Model.UserAuthentication;
 import com.vincendp.RedditClone.Repository.UserRepository;
 import com.vincendp.RedditClone.Service.UserService;
+import com.vincendp.RedditClone.Utility.SuccessResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
-@Controller
+@RestController
 public class UserController {
 
     private UserService userService;
@@ -23,12 +23,17 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("/users")
-    String getUsers(){
-        MyUserDetails o = userRepository.findUserAndUserAuthentication("vince");
+    @RequestMapping ("/hi")
+    CustomUserDetails getUsers(){
+        CustomUserDetails o = userRepository.findUserAndUserAuthentication("vince");
         System.out.println(o.getUsername());
         System.out.println(o.getPassword());
-        return "hi";
+        return new CustomUserDetails(new User(), new UserAuthentication());
+    }
+
+    @GetMapping("/helloWorld")
+    SuccessResponse getUserss(){
+        return new SuccessResponse(200, "", "");
     }
 
     @PostMapping("/users")

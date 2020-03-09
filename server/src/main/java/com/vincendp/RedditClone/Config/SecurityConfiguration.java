@@ -1,5 +1,6 @@
 package com.vincendp.RedditClone.Config;
 
+import com.vincendp.RedditClone.Filter.JWTFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -8,8 +9,12 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -22,11 +27,19 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private PasswordEncoder passwordEncoder;
     private UserDetailsService userDetailsService;
+    private JWTFilter jwtFilter;
+    private AuthenticationEntryPoint authenticationEntryPoint;
+    private AccessDeniedHandler accessDeniedHandler;
 
     @Autowired
-    public SecurityConfiguration(PasswordEncoder passwordEncoder, UserDetailsService userDetailsService){
+    public SecurityConfiguration(PasswordEncoder passwordEncoder, UserDetailsService userDetailsService,
+                                 JWTFilter jwtFilter, AuthenticationEntryPoint authenticationEntryPoint,
+                                 AccessDeniedHandler accessDeniedHandler){
         this.passwordEncoder = passwordEncoder;
         this.userDetailsService = userDetailsService;
+        this.jwtFilter = jwtFilter;
+        this.authenticationEntryPoint = authenticationEntryPoint;
+        this.accessDeniedHandler = accessDeniedHandler;
     }
 
     @Bean
@@ -35,6 +48,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         return super.authenticationManagerBean();
     }
 
+
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
@@ -42,12 +56,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.cors().and().csrf().disable().authorizeRequests().antMatchers("/", "/auth/login", "/users").permitAll().
-                anyRequest().authenticated();
-//        http.csrf().disable().authorizeRequests().antMatchers("/*").permitAll();
-//        http.antMatcher("/users").authorizeRequests().anyRequest().authenticated();
-//        http.authorizeRequests()
-//        .anyRequest().authenticated().and().formLogin();
+        http.cors().and().csrf().disable()
+                .authorizeRequests().antMatchers("/", "/auth/login", "/users").permitAll()
+                .anyRequest().authenticated()
+                .and().exceptionHandling().authenticationEntryPoint(authenticationEntryPoint)
+                .accessDeniedHandler(accessDeniedHandler)
+                .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and().addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
     @Bean

@@ -1,8 +1,6 @@
 package com.vincendp.RedditClone.Utility;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -20,39 +18,18 @@ public class JWTUtility {
     private int EXPIRATION;
 
 
-    public String getUsernameFromClaims(String jws){
-        String username;
-        try{
-            Claims claims = getAllClaimsFromToken(jws);
-            username = claims.getSubject();
-        }
-        catch(Exception e){
-            username = null;
-        }
-        return username;
+    public String getUsernameFromClaims(String jws) throws JwtException{
+        Claims claims = getAllClaimsFromToken(jws);
+        return claims.getSubject();
     }
 
-    public Date getExpirationFromClaims(String jws){
-        Date date;
-        try{
-            Claims claims = getAllClaimsFromToken(jws);
-            date = claims.getExpiration();
-        }
-        catch(Exception e){
-            date = null;
-        }
-        return date;
+    public Date getExpirationFromClaims(String jws) throws JwtException{
+        Claims claims = getAllClaimsFromToken(jws);
+        return claims.getExpiration();
     }
 
-    private Claims getAllClaimsFromToken(String jws){
-        Claims claims;
-        try{
-            claims = Jwts.parser().setSigningKey(SECRET).parseClaimsJws(jws).getBody();
-        }
-        catch(Exception e){
-            claims = null;
-        }
-
+    private Claims getAllClaimsFromToken(String jws) throws JwtException {
+        Claims claims = Jwts.parser().setSigningKey(SECRET).parseClaimsJws(jws).getBody();
         return claims;
     }
 
@@ -73,7 +50,7 @@ public class JWTUtility {
     public boolean validateJWS(String jws, UserDetails userDetails){
         String username = getUsernameFromClaims(jws);
         return username != null && username.equals(userDetails.getUsername()) &&
-                getExpirationFromClaims(jws).before(new Date());
+                getExpirationFromClaims(jws).after(new Date());
 
     }
 

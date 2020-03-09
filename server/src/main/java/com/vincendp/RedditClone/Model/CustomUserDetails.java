@@ -5,12 +5,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 
-public class MyUserDetails implements UserDetails {
+public class CustomUserDetails implements UserDetails {
 
     private User user;
     private UserAuthentication userAuthentication;
 
-    public MyUserDetails(User user, UserAuthentication userAuthentication) {
+    public CustomUserDetails(User user, UserAuthentication userAuthentication) {
         this.user = user;
         this.userAuthentication = userAuthentication;
     }

@@ -3,6 +3,9 @@ package com.vincendp.RedditClone.Dto;
 public class LoginResponse {
     String test;
 
+    public LoginResponse(){
+    }
+
     public LoginResponse(String test) {
         this.test = test;
     }
