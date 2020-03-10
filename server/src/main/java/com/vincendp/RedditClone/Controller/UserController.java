@@ -6,29 +6,39 @@ import com.vincendp.RedditClone.Model.User;
 import com.vincendp.RedditClone.Model.UserAuthentication;
 import com.vincendp.RedditClone.Repository.UserRepository;
 import com.vincendp.RedditClone.Service.UserService;
+import com.vincendp.RedditClone.Utility.JWTUtility;
 import com.vincendp.RedditClone.Utility.SuccessResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
 
 @RestController
 public class UserController {
 
     private UserService userService;
 
-    @Autowired
-    private UserRepository userRepository;
+    private AuthenticationManager authenticationManager;
+
+    private JWTUtility jwtUtility;
+
+    private UserDetailsService userDetailsService;
+
 
     @Autowired
-    public UserController(UserService userService){
+    public UserController(UserService userService, AuthenticationManager authenticationManager,
+                          JWTUtility jwtUtility, UserDetailsService userDetailsService){
         this.userService = userService;
-    }
-
-    @RequestMapping ("/hi")
-    CustomUserDetails getUsers(){
-        CustomUserDetails o = userRepository.findUserAndUserAuthentication("vince");
-        System.out.println(o.getUsername());
-        System.out.println(o.getPassword());
-        return new CustomUserDetails(new User(), new UserAuthentication());
+        this.authenticationManager = authenticationManager;
+        this.jwtUtility = jwtUtility;
+        this.userDetailsService = userDetailsService;
     }
 
     @GetMapping("/helloWorld")
@@ -37,7 +47,7 @@ public class UserController {
     }
 
     @PostMapping("/users")
-    String createUser(@RequestBody CreateUserRequest createUserRequest){
+    ResponseEntity createUser(@RequestBody CreateUserRequest createUserRequest, HttpServletRequest request){
         if( createUserRequest.getUsername() == null
             || createUserRequest.getPassword() == null
             || createUserRequest.getVerifyPassword() == null
@@ -51,14 +61,16 @@ public class UserController {
             throw new IllegalArgumentException("Error: passwords are not the same.");
         }
 
-        System.out.println("hello world");
-        System.out.println(createUserRequest.getUsername());
-        System.out.println(createUserRequest.getPassword());
-        System.out.println(createUserRequest.getVerifyPassword());
-
         userService.createUser(createUserRequest);
 
-        return "Created.";
+        UserDetails userDetails = userDetailsService.loadUserByUsername(createUserRequest.getUsername());
+        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
+                userDetails, null, userDetails.getAuthorities());
+
+        usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+        SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+
+        return ResponseEntity.ok(new SuccessResponse(200, "Success: Created account", null));
     }
 
 }

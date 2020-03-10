@@ -26,7 +26,8 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException e) throws IOException, ServletException {
         response.setContentType("application/json");
+        response.setStatus(403);
         PrintWriter writer = response.getWriter();
-        objectMapper.writeValue(writer, new ErrorResponse(403, "Error: Authenticated role does not have permission", ""));
+        objectMapper.writeValue(writer, new ErrorResponse(403, "Error: Authenticated role does not have permission", null));
     }
 }

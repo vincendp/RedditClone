@@ -39,7 +39,6 @@ public class AuthenticationController {
     @PostMapping(value = "/login")
     ResponseEntity login(@RequestBody LoginRequest loginRequest, HttpServletRequest request, HttpServletResponse response) throws Exception{
 
-
         Authentication authentication = null;
         try{
             authentication = authenticationManager.authenticate(
@@ -50,7 +49,7 @@ public class AuthenticationController {
             );
         }
         catch(BadCredentialsException e){
-            throw new Exception("Incorrect username or password");
+            throw new BadCredentialsException("Error: Invalid username or password");
         }
 
         SecurityContextHolder.getContext().setAuthentication(authentication);

@@ -19,6 +19,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Arrays;
 
 @Component
 public class JWTFilter extends OncePerRequestFilter {
@@ -40,13 +41,8 @@ public class JWTFilter extends OncePerRequestFilter {
         Cookie cookie = null;
         Cookie[] cookies = request.getCookies();
 
-        if(cookies != null){
-            for(Cookie c: cookies){
-                if(c.getName().equals("jws")){
-                    cookie = c;
-                    break;
-                }
-            }
+        if(cookies != null && cookies.length > 0){
+            cookie = Arrays.asList(cookies).stream().filter(c -> c.getName().equals("jwt")).findFirst().orElse(null);
         }
 
         try{
@@ -85,6 +81,12 @@ public class JWTFilter extends OncePerRequestFilter {
         }
 
         filterChain.doFilter(request, response);
+    }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        String path = request.getServletPath();
+        return path.startsWith("/auth");
     }
 }
 

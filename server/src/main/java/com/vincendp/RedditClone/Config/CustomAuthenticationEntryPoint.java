@@ -26,7 +26,8 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException e) throws IOException, ServletException {
         response.setContentType("application/json");
+        response.setStatus(403);
         PrintWriter writer = response.getWriter();
-        objectMapper.writeValue(writer, new ErrorResponse(403, "Error: Not authenticated", ""));
+        objectMapper.writeValue(writer, new ErrorResponse(403, "Error: Not authenticated", null));
     }
 }

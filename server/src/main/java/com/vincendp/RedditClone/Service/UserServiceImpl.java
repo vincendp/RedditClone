@@ -32,24 +32,10 @@ public class UserServiceImpl implements UserService {
 
         u.setUsername(createUserRequest.getUsername());
         userAuthentication.setPassword(passwordEncoder.encode(createUserRequest.getPassword()));
-
-        String a = passwordEncoder.encode(createUserRequest.getPassword());
-
-        System.out.println("hi");
-        System.out.println(a.length());
-
-
         userAuthentication.setUser(u);
 
-        userAuthentication = userAuthenticationRepository.save(userAuthentication);
-
-        System.out.println(userAuthentication.getUser_id());
-        System.out.println(userAuthentication.getPassword());
-
-        u = userAuthentication.getUser();
-        System.out.println(u.getId());
-        System.out.println(u.getUsername());
-
+        userAuthentication = null;
+        userAuthenticationRepository.save(userAuthentication);
 
         return new CreateUserResponse();
     }
