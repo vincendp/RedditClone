@@ -1,6 +1,7 @@
 package com.vincendp.RedditClone.Controller;
 
 import com.vincendp.RedditClone.Dto.CreateUserRequest;
+import com.vincendp.RedditClone.Dto.CreateUserResponse;
 import com.vincendp.RedditClone.Model.CustomUserDetails;
 import com.vincendp.RedditClone.Model.User;
 import com.vincendp.RedditClone.Model.UserAuthentication;
@@ -61,7 +62,7 @@ public class UserController {
             throw new IllegalArgumentException("Error: passwords are not the same.");
         }
 
-        userService.createUser(createUserRequest);
+        CreateUserResponse createUserResponse = userService.createUser(createUserRequest);
 
         UserDetails userDetails = userDetailsService.loadUserByUsername(createUserRequest.getUsername());
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
@@ -70,7 +71,7 @@ public class UserController {
         usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
         SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
 
-        return ResponseEntity.ok(new SuccessResponse(200, "Success: Created account", null));
+        return ResponseEntity.ok(new SuccessResponse(200, "Success: Created account", createUserResponse));
     }
 
 }
