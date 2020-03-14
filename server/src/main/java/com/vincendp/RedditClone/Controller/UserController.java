@@ -2,21 +2,13 @@ package com.vincendp.RedditClone.Controller;
 
 import com.vincendp.RedditClone.Dto.CreateUserRequest;
 import com.vincendp.RedditClone.Dto.CreateUserResponse;
-import com.vincendp.RedditClone.Model.CustomUserDetails;
-import com.vincendp.RedditClone.Model.User;
-import com.vincendp.RedditClone.Model.UserAuthentication;
-import com.vincendp.RedditClone.Repository.UserRepository;
 import com.vincendp.RedditClone.Service.UserService;
-import com.vincendp.RedditClone.Utility.JWTUtility;
+import com.vincendp.RedditClone.Utility.AuthenticationUtility;
 import com.vincendp.RedditClone.Utility.SuccessResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -26,20 +18,18 @@ public class UserController {
 
     private UserService userService;
 
-    private AuthenticationManager authenticationManager;
-
-    private JWTUtility jwtUtility;
-
     private UserDetailsService userDetailsService;
+
+    private AuthenticationUtility authenticationUtility;
 
 
     @Autowired
-    public UserController(UserService userService, AuthenticationManager authenticationManager,
-                          JWTUtility jwtUtility, UserDetailsService userDetailsService){
+    public UserController(UserService userService,
+                          UserDetailsService userDetailsService,
+                          AuthenticationUtility authenticationUtility){
         this.userService = userService;
-        this.authenticationManager = authenticationManager;
-        this.jwtUtility = jwtUtility;
         this.userDetailsService = userDetailsService;
+        this.authenticationUtility = authenticationUtility;
     }
 
     @GetMapping("/helloWorld")
@@ -64,12 +54,9 @@ public class UserController {
 
         CreateUserResponse createUserResponse = userService.createUser(createUserRequest);
 
-        UserDetails userDetails = userDetailsService.loadUserByUsername(createUserRequest.getUsername());
-        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
-                userDetails, null, userDetails.getAuthorities());
+        UserDetails userDetails = userDetailsService.loadUserByUsername(createUserResponse.getUsername());
 
-        usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-        SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+        authenticationUtility.authenticateUser(userDetails, request);
 
         return ResponseEntity.ok(new SuccessResponse(200, "Success: Created account", createUserResponse));
     }

@@ -1,15 +1,14 @@
 package com.vincendp.RedditClone.Filter;
 
+import com.vincendp.RedditClone.Utility.AuthenticationUtility;
 import com.vincendp.RedditClone.Utility.JWTUtility;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.SignatureException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -29,10 +28,13 @@ public class JWTFilter extends OncePerRequestFilter {
 
     private UserDetailsService userDetailsService;
 
+    private AuthenticationUtility authenticationUtility;
+
     @Autowired
-    public JWTFilter(JWTUtility jwtUtility, UserDetailsService userDetailsService){
+    public JWTFilter(JWTUtility jwtUtility, UserDetailsService userDetailsService, AuthenticationUtility authenticationUtility){
         this.jwtUtility = jwtUtility;
         this.userDetailsService = userDetailsService;
+        this.authenticationUtility = authenticationUtility;
     }
 
 
@@ -42,7 +44,7 @@ public class JWTFilter extends OncePerRequestFilter {
         Cookie[] cookies = request.getCookies();
 
         if(cookies != null && cookies.length > 0){
-            cookie = Arrays.asList(cookies).stream().filter(c -> c.getName().equals("jwt")).findFirst().orElse(null);
+            cookie = Arrays.asList(cookies).stream().filter(c -> c.getName().equals("jws")).findFirst().orElse(null);
         }
 
         try{
@@ -59,11 +61,9 @@ public class JWTFilter extends OncePerRequestFilter {
                         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
                         if(jwtUtility.validateJWS(jws, userDetails)) {
-                            UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
-                                    userDetails, null, userDetails.getAuthorities());
 
-                            usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                            SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+                            authenticationUtility.authenticateUser(userDetails, request);
+
                         }
 
                     }
