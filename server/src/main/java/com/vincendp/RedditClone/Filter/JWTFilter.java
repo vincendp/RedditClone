@@ -42,6 +42,7 @@ public class JWTFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         Cookie cookie = null;
         Cookie[] cookies = request.getCookies();
+        boolean should_delete_cookies = false;
 
         if(cookies != null && cookies.length > 0){
             cookie = Arrays.asList(cookies).stream().filter(c -> c.getName().equals("jws")).findFirst().orElse(null);
@@ -51,33 +52,42 @@ public class JWTFilter extends OncePerRequestFilter {
             if(cookie != null){
                 String username = null;
                 String jws = cookie.getValue();
-
                 if(jws != null){
-
                     username = jwtUtility.getUsernameFromClaims(jws);
-
                     if(username != null && SecurityContextHolder.getContext().getAuthentication() == null){
-
                         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-
                         if(jwtUtility.validateJWS(jws, userDetails)) {
-
                             authenticationUtility.authenticateUser(userDetails, request);
-
                         }
-
+                        else{
+                            should_delete_cookies = true;
+                        }
+                    }
+                    else{
+                        should_delete_cookies = true;
                     }
                 }
             }
         }
         catch(SignatureException e){
+            should_delete_cookies = true;
             throw new ServletException("Error: Invalid JWT signature");
         }
         catch(ExpiredJwtException e){
+            should_delete_cookies = true;
             throw new ServletException("Error: Expired JWT");
         }
         catch(JwtException e){
+            should_delete_cookies = true;
             throw new ServletException("Error: Invalid JWT");
+        }
+        finally {
+            if(should_delete_cookies){
+                Cookie delete_cookie = new Cookie("jws", null);
+                delete_cookie.setMaxAge(0);
+                delete_cookie.setPath("/");
+                response.addCookie(delete_cookie);
+            }
         }
 
         filterChain.doFilter(request, response);

@@ -13,4 +13,8 @@ public interface UserRepository extends CrudRepository<User, UUID> {
     @Query("SELECT new com.vincendp.RedditClone.Model.CustomUserDetails(u, ua)" +
             "FROM User u, UserAuthentication ua WHERE u.id=ua.user_id and u.username = :username")
     CustomUserDetails findUserAndUserAuthentication(String username);
+
+    User findByUsername(String username);
+
+    User findById(byte[] id);
 }

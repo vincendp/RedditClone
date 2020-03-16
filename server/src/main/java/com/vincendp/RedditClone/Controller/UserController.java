@@ -1,7 +1,7 @@
 package com.vincendp.RedditClone.Controller;
 
 import com.vincendp.RedditClone.Dto.CreateUserRequest;
-import com.vincendp.RedditClone.Dto.CreateUserResponse;
+import com.vincendp.RedditClone.Dto.LoginResponse;
 import com.vincendp.RedditClone.Service.UserService;
 import com.vincendp.RedditClone.Utility.AuthenticationUtility;
 import com.vincendp.RedditClone.Utility.SuccessResponse;
@@ -40,11 +40,11 @@ public class UserController {
     @PostMapping("/users")
     ResponseEntity createUser(@RequestBody CreateUserRequest createUserRequest, HttpServletRequest request){
         if( createUserRequest.getUsername() == null
-            || createUserRequest.getPassword() == null
-            || createUserRequest.getVerifyPassword() == null
-            || createUserRequest.getUsername().length() <= 0
-            || createUserRequest.getPassword().length() <= 0
-            || createUserRequest.getVerifyPassword().length() <= 0){
+                || createUserRequest.getPassword() == null
+                || createUserRequest.getVerifyPassword() == null
+                || createUserRequest.getUsername().length() <= 0
+                || createUserRequest.getPassword().length() <= 0
+                || createUserRequest.getVerifyPassword().length() <= 0){
 
             throw new IllegalArgumentException("Error: username or password cannot be empty.");
         }
@@ -52,13 +52,13 @@ public class UserController {
             throw new IllegalArgumentException("Error: passwords are not the same.");
         }
 
-        CreateUserResponse createUserResponse = userService.createUser(createUserRequest);
+        LoginResponse loginResponse = userService.createUser(createUserRequest);
 
-        UserDetails userDetails = userDetailsService.loadUserByUsername(createUserResponse.getUsername());
+        UserDetails userDetails = userDetailsService.loadUserByUsername(loginResponse.getUsername());
 
         authenticationUtility.authenticateUser(userDetails, request);
 
-        return ResponseEntity.ok(new SuccessResponse(200, "Success: Created account", createUserResponse));
+        return ResponseEntity.ok(new SuccessResponse(200, "Success: Created account", loginResponse));
     }
 
 }

@@ -3,6 +3,8 @@ package com.vincendp.RedditClone.Controller;
 import com.vincendp.RedditClone.Dto.LoginRequest;
 import com.vincendp.RedditClone.Dto.LoginResponse;
 import com.vincendp.RedditClone.Model.CustomUserDetails;
+import com.vincendp.RedditClone.Model.User;
+import com.vincendp.RedditClone.Repository.UserRepository;
 import com.vincendp.RedditClone.Utility.JWTUtility;
 import com.vincendp.RedditClone.Utility.SuccessResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,12 +29,14 @@ public class AuthenticationController {
 
     private AuthenticationManager authenticationManager;
     private JWTUtility jwtUtility;
+    private UserRepository userRepository;
 
     @Autowired
     public AuthenticationController(AuthenticationManager authenticationManager,
-                                    JWTUtility jwtUtility){
+                                    JWTUtility jwtUtility, UserRepository userRepository){
         this.authenticationManager = authenticationManager;
         this.jwtUtility = jwtUtility;
+        this.userRepository = userRepository;
     }
 
 
@@ -61,7 +65,11 @@ public class AuthenticationController {
         cookie.setHttpOnly(true);
         response.addCookie(cookie);
 
-        return ResponseEntity.ok(new SuccessResponse(200, "Success: Logged in", new LoginResponse(jws)));
+        User user = userRepository.findByUsername(loginRequest.getUsername());
+
+        return ResponseEntity.ok(new SuccessResponse(200,
+                "Success: Logged in",
+                new LoginResponse(user.getId().toString(), user.getUsername(), user.getCreated_at())));
     }
 }
 

@@ -18,10 +18,9 @@ CREATE TABLE User (
 );
 
 CREATE TABLE UserAuthentication(
-	id BINARY(16) NOT NULL,
-    password BINARY(32) NOT NULL,
-    user_id BINARY(16) NOT NULL,
-    PRIMARY KEY (id),
+	user_id BINARY(16) NOT NULL,
+    password BINARY(68) NOT NULL,
+    PRIMARY KEY (user_id),
     FOREIGN KEY (user_id) REFERENCES User (id),
     INDEX (user_id)
 );
@@ -86,16 +85,3 @@ CREATE TABLE VotePost(
     INDEX (user_id),
     INDEX (post_id)
 );
-
-
-
-
-
-
-
-
-
-
-
-
-

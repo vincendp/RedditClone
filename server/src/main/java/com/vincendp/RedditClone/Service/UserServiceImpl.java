@@ -1,7 +1,7 @@
 package com.vincendp.RedditClone.Service;
 
 import com.vincendp.RedditClone.Dto.CreateUserRequest;
-import com.vincendp.RedditClone.Dto.CreateUserResponse;
+import com.vincendp.RedditClone.Dto.LoginResponse;
 import com.vincendp.RedditClone.Model.User;
 import com.vincendp.RedditClone.Model.UserAuthentication;
 import com.vincendp.RedditClone.Repository.UserAuthenticationRepository;
@@ -13,20 +13,17 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl implements UserService {
 
     private UserAuthenticationRepository userAuthenticationRepository;
-    private UserAuthenticationService userAuthenticationService;
     private PasswordEncoder passwordEncoder;
 
     @Autowired
     public UserServiceImpl(UserAuthenticationRepository userAuthenticationRepository,
-                           UserAuthenticationService userAuthenticationService,
                            PasswordEncoder passwordEncoder){
         this.userAuthenticationRepository = userAuthenticationRepository;
-        this.userAuthenticationService = userAuthenticationService;
         this.passwordEncoder = passwordEncoder;
     }
 
     @Override
-    public CreateUserResponse createUser(CreateUserRequest createUserRequest) {
+    public LoginResponse createUser(CreateUserRequest createUserRequest) {
         User u = new User();
         UserAuthentication userAuthentication = new UserAuthentication();
 
@@ -36,6 +33,6 @@ public class UserServiceImpl implements UserService {
 
         userAuthenticationRepository.save(userAuthentication);
 
-        return new CreateUserResponse(u.getUsername(), u.getCreated_at());
+        return new LoginResponse(u.getId().toString(), u.getUsername(), u.getCreated_at());
     }
 }
