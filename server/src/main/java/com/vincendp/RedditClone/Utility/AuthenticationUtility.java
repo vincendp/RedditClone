@@ -11,10 +11,11 @@ import javax.servlet.http.HttpServletRequest;
 @Component
 public class AuthenticationUtility {
 
-    public void authenticateUser(UserDetails userDetails, HttpServletRequest request){
+    public boolean authenticateUser(UserDetails userDetails, HttpServletRequest request){
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
                 userDetails, null, userDetails.getAuthorities());
         usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
         SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+        return true;
     }
 }
