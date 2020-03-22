@@ -35,7 +35,7 @@ import static org.mockito.Mockito.*;
 public class AuthenticationControllerTest {
 
     @Autowired
-    ObjectMapper objectMapper;
+    private ObjectMapper objectMapper;
 
     @Autowired
     private MockMvc mockMvc;

@@ -38,7 +38,7 @@ import static org.assertj.core.api.Assertions.*;
 public class UserControllerTest {
 
     @Autowired
-    ObjectMapper objectMapper;
+    private ObjectMapper objectMapper;
 
     @Autowired
     private MockMvc mockMvc;

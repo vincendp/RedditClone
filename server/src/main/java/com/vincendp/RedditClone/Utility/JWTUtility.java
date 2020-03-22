@@ -12,11 +12,18 @@ import java.util.Date;
 public class JWTUtility {
 
     @Value("${jwt.secret}")
-    public String SECRET;
+    private String SECRET;
 
     @Value("${expiration}")
     private int EXPIRATION;
 
+    public JWTUtility(){
+    }
+
+    public JWTUtility(String secret, int expiration){
+        this.SECRET = secret;
+        this.EXPIRATION = expiration;
+    }
 
     public String getUsernameFromClaims(String jws) throws JwtException{
         Claims claims = getAllClaimsFromToken(jws);
@@ -60,6 +67,4 @@ public class JWTUtility {
                 .signWith(SignatureAlgorithm.HS256, SECRET).compact();
 
     }
-
-
 }
