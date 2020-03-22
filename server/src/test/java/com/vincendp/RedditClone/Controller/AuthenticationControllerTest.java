@@ -91,9 +91,11 @@ public class AuthenticationControllerTest {
         MvcResult result = mockMvc.perform(post("/auth/login")
                 .header("Content-Type", "application/json")
                 .content(json))
+                .andExpect(status().is2xxSuccessful())
                 .andReturn();
 
         assertEquals(result.getResponse().getCookie("jws").getValue(), jws);
+        assertTrue(result.getResponse().getContentAsString().contains("Success: Logged in"));
     }
 
 }

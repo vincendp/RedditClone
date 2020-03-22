@@ -1,6 +1,7 @@
 package com.vincendp.RedditClone.Service;
 
-import com.vincendp.RedditClone.Model.CustomUserDetails;
+import com.vincendp.RedditClone.Dto.CreateUserRequest;
+import com.vincendp.RedditClone.Dto.LoginResponse;
 import com.vincendp.RedditClone.Model.User;
 import com.vincendp.RedditClone.Model.UserAuthentication;
 import com.vincendp.RedditClone.Repository.UserAuthenticationRepository;
@@ -10,8 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.dao.DataAccessException;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 
@@ -22,16 +22,16 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @TestPropertySource(locations="classpath:application-test.properties")
 @Sql({"/sql/redditdb.sql"})
-public class UserDetailsServiceIntegrationTest {
+public class UserServiceIntegrationTest {
+
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private UserAuthenticationRepository userAuthenticationRepository;
 
     @Autowired
     private UserRepository userRepository;
-
-    @Autowired
-    private UserDetailsService userDetailsService;
 
     private User user;
 
@@ -56,17 +56,28 @@ public class UserDetailsServiceIntegrationTest {
     }
 
     @Test
-    void when_username_not_found_throws_error(){
-        assertThrows(UsernameNotFoundException.class, () -> {
-            userDetailsService.loadUserByUsername("alice");
+    void when_null_password_throws_error(){
+        CreateUserRequest createUserRequest = new CreateUserRequest("alice", null, null);
+        assertThrows(NullPointerException.class, () -> {
+           userService.createUser(createUserRequest);
         });
     }
 
     @Test
-    void when_username_found_returns_user_details(){
-        CustomUserDetails customUserDetails = (CustomUserDetails) userDetailsService.loadUserByUsername("bob");
-        assertNotNull(customUserDetails);
-        assertEquals(user.getUsername(), customUserDetails.getUsername());
+    void when_non_unique_user_throws_error(){
+        CreateUserRequest createUserRequest = new CreateUserRequest("bob", "1234", "1234");
+        assertThrows(DataAccessException.class, () -> {
+            userService.createUser(createUserRequest);
+        });
+    }
+
+    @Test
+    void when_valid_signup_returns_login_response(){
+        CreateUserRequest createUserRequest = new CreateUserRequest("alice", "1234", "1234");
+        LoginResponse loginResponse = userService.createUser(createUserRequest);
+        assertNotNull(loginResponse);
+        assertNotNull(loginResponse.getId());
+        assertEquals(createUserRequest.getUsername(), loginResponse.getUsername());
     }
 
 }
