@@ -24,6 +24,7 @@
         class="nav__text nav__user-button nav__user-login"
         [routerLink]="['/Login']"
         routerLinkActive
+        *ngIf="!is_logged_in"
       >
         Login
       </button>
@@ -31,8 +32,16 @@
         class="nav__text nav__user-button nav__user-signup"
         [routerLink]="['/Signup']"
         routerLinkActive
+        *ngIf="!is_logged_in"
       >
         Signup
+      </button>
+      <button
+        class="nav__text nav__user-button nav__user-login"
+        *ngIf="is_logged_in"
+        (click)="logout()"
+      >
+        Logout
       </button>
     </div>
 

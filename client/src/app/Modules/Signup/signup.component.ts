@@ -27,15 +27,7 @@ export class SignupComponent implements OnInit {
   }
 
   signup() {
-    console.log("hi");
     console.log(this.userSignup.value);
-    this.apiService.post("/users", this.userSignup.value).subscribe(
-      data => {
-        console.log(data);
-      },
-      err => {
-        console.log(err);
-      }
-    );
+    this.userService.signup(this.userSignup.value);
   }
 }
