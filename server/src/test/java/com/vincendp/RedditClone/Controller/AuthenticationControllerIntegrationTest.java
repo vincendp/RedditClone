@@ -2,31 +2,26 @@ package com.vincendp.RedditClone.Controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vincendp.RedditClone.Dto.LoginRequest;
-import com.vincendp.RedditClone.Model.CustomUserDetails;
 import com.vincendp.RedditClone.Model.User;
 import com.vincendp.RedditClone.Model.UserAuthentication;
 import com.vincendp.RedditClone.Repository.UserAuthenticationRepository;
 import com.vincendp.RedditClone.Repository.UserRepository;
-import com.vincendp.RedditClone.Utility.JWTUtility;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
-import java.util.ArrayList;
 import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.request;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -48,13 +43,7 @@ public class AuthenticationControllerIntegrationTest {
     private UserAuthenticationRepository userAuthenticationRepository;
 
     @Autowired
-    private AuthenticationManager authenticationManager;
-
-    @Autowired
     private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private JWTUtility jwtUtility;
 
     private User user;
 
@@ -71,15 +60,6 @@ public class AuthenticationControllerIntegrationTest {
         userAuthentication.setPassword(passwordEncoder.encode("1234"));
         userAuthentication.setUser(user);
         userAuthenticationRepository.save(userAuthentication);
-
-        ArrayList<UserAuthentication> users = new ArrayList<>();
-        userAuthenticationRepository.findAll().forEach(users::add);
-
-        System.out.println("HELLO");
-        for(UserAuthentication ua: users){
-            System.out.println(ua.getUser().getUsername());
-            System.out.println(ua.getPassword());
-        }
     }
 
     @AfterEach
@@ -107,14 +87,14 @@ public class AuthenticationControllerIntegrationTest {
         LoginRequest loginRequest = new LoginRequest("bob", "1234");
         String json = objectMapper.writeValueAsString(loginRequest);
 
-        MvcResult result = mockMvc.perform(post("/auth/login")
+        MvcResult  result = mockMvc.perform(post("/auth/login")
                 .header("Content-Type", "application/json")
                 .content(json))
                 .andExpect(status().is2xxSuccessful())
                 .andReturn();
 
-//        assertNotNull(result.getResponse().getCookie("jws").getValue());
-//        assertTrue(result.getResponse().getContentAsString().contains("Success: Logged in"));
+        assertNotNull(result.getResponse().getCookie("jws").getValue());
+        assertTrue(result.getResponse().getContentAsString().contains("Success: Logged in"));
     }
 
 }

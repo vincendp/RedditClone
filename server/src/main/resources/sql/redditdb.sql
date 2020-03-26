@@ -19,7 +19,7 @@ CREATE TABLE User (
 
 CREATE TABLE UserAuthentication(
 	user_id BINARY(16) NOT NULL,
-    password BINARY(68) NOT NULL,
+    password VARCHAR(68) NOT NULL,
     PRIMARY KEY (user_id),
     FOREIGN KEY (user_id) REFERENCES User (id),
     INDEX (user_id)
@@ -38,6 +38,7 @@ CREATE TABLE Post(
 	id BINARY(16) NOT NULL,
     title VARCHAR(300) NOT NULL,
     description TEXT,
+    link VARCHAR(1000),
     deleted BOOLEAN, 
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     user_id BINARY(16),
