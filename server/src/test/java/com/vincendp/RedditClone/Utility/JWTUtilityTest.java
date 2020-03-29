@@ -1,6 +1,8 @@
 package com.vincendp.RedditClone.Utility;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.SignatureException;
@@ -17,7 +19,8 @@ public class JWTUtilityTest {
     @BeforeEach
     void setup(){
         jwtUtility = new JWTUtility("SECRET", 10000);
-        jwt = jwtUtility.generateJWS("bob");
+        Map<String, Object> claims = new HashMap<>();
+        jwt = jwtUtility.generateJWS(claims,"bob");
     }
 
     @Test
@@ -35,7 +38,8 @@ public class JWTUtilityTest {
     @Test
     void expired_jwt_throws_error(){
         JWTUtility jwtUtility = new JWTUtility("SECRET", 0);
-        String jwt = jwtUtility.generateJWS("bob");
+        Map<String, Object> claims = new HashMap<>();
+        String jwt = jwtUtility.generateJWS(claims,"bob");
 
         assertThrows(ExpiredJwtException.class, () -> {
             jwtUtility.getExpirationFromClaims(jwt);

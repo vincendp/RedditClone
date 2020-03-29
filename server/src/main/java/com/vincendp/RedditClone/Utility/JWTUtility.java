@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
+import java.util.Map;
 
 @Component
 public class JWTUtility {
@@ -35,6 +36,11 @@ public class JWTUtility {
         return claims.getExpiration();
     }
 
+    public String getIdFromClaims(String jws) throws JwtException{
+        Claims claims = getAllClaimsFromToken(jws);
+        return claims.get("id", String.class);
+    }
+
     private Claims getAllClaimsFromToken(String jws) throws JwtException {
         Claims claims = Jwts.parser().setSigningKey(SECRET).parseClaimsJws(jws).getBody();
         return claims;
@@ -61,8 +67,8 @@ public class JWTUtility {
 
     }
 
-    public String generateJWS(String username){
-        return Jwts.builder().setSubject(username).setIssuedAt(new Date())
+    public String generateJWS(Map<String, Object> claims, String username){
+        return Jwts.builder().setClaims(claims).setSubject(username).setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * EXPIRATION))
                 .signWith(SignatureAlgorithm.HS256, SECRET).compact();
 

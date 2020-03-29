@@ -4,9 +4,9 @@ import java.util.Date;
 
 public class LoginResponse {
 
-    String id;
-    String username;
-    Date created_at;
+    private String id;
+    private String username;
+    private Date created_at;
 
     public LoginResponse(){
 

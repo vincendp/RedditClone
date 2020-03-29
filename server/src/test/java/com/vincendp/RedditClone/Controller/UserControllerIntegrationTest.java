@@ -55,7 +55,7 @@ public class UserControllerIntegrationTest {
         mockMvc.perform(post("/users")
                 .header("Content-Type", "application/json")
                 .content(json))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isConflict());
     }
 
     @Test

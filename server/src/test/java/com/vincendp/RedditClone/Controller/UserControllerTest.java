@@ -9,6 +9,7 @@ import com.vincendp.RedditClone.Model.User;
 import com.vincendp.RedditClone.Model.UserAuthentication;
 import com.vincendp.RedditClone.Service.UserService;
 import com.vincendp.RedditClone.Utility.AuthenticationUtility;
+import com.vincendp.RedditClone.Utility.JWTUtility;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -51,6 +52,9 @@ public class UserControllerTest {
 
     @MockBean
     private AuthenticationUtility authenticationUtility;
+
+    @MockBean
+    private JWTUtility jwtUtility;
 
     @Test
     void null_username_should_throw_error() throws Exception{

@@ -85,7 +85,7 @@ public class AuthenticationControllerTest {
 
         when(authenticationManager.authenticate(any())).thenReturn(new UsernamePasswordAuthenticationToken(
                 customUserDetails, null, null));
-        when(jwtUtility.generateJWS(anyString())).thenReturn(jws);
+        when(jwtUtility.generateJWS(any(), anyString())).thenReturn(jws);
         when(userRepository.findByUsername(anyString())).thenReturn(user);
 
         MvcResult result = mockMvc.perform(post("/auth/login")

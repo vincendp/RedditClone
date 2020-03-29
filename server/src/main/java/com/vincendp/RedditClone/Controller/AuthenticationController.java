@@ -22,6 +22,8 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("auth")
@@ -58,7 +60,9 @@ public class AuthenticationController {
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
-        String jws = jwtUtility.generateJWS(customUserDetails.getUsername());
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("id", customUserDetails.getId());
+        String jws = jwtUtility.generateJWS(claims, customUserDetails.getUsername());
 
         Cookie cookie = new Cookie("jws", jws);
         cookie.setPath("/");

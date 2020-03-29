@@ -1,6 +1,7 @@
 package com.vincendp.RedditClone.Exception;
 
 import com.vincendp.RedditClone.Utility.ErrorResponse;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -26,6 +27,17 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(e, errorResponse, headers, HttpStatus.INTERNAL_SERVER_ERROR, request);
     }
 
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<Object> handleRuntimeException(RuntimeException e, WebRequest request){
+        ErrorResponse errorResponse = new ErrorResponse(
+                HttpStatus.BAD_REQUEST.value(), e.getMessage(), null);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        return handleExceptionInternal(e, errorResponse, headers, HttpStatus.BAD_REQUEST, request);
+    }
+
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<Object> handleInvalidAuthentication(RuntimeException e, WebRequest request){
         ErrorResponse errorResponse = new ErrorResponse(
@@ -37,15 +49,26 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(e, errorResponse, headers, HttpStatus.UNAUTHORIZED, request);
     }
 
-    @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<Object> handleRuntimeException(RuntimeException e, WebRequest request){
+    @ExceptionHandler(ResourceAlreadyExistsException.class)
+    public ResponseEntity<Object> handleResourceAlreadyExists(RuntimeException e, WebRequest request){
         ErrorResponse errorResponse = new ErrorResponse(
-                HttpStatus.BAD_REQUEST.value(), e.getMessage(), null);
+                HttpStatus.CONFLICT.value(), e.getMessage(), null);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        return handleExceptionInternal(e, errorResponse, headers, HttpStatus.BAD_REQUEST, request);
+        return handleExceptionInternal(e, errorResponse, headers, HttpStatus.CONFLICT, request);
+    }
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<Object> handleResourceNotFound(RuntimeException e, WebRequest request){
+        ErrorResponse errorResponse = new ErrorResponse(
+                HttpStatus.NOT_FOUND.value(), e.getMessage(), null);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        return handleExceptionInternal(e, errorResponse, headers, HttpStatus.NOT_FOUND, request);
     }
 
     @ExceptionHandler(IllegalArgumentException.class)

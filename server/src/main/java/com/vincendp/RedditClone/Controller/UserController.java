@@ -4,6 +4,7 @@ import com.vincendp.RedditClone.Dto.CreateUserRequest;
 import com.vincendp.RedditClone.Dto.LoginResponse;
 import com.vincendp.RedditClone.Service.UserService;
 import com.vincendp.RedditClone.Utility.AuthenticationUtility;
+import com.vincendp.RedditClone.Utility.JWTUtility;
 import com.vincendp.RedditClone.Utility.SuccessResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -11,9 +12,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Arrays;
 
 @RestController
+@RequestMapping("users")
 public class UserController {
 
     private UserService userService;
@@ -22,22 +26,36 @@ public class UserController {
 
     private AuthenticationUtility authenticationUtility;
 
+    private JWTUtility jwtUtility;
+
 
     @Autowired
     public UserController(UserService userService,
                           UserDetailsService userDetailsService,
-                          AuthenticationUtility authenticationUtility){
+                          AuthenticationUtility authenticationUtility,
+                          JWTUtility jwtUtility){
         this.userService = userService;
         this.userDetailsService = userDetailsService;
         this.authenticationUtility = authenticationUtility;
+        this.jwtUtility = jwtUtility;
     }
 
-    @GetMapping("/helloWorld")
-    SuccessResponse getUserss(){
-        return new SuccessResponse(200, "", "");
+    @GetMapping()
+    ResponseEntity getUser(HttpServletRequest request){
+        Cookie cookie = null;
+        Cookie[] cookies = request.getCookies();
+
+        if(cookies != null && cookies.length > 0){
+            cookie = Arrays.asList(cookies).stream().filter(c -> c.getName().equals("jws")).findFirst().orElse(null);
+        }
+
+        String id = jwtUtility.getIdFromClaims(cookie.getValue());
+        LoginResponse loginResponse = userService.getUser(id);
+
+        return ResponseEntity.ok(new SuccessResponse(200, "Success: Got user", loginResponse));
     }
 
-    @PostMapping("/users")
+    @PostMapping()
     ResponseEntity createUser(@RequestBody CreateUserRequest createUserRequest, HttpServletRequest request){
         if( createUserRequest.getUsername() == null
                 || createUserRequest.getPassword() == null

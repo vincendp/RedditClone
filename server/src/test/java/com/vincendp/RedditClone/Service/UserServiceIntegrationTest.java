@@ -2,6 +2,7 @@ package com.vincendp.RedditClone.Service;
 
 import com.vincendp.RedditClone.Dto.CreateUserRequest;
 import com.vincendp.RedditClone.Dto.LoginResponse;
+import com.vincendp.RedditClone.Exception.ResourceAlreadyExistsException;
 import com.vincendp.RedditClone.Model.User;
 import com.vincendp.RedditClone.Model.UserAuthentication;
 import com.vincendp.RedditClone.Repository.UserAuthenticationRepository;
@@ -11,7 +12,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.dao.DataAccessException;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 
@@ -66,7 +66,7 @@ public class UserServiceIntegrationTest {
     @Test
     void when_non_unique_user_throws_error(){
         CreateUserRequest createUserRequest = new CreateUserRequest("bob", "1234", "1234");
-        assertThrows(DataAccessException.class, () -> {
+        assertThrows(ResourceAlreadyExistsException.class, () -> {
             userService.createUser(createUserRequest);
         });
     }
