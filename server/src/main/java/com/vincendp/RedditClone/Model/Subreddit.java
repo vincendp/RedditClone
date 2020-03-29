@@ -24,4 +24,40 @@ public class Subreddit {
     @Temporal(TemporalType.TIMESTAMP)
     private Date created_at;
 
+    public Subreddit() {
+    }
+
+    public Subreddit(String name){
+        this.name = name;
+    }
+
+    public Subreddit(UUID id, String name, Date created_at){
+        this.id = id;
+        this.name = name;
+        this.created_at = created_at;
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Date getCreated_at() {
+        return created_at;
+    }
+
+    public void setCreated_at(Date created_at) {
+        this.created_at = created_at;
+    }
 }

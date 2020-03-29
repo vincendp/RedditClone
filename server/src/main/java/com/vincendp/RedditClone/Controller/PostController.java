@@ -24,9 +24,20 @@ public class PostController {
 
     @PostMapping
     ResponseEntity createPost(@RequestBody CreatePostRequest createPostRequest){
+        if( createPostRequest.getTitle() == null
+                || createPostRequest.getTitle().length() <= 0){
+            throw new IllegalArgumentException("Error: title cannot be empty.");
+        }
+        else if (createPostRequest.getUser_id() == null
+                || createPostRequest.getSubreddit_id() == null
+                || createPostRequest.getUser_id().length() <= 0
+                || createPostRequest.getSubreddit_id().length() <= 0){
+            throw new IllegalArgumentException("Error: user or subreddit cannot be empty.");
+        }
+
         CreatePostResponse createPostResponse = postService.createPost(createPostRequest);
 
-        return ResponseEntity.ok(new SuccessResponse(200, "Success: Created post", null));
+        return ResponseEntity.ok(new SuccessResponse(200, "Success: Created post", createPostRequest));
     }
 
 }
