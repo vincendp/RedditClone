@@ -24,6 +24,15 @@ public class User {
     @Temporal(TemporalType.TIMESTAMP)
     private Date created_at;
 
+    public User() {
+    }
+
+    public User(UUID id, String username, Date created_at){
+        this.id = id;
+        this.username = username;
+        this.created_at = created_at;
+    }
+
     public UUID getId() {
         return id;
     }
