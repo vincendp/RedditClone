@@ -39,6 +39,23 @@ public class Post {
     @ManyToOne
     private Subreddit subreddit;
 
+    public Post() {
+
+    }
+
+    public Post(UUID id, String title, String description,
+                String link, boolean deleted, Date created_at,
+                User user, Subreddit subreddit){
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.link = link;
+        this.deleted = deleted;
+        this.created_at = created_at;
+        this.user = user;
+        this.subreddit = subreddit;
+    }
+
     public UUID getId() {
         return id;
     }

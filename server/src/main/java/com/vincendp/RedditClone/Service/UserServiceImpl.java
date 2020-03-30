@@ -42,7 +42,7 @@ public class UserServiceImpl implements UserService {
         catch(IllegalArgumentException e){
             throw new IllegalArgumentException("Error: invalid user");
         }
-        catch(NoSuchElementException e){
+        if(user == null){
             throw new ResourceNotFoundException("Error: user not found");
         }
 

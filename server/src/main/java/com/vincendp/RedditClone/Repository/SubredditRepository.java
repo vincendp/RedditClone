@@ -9,4 +9,6 @@ import java.util.UUID;
 @Repository
 public interface SubredditRepository extends CrudRepository<Subreddit, UUID> {
 
+    Subreddit getById(UUID id);
+
 }

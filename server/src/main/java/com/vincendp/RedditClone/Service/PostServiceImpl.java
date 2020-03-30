@@ -40,8 +40,10 @@ public class PostServiceImpl implements PostService{
         User user = null;
 
         try{
-            subreddit = subredditRepository.findById(UUID.fromString(createPostRequest.getSubreddit_id())).get();
-            user = userRepository.findById(UUID.fromString(createPostRequest.getUser_id())).get();
+            UUID subreddit_uuid = UUID.fromString(createPostRequest.getSubreddit_id());
+            UUID user_uuid = UUID.fromString(createPostRequest.getUser_id());
+            subreddit = subredditRepository.getById(subreddit_uuid);
+            user = userRepository.getById(user_uuid);
         }
         catch(IllegalArgumentException e){
             throw new IllegalArgumentException("Error: Invalid user or subreddit");
@@ -57,7 +59,7 @@ public class PostServiceImpl implements PostService{
         post.setUser(user);
         post.setSubreddit(subreddit);
 
-        postRepository.save(post);
+        post = postRepository.save(post);
 
         return new CreatePostResponse(post.getId().toString(), post.getTitle(), post.getDescription(),
                 post.getLink(), post.getUser().getId().toString(), post.getSubreddit().getId().toString(),

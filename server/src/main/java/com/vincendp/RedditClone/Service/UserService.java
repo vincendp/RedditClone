@@ -6,7 +6,7 @@ import com.vincendp.RedditClone.Dto.LoginResponse;
 
 public interface UserService {
 
-    LoginResponse getUser(String username);
+    LoginResponse getUser(String id);
     LoginResponse createUser(CreateUserRequest createUserRequest);
 
 }

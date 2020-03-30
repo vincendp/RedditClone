@@ -89,7 +89,7 @@ public class UserServiceTest {
 
     @Test
     void when_user_not_found_throws_error(){
-        when(userRepository.getById(any())).thenThrow(NoSuchElementException.class);
+        when(userRepository.getById(any())).thenReturn(null);
 
         assertThrows(ResourceNotFoundException.class, () -> {
             userService.getUser(user.getId().toString());

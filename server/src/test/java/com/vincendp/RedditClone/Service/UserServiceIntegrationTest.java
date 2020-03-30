@@ -3,6 +3,7 @@ package com.vincendp.RedditClone.Service;
 import com.vincendp.RedditClone.Dto.CreateUserRequest;
 import com.vincendp.RedditClone.Dto.LoginResponse;
 import com.vincendp.RedditClone.Exception.ResourceAlreadyExistsException;
+import com.vincendp.RedditClone.Exception.ResourceNotFoundException;
 import com.vincendp.RedditClone.Model.User;
 import com.vincendp.RedditClone.Model.UserAuthentication;
 import com.vincendp.RedditClone.Repository.UserAuthenticationRepository;
@@ -16,6 +17,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.util.Date;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -78,6 +80,21 @@ public class UserServiceIntegrationTest {
         assertNotNull(loginResponse);
         assertNotNull(loginResponse.getId());
         assertEquals(createUserRequest.getUsername(), loginResponse.getUsername());
+    }
+
+    @Test
+    void when_user_not_found_throws_error(){
+        assertThrows(ResourceNotFoundException.class, () -> {
+            userService.getUser(UUID.randomUUID().toString());
+        });
+    }
+
+    @Test
+    void when_user_found_returns_login_response(){
+        LoginResponse loginResponse = userService.getUser(user.getId().toString());
+        assertNotNull(loginResponse);
+        assertNotNull(loginResponse.getId());
+        assertEquals(user.getUsername(), loginResponse.getUsername());
     }
 
 }

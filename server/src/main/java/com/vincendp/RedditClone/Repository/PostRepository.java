@@ -9,4 +9,6 @@ import java.util.UUID;
 @Repository
 public interface PostRepository extends CrudRepository<Post, UUID> {
 
+    Post getById(UUID id);
+
 }
