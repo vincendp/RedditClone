@@ -8,6 +8,7 @@ import com.vincendp.RedditClone.Utility.JWTUtility;
 import com.vincendp.RedditClone.Utility.SuccessResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
@@ -47,6 +48,9 @@ public class UserController {
 
         if(cookies != null && cookies.length > 0){
             cookie = Arrays.asList(cookies).stream().filter(c -> c.getName().equals("jws")).findFirst().orElse(null);
+        }
+        if(cookie == null){
+            throw new BadCredentialsException("Error: No cookies found");
         }
 
         String id = jwtUtility.getIdFromClaims(cookie.getValue());
