@@ -12,7 +12,6 @@ import com.vincendp.RedditClone.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.NoSuchElementException;
 import java.util.UUID;
 
 @Service
@@ -48,7 +47,8 @@ public class PostServiceImpl implements PostService{
         catch(IllegalArgumentException e){
             throw new IllegalArgumentException("Error: Invalid user or subreddit");
         }
-        catch(NoSuchElementException e){
+
+        if(user == null || subreddit == null){
             throw new ResourceNotFoundException("Error: User or subreddit not found");
         }
 

@@ -37,7 +37,6 @@ public class PostController {
 
         CreatePostResponse createPostResponse = postService.createPost(createPostRequest);
 
-        return ResponseEntity.ok(new SuccessResponse(200, "Success: Created post", createPostRequest));
+        return ResponseEntity.ok(new SuccessResponse(200, "Success: Created post", createPostResponse));
     }
-
 }
