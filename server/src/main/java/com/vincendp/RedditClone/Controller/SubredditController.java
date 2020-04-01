@@ -19,7 +19,7 @@ public class SubredditController {
 
     @Autowired
     public SubredditController(SubredditService subredditService){
-
+        this.subredditService = subredditService;
     }
 
     @PostMapping
@@ -30,7 +30,7 @@ public class SubredditController {
         }
 
         CreateSubredditResponse createSubredditResponse = subredditService.createSubreddit(createSubredditRequest);
-        return ResponseEntity.ok(new SuccessResponse(200, "Success: Created post", createSubredditRequest));
+        return ResponseEntity.ok(new SuccessResponse(200, "Success: Created subreddit", createSubredditResponse));
     }
 
 }

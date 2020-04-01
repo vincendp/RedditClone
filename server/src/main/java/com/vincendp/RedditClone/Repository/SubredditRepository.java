@@ -10,5 +10,6 @@ import java.util.UUID;
 public interface SubredditRepository extends CrudRepository<Subreddit, UUID> {
 
     Subreddit getById(UUID id);
+    Subreddit findByName(String name);
 
 }
