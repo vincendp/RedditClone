@@ -55,7 +55,7 @@ public class UserServiceTest {
 
     @Test
     void when_user_authentication_repository_fails_throw_error(){
-        doThrow( new DataIntegrityViolationException("")).when(userAuthenticationRepository).save(any());
+        when(userRepository.findByUsername(anyString())).thenReturn(new User());
         assertThrows(ResourceAlreadyExistsException.class, () -> {
            userService.createUser(createUserRequest);
         });
@@ -72,6 +72,8 @@ public class UserServiceTest {
         userAuthentication.setUser_id(user.getId());
         userAuthentication.setPassword("1234");
         userAuthentication.setUser(user);
+
+        when(userRepository.findByUsername(anyString())).thenReturn(null);
         when(userAuthenticationRepository.save(any())).thenReturn(userAuthentication);
 
         assertTrue(userService.createUser(createUserRequest) instanceof LoginResponse);

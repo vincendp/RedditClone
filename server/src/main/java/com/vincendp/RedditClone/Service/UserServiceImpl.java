@@ -13,7 +13,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.NoSuchElementException;
 import java.util.UUID;
 
 @Service
@@ -51,6 +50,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public LoginResponse createUser(CreateUserRequest createUserRequest) {
+        User existingUser = userRepository.findByUsername(createUserRequest.getUsername());
+
+        if(existingUser != null){
+            throw new ResourceAlreadyExistsException("Error: User already exists");
+        }
+
         User u = new User();
         UserAuthentication userAuthentication = new UserAuthentication();
 
@@ -62,7 +67,7 @@ public class UserServiceImpl implements UserService {
             userAuthentication = userAuthenticationRepository.save(userAuthentication);
         }
         catch(DataIntegrityViolationException e){
-            throw new ResourceAlreadyExistsException("Error: user already exists");
+            throw new DataIntegrityViolationException("Error: Could not save user");
         }
 
         u.setId(userAuthentication.getUser_id());
