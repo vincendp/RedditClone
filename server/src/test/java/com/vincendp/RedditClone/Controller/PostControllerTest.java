@@ -92,7 +92,7 @@ public class PostControllerTest {
             mockMvc.perform(post("/posts")
                     .header("Content-Type", "application/json")
                     .content(json));
-        }).hasCauseInstanceOf(IllegalArgumentException.class);
+        }).hasCauseInstanceOf(RuntimeException.class);
     }
 
     @Test

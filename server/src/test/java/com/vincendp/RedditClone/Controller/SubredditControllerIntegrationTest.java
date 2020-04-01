@@ -50,7 +50,7 @@ public class SubredditControllerIntegrationTest {
         subredditRepository.save(new Subreddit(null, "subreddit", new Date()));
         String json = objectMapper.writeValueAsString(createSubredditRequest);
 
-        mockMvc.perform(post("/subreddit")
+        mockMvc.perform(post("/subreddits")
                 .header("Content-Type", "application/json")
                 .content(json))
                 .andExpect(status().is4xxClientError());
@@ -61,7 +61,7 @@ public class SubredditControllerIntegrationTest {
     void when_valid_subreddit_should_return_response_success() throws Exception{
         String json = objectMapper.writeValueAsString(createSubredditRequest);
 
-        mockMvc.perform(post("/subreddit")
+        mockMvc.perform(post("/subreddits")
                 .header("Content-Type", "application/json")
                 .content(json))
                 .andExpect(status().isOk())

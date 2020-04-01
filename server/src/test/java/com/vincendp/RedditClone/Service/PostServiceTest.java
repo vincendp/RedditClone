@@ -76,7 +76,7 @@ public class PostServiceTest {
     @Test
     void when_subreddit_not_found_throws_error(){
         when(subredditRepository.getById(any())).thenThrow(NoSuchElementException.class);
-        assertThrows(ResourceNotFoundException.class, () -> {
+        assertThrows(NoSuchElementException.class, () -> {
             postService.createPost(createPostRequest);
         });
     }
@@ -86,7 +86,7 @@ public class PostServiceTest {
         when(subredditRepository.getById(any())).thenReturn(subreddit);
         when(userRepository.getById(any())).thenThrow(NoSuchElementException.class);
 
-        assertThrows(ResourceNotFoundException.class, () -> {
+        assertThrows(NoSuchElementException.class, () -> {
             postService.createPost(createPostRequest);
         });
     }

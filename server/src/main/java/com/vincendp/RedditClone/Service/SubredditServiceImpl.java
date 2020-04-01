@@ -2,6 +2,7 @@ package com.vincendp.RedditClone.Service;
 
 import com.vincendp.RedditClone.Dto.CreateSubredditRequest;
 import com.vincendp.RedditClone.Dto.CreateSubredditResponse;
+import com.vincendp.RedditClone.Dto.GetSubredditResponse;
 import com.vincendp.RedditClone.Exception.ResourceAlreadyExistsException;
 import com.vincendp.RedditClone.Model.Subreddit;
 import com.vincendp.RedditClone.Repository.SubredditRepository;
@@ -9,7 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
-import javax.validation.ConstraintViolationException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class SubredditServiceImpl implements SubredditService{
@@ -19,6 +21,20 @@ public class SubredditServiceImpl implements SubredditService{
     @Autowired
     public SubredditServiceImpl(SubredditRepository subredditRepository) {
         this.subredditRepository = subredditRepository;
+    }
+
+    @Override
+    public List<GetSubredditResponse> getSubreddits() {
+        ArrayList<GetSubredditResponse> subreddits = new ArrayList<>();
+
+        Iterable<Subreddit> subredditIterable = subredditRepository.findAll();
+        subredditIterable.forEach(subreddit ->
+            subreddits.add(new GetSubredditResponse(
+                    subreddit.getId().toString(), subreddit.getName(), subreddit.getCreated_at()
+            ))
+        );
+
+        return subreddits;
     }
 
     @Override
