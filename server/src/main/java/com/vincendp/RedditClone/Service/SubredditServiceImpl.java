@@ -25,7 +25,7 @@ public class SubredditServiceImpl implements SubredditService{
 
     @Override
     public List<GetSubredditResponse> getSubreddits() {
-        ArrayList<GetSubredditResponse> subreddits = new ArrayList<>();
+        List<GetSubredditResponse> subreddits = new ArrayList<>();
 
         Iterable<Subreddit> subredditIterable = subredditRepository.findAll();
         subredditIterable.forEach(subreddit ->

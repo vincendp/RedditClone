@@ -2,6 +2,7 @@ package com.vincendp.RedditClone.Service;
 
 import com.vincendp.RedditClone.Dto.CreateSubredditRequest;
 import com.vincendp.RedditClone.Dto.CreateSubredditResponse;
+import com.vincendp.RedditClone.Dto.GetSubredditResponse;
 import com.vincendp.RedditClone.Exception.ResourceAlreadyExistsException;
 import com.vincendp.RedditClone.Model.Subreddit;
 import com.vincendp.RedditClone.Repository.SubredditRepository;
@@ -14,8 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.DataIntegrityViolationException;
 
 
-import java.util.Date;
-import java.util.UUID;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -69,6 +69,26 @@ public class SubredditServiceTest {
         assertNotNull(createSubredditResponse.getId());
         assertNotNull(createSubredditResponse.getCreated_at());
         assertEquals(createSubredditRequest.getName(), createSubredditResponse.getName());
+    }
+
+    @Test
+    void when_empty_subreddits_then_return_empty_list(){
+        when(subredditRepository.findAll()).thenReturn(new ArrayList<>());
+        List<GetSubredditResponse> subreddits = subredditService.getSubreddits();
+        assertNotNull(subreddits);
+        assertTrue(subreddits.size() == 0);
+    }
+
+    @Test
+    void when_has_subreddits_then_return_list(){
+        when(subredditRepository.findAll()).thenReturn(new ArrayList<>(Arrays.asList(
+                new Subreddit(UUID.randomUUID(), "subreddit1", new Date()),
+                new Subreddit(UUID.randomUUID(), "subreddit2", new Date()),
+                new Subreddit(UUID.randomUUID(), "subreddit3", new Date())
+        )));
+        List<GetSubredditResponse> subreddits = subredditService.getSubreddits();
+        assertNotNull(subreddits);
+        assertTrue(subreddits.size() > 0);
     }
 
 }

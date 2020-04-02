@@ -6,6 +6,10 @@ public class ResponseWrapper {
     private String message;
     private Object data;
 
+    public ResponseWrapper(){
+
+    }
+
     public ResponseWrapper(int status, String message, Object data) {
         this.status = status;
         this.message = message;

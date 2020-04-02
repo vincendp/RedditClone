@@ -6,6 +6,7 @@ import com.vincendp.RedditClone.Config.TestSecurityConfiguration;
 import com.vincendp.RedditClone.Dto.CreateSubredditRequest;
 import com.vincendp.RedditClone.Dto.GetSubredditResponse;
 import com.vincendp.RedditClone.Service.SubredditService;
+import com.vincendp.RedditClone.Utility.SuccessResponse;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,8 +15,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -85,7 +88,7 @@ public class SubredditControllerTest {
     }
 
     @Test
-    void when_getting_all_returns_status_ok(){
+    void when_getting_all_subreddits_returns_status_ok() throws Exception{
         when(subredditService.getSubreddits()).thenReturn(new ArrayList<>())
                 .thenReturn(new ArrayList<>(Arrays.asList(
                         new GetSubredditResponse(UUID.randomUUID().toString(), "1", new Date()),
@@ -93,7 +96,21 @@ public class SubredditControllerTest {
                         new GetSubredditResponse(UUID.randomUUID().toString(), "3", new Date())
                 )));
 
-        
+        mockMvc.perform(get("/subreddits")
+                .header("Content-Type", "application/json"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(Matchers.containsString("Success: Got subreddits")));
+
+        MvcResult result = mockMvc.perform(get("/subreddits")
+                .header("Content-Type", "application/json"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(Matchers.containsString("Success: Got subreddits")))
+                .andReturn();
+
+
+        SuccessResponse successResponse = objectMapper.readValue(result.getResponse().getContentAsString(), SuccessResponse.class);
+        ArrayList<GetSubredditResponse> subreddits = (ArrayList<GetSubredditResponse>) successResponse.getData();
+        assertThat(subreddits.size() > 0);
     }
 
 }
