@@ -1,29 +1,57 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, ViewChild, ElementRef } from "@angular/core";
 import { UserService } from "../../Services/user.service";
+import { UtilityService } from "../../Services/utility.service";
 
 @Component({
   selector: "app-header",
   templateUrl: "./header.component.html",
-  styleUrls: ["./header.component.scss"]
+  styleUrls: ["./header.component.scss"],
 })
 export class HeaderComponent implements OnInit {
-  is_logged_in: boolean;
+  isLoggedIn: boolean;
+  dropdownIsActive: boolean;
 
-  constructor(private userService: UserService) {}
+  @ViewChild("dropdownButton", { read: ElementRef, static: false })
+  dropdownButton: ElementRef;
+
+  constructor(
+    private userService: UserService,
+    private utilityService: UtilityService
+  ) {}
 
   ngOnInit(): void {
+    this.userService.populate();
+
     this.userService.isAuthenticated.subscribe(
-      data => {
-        console.log(data);
-        this.is_logged_in = data;
+      (data) => {
+        this.isLoggedIn = data;
       },
-      err => {
+      (err) => {
+        console.log(err);
+      }
+    );
+
+    this.utilityService.documentClickTarget.subscribe(
+      (data) => {
+        this.onDocumentClick(data);
+      },
+      (err) => {
         console.log(err);
       }
     );
   }
 
-  logout() {
+  logout(): void {
     this.userService.logout();
+  }
+
+  onToggleDropdown(): void {
+    this.dropdownIsActive = !this.dropdownIsActive;
+  }
+
+  onDocumentClick(target: any): void {
+    if (!this.dropdownButton.nativeElement.contains(target)) {
+      this.dropdownIsActive = false;
+    }
   }
 }

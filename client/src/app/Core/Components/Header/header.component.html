@@ -1,7 +1,7 @@
 <header class="nav">
   <div class="nav__home">
     <button
-      class="nav__svg-with-text nav__svg-button "
+      class="nav__svg-with-text nav__svg-button nav__hover"
       [routerLink]="['/']"
       routerLinkActive
     >
@@ -12,8 +12,45 @@
     </button>
   </div>
 
+  <div class="nav__dropdown">
+    <div class="dropdown" #dropdownButton>
+      <button
+        class="nav__svg-with-text nav__svg-button nav__hover dropdown__box"
+        [ngClass]="{ 'dropdown__box--active': dropdownIsActive }"
+        (click)="onToggleDropdown()"
+      >
+        <span class="dropdown__button-text">
+          Subreddit
+        </span>
+        <span class="nav__icon">
+          <app-svg-icon
+            *ngIf="!dropdownIsActive"
+            icon_name="icon-keyboard_arrow_down"
+          >
+          </app-svg-icon>
+          <app-svg-icon
+            *ngIf="dropdownIsActive"
+            icon_name="icon-keyboard_arrow_up"
+          >
+          </app-svg-icon>
+        </span>
+      </button>
+      <div
+        class="dropdown__content"
+        [ngClass]="{ 'dropdown__content--active': dropdownIsActive }"
+      >
+        <ul class="dropdown__ul" (click)="onToggleDropdown()">
+          <li class="dropdown__li">All</li>
+          <li class="dropdown__li" [routerLink]="['/subreddits']">
+            Subreddits
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
   <div class="nav__search">
-    <button class="nav__svg-button nav__icon">
+    <button class="nav__svg-button nav__icon nav__hover">
       <app-svg-icon icon_name="icon-search"> </app-svg-icon>
     </button>
   </div>
@@ -21,31 +58,31 @@
   <div class="nav__user">
     <div class="nav__user-buttons">
       <button
-        class="nav__text nav__user-button nav__user-login"
-        [routerLink]="['/Login']"
+        class="nav__text nav__user-button nav__user-login nav__hover"
+        [routerLink]="['/login']"
         routerLinkActive
-        *ngIf="!is_logged_in"
+        *ngIf="!isLoggedIn"
       >
         Login
       </button>
       <button
-        class="nav__text nav__user-button nav__user-signup"
-        [routerLink]="['/Signup']"
+        class="nav__text nav__user-button nav__user-signup nav__hover"
+        [routerLink]="['/signup']"
         routerLinkActive
-        *ngIf="!is_logged_in"
+        *ngIf="!isLoggedIn"
       >
         Signup
       </button>
       <button
         class="nav__text nav__user-button nav__user-login"
-        *ngIf="is_logged_in"
+        *ngIf="isLoggedIn"
         (click)="logout()"
       >
         Logout
       </button>
     </div>
 
-    <button class="nav__svg-button nav__icon u-margin-right-s">
+    <button class="nav__svg-button nav__icon nav__hover u-margin-right-s">
       <app-svg-icon icon_name="icon-person"> </app-svg-icon>
     </button>
   </div>

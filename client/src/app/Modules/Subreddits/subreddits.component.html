@@ -1,0 +1,12 @@
+<div class="subreddits">
+  <h1 class="subreddits__heading">
+    Subreddits
+  </h1>
+  <ul class="subreddits__rows">
+    <li class="subreddits__row" *ngFor="let subreddit of subreddits">
+      <a [routerLink]="['/r/' + subreddit.name]" class="subreddits__link">
+        r/{{ subreddit.name }}
+      </a>
+    </li>
+  </ul>
+</div>

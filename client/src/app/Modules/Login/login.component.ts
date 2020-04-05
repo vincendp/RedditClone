@@ -6,7 +6,7 @@ import { ApiService } from "src/app/Core/Http/api.service";
 @Component({
   selector: "app-login",
   templateUrl: "./login.component.html",
-  styleUrls: ["./login.component.scss"]
+  styleUrls: ["./login.component.scss"],
 })
 export class LoginComponent implements OnInit {
   userLogin: any;
@@ -21,7 +21,7 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void {
     this.userLogin = this.formBuilder.group({
       username: ["", Validators.required],
-      password: ["", Validators.required]
+      password: ["", Validators.required],
     });
   }
 
@@ -29,27 +29,5 @@ export class LoginComponent implements OnInit {
     this.submitted = true;
     this.userService.login(this.userLogin.value);
     console.log(this.userLogin.value);
-  }
-
-  callRestrictedAPI() {
-    this.apiService.get("/helloWorld", null).subscribe(
-      data => {
-        console.log(data);
-      },
-      err => {
-        console.log(err);
-      }
-    );
-  }
-
-  callRestrictedAPI2() {
-    this.apiService.post("/logout", null).subscribe(
-      data => {
-        console.log(data);
-      },
-      err => {
-        console.log(err);
-      }
-    );
   }
 }

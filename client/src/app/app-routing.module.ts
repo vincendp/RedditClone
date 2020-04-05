@@ -5,22 +5,32 @@ const routes: Routes = [
   {
     path: "",
     loadChildren: () =>
-      import("./Modules/Home/home.module").then(m => m.HomeModule)
+      import("./Modules/Home/home.module").then((m) => m.HomeModule),
   },
   {
-    path: "Login",
+    path: "login",
     loadChildren: () =>
-      import("./Modules/Login/login.module").then(m => m.LoginModule)
+      import("./Modules/Login/login.module").then((m) => m.LoginModule),
   },
   {
-    path: "Signup",
+    path: "signup",
     loadChildren: () =>
-      import("./Modules/Signup/signup.module").then(m => m.SignupModule)
+      import("./Modules/Signup/signup.module").then((m) => m.SignupModule),
+  },
+  {
+    path: "subreddits",
+    loadChildren: () =>
+      import("./Modules/Subreddits/subreddits.module").then((m) => m.SubredditsModule),
+  },
+  {
+    path: "r/:subreddit",
+    loadChildren: () =>
+      import("./Modules/Subreddit/subreddit.module").then((m) => m.SubredditModule),
   }
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
 export class AppRoutingModule {}

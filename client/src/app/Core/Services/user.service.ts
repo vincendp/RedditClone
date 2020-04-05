@@ -64,4 +64,18 @@ export class UserService {
       }
     );
   }
+
+  populate() {
+    this.apiService.get("/users", null).subscribe(
+      (data: {}) => {
+        console.log(data);
+
+        this.userSubject.next(<User>data["result"]);
+        this.isAuthenticatedSubject.next(true);
+      },
+      err => {
+        console.log(err);
+      }
+    );
+  }
 }

@@ -1,0 +1,46 @@
+@import "src/assets/abstracts/_variables.scss";
+
+.subreddit {
+  width: 100%;
+  margin-top: 1rem;
+
+  &__header {
+    display: flex;
+    margin: 0 1rem;
+    padding: 0.5rem 1rem;
+    color: $color-grey-light;
+    background-color: $color-primary-dark;
+
+    &__info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    &__title {
+    }
+
+    &__title-text {
+      font-size: 4rem;
+    }
+
+    &__subreddit {
+      font-size: 2rem;
+    }
+  }
+
+  &__main {
+    display: flex;
+  }
+
+  &__content {
+    flex: 1;
+    height: 100vh;
+    background-color: $color-primary-light;
+  }
+
+  &__sidebar {
+    flex: 0.2;
+    height: 100vh;
+    background-color: $color-primary-darker;
+  }
+}
