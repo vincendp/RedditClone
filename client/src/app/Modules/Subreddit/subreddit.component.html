@@ -10,11 +10,99 @@
 
   <div class="subreddit__main">
     <div class="subreddit__content">
-      CONTENT
+      <div class="subreddit__content__create-post">
+        <button
+          class="subreddit__content__create-post-button subreddit__button"
+        >
+          Create Post
+        </button>
+        <div class="subreddit__content__icon subreddit__button">
+          <app-svg-icon icon_name="icon-panorama"> </app-svg-icon>
+        </div>
+        <div class="subreddit__content__icon subreddit__button">
+          <app-svg-icon icon_name="icon-linkinsert_link"> </app-svg-icon>
+        </div>
+      </div>
+      <div class="subreddit__content__filter">
+        <div class="subreddit__content__filter-button subreddit__button">
+          <div class="subreddit__content__filter-button-icon">
+            <app-svg-icon icon_name="icon-trending_up"> </app-svg-icon>
+          </div>
+          <span class="subreddit__content__filter-button-text">
+            Top
+          </span>
+        </div>
+        <div class="subreddit__content__filter-button subreddit__button">
+          <div class="subreddit__content__filter-button-icon">
+            <app-svg-icon icon_name="icon-new"> </app-svg-icon>
+          </div>
+          <span class="subreddit__content__filter-button-text">
+            New
+          </span>
+        </div>
+      </div>
+      <div class="subreddit__content__posts">
+        <div class="subreddit__content__post">
+          <div class="subreddit__content__vote-container">
+            <div class="subreddit__content__post-icon subreddit__button">
+              <app-svg-icon icon_name="icon-thumb_up_alt"> </app-svg-icon>
+            </div>
+            <div class="subreddit__content__vote-number">
+              10
+            </div>
+            <div class="subreddit__content__post-icon subreddit__button">
+              <app-svg-icon icon_name="icon-thumb_down_alt"> </app-svg-icon>
+            </div>
+          </div>
+          <div class="subreddit__content__post-preview subreddit__button">
+            <div class="subreddit__content__post-icon">
+              <app-svg-icon icon_name="icon-mode_comment"> </app-svg-icon>
+            </div>
+          </div>
+          <div class="subreddit__content__post-info-container">
+            <div class="subreddit__content__post-title">
+              What is the point of pointing?
+            </div>
+            <div class="subreddit__content__post-by">
+              Posted by
+              <a href="#" class="subreddit__content__post-user"> u/bob </a> 14
+              hours ago
+            </div>
+            <div class="subreddit__content__post-buttons">
+              <div class="subreddit__content__post-button subreddit__button">
+                <div class="subreddit__content__post-icon">
+                  <app-svg-icon icon_name="icon-insert_comment"> </app-svg-icon>
+                </div>
+                <span class="subreddit__content__post-button-text">
+                  5 Comments
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="subreddit__sidebar">
-      SIDEBAR
+      <h2 class="subreddit__sidebar__heading">
+        About Community
+      </h2>
+      <div class="subreddit__sidebar__info">
+        <div class="subreddit__sidebar__description">
+          The place to discuss all stuff related to the Nintendo 3DS™ family!
+        </div>
+        <div class="subreddit__sidebar__members">
+          642k members
+        </div>
+        <div class="subreddit__sidebar__created-at">
+          Created Jun 16, 2010
+        </div>
+      </div>
+      <div class="subreddit__sidebar__buttons">
+        <button class="subreddit__sidebar__button subreddit__button">
+          Create Post
+        </button>
+      </div>
     </div>
   </div>
 </div>
