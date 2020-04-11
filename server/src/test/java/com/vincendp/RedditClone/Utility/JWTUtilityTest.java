@@ -54,5 +54,4 @@ public class JWTUtilityTest {
            jwtUtility.getUsernameFromClaims(tampered_jwt);
         });
     }
-
 }

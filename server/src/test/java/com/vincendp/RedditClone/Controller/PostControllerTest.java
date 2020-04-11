@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vincendp.RedditClone.Config.TestSecurityConfiguration;
 import com.vincendp.RedditClone.Dto.CreatePostRequest;
 import com.vincendp.RedditClone.Dto.CreatePostResponse;
+import com.vincendp.RedditClone.Model.PostType;
 import com.vincendp.RedditClone.Service.PostService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -44,7 +45,7 @@ public class PostControllerTest {
     @BeforeEach
     void setup(){
         createPostRequest = new CreatePostRequest("title", "description"
-                , null, UUID.randomUUID().toString(), UUID.randomUUID().toString());
+                , "https://google.com", UUID.randomUUID().toString(), UUID.randomUUID().toString(), PostType.Type.TEXT.getValue());
     }
 
     @Test
@@ -74,6 +75,43 @@ public class PostControllerTest {
     @Test
     void when_subreddit_id_is_empty_should_throw_error() throws Exception{
         createPostRequest.setSubreddit_id(null);
+        String json = objectMapper.writeValueAsString(createPostRequest);
+
+        assertThatThrownBy(() -> {
+            mockMvc.perform(post("/posts")
+                    .header("Content-Type", "application/json")
+                    .content(json));
+        }).hasCauseInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void when_post_type_is_empty_should_throw_error() throws Exception{
+        createPostRequest.setPost_type(null);
+        String json = objectMapper.writeValueAsString(createPostRequest);
+
+        assertThatThrownBy(() -> {
+            mockMvc.perform(post("/posts")
+                    .header("Content-Type", "application/json")
+                    .content(json));
+        }).hasCauseInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void when_link_post_and_link_is_empty_should_throw_error() throws Exception{
+        createPostRequest.setPost_type(PostType.Type.LINK.getValue());
+        createPostRequest.setLink(null);
+        String json = objectMapper.writeValueAsString(createPostRequest);
+
+        assertThatThrownBy(() -> {
+            mockMvc.perform(post("/posts")
+                    .header("Content-Type", "application/json")
+                    .content(json));
+        }).hasCauseInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void when_post_type_invalid_should_throw_error() throws Exception{
+        createPostRequest.setPost_type(-1);
         String json = objectMapper.writeValueAsString(createPostRequest);
 
         assertThatThrownBy(() -> {

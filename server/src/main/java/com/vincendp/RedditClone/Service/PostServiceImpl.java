@@ -4,9 +4,11 @@ import com.vincendp.RedditClone.Dto.CreatePostRequest;
 import com.vincendp.RedditClone.Dto.CreatePostResponse;
 import com.vincendp.RedditClone.Exception.ResourceNotFoundException;
 import com.vincendp.RedditClone.Model.Post;
+import com.vincendp.RedditClone.Model.PostType;
 import com.vincendp.RedditClone.Model.Subreddit;
 import com.vincendp.RedditClone.Model.User;
 import com.vincendp.RedditClone.Repository.PostRepository;
+import com.vincendp.RedditClone.Repository.PostTypeRepository;
 import com.vincendp.RedditClone.Repository.SubredditRepository;
 import com.vincendp.RedditClone.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,14 +25,18 @@ public class PostServiceImpl implements PostService{
 
     private SubredditRepository subredditRepository;
 
+    private PostTypeRepository postTypeRepository;
+
 
     @Autowired
     public PostServiceImpl(PostRepository postRepository,
                            UserRepository userRepository,
-                           SubredditRepository subredditRepository){
+                           SubredditRepository subredditRepository,
+                           PostTypeRepository postTypeRepository){
         this.postRepository = postRepository;
         this.userRepository = userRepository;
         this.subredditRepository = subredditRepository;
+        this.postTypeRepository = postTypeRepository;
     }
 
     @Override
@@ -52,12 +58,10 @@ public class PostServiceImpl implements PostService{
             throw new ResourceNotFoundException("Error: User or subreddit not found");
         }
 
-        Post post = new Post();
-        post.setTitle(createPostRequest.getTitle());
+        PostType postType = postTypeRepository.findById(createPostRequest.getPost_type()).get();
+        Post post = new Post(null, createPostRequest.getTitle(), null, user, subreddit, postType);
         post.setDescription(createPostRequest.getDescription());
         post.setLink(createPostRequest.getLink());
-        post.setUser(user);
-        post.setSubreddit(subreddit);
 
         post = postRepository.save(post);
 

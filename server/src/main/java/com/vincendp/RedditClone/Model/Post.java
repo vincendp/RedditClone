@@ -2,6 +2,7 @@ package com.vincendp.RedditClone.Model;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.validator.constraints.URL;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -24,6 +25,7 @@ public class Post {
     private String description;
 
     @Column(length = 1000)
+    @URL
     private String link;
 
     @Column
@@ -39,21 +41,22 @@ public class Post {
     @ManyToOne
     private Subreddit subreddit;
 
+    @ManyToOne
+    @JoinColumn(name = "post_type_id")
+    private PostType postType;
+
     public Post() {
 
     }
 
-    public Post(UUID id, String title, String description,
-                String link, boolean deleted, Date created_at,
-                User user, Subreddit subreddit){
+    public Post(UUID id, String title, Date created_at,
+                User user, Subreddit subreddit, PostType postType){
         this.id = id;
         this.title = title;
-        this.description = description;
-        this.link = link;
-        this.deleted = deleted;
         this.created_at = created_at;
         this.user = user;
         this.subreddit = subreddit;
+        this.postType = postType;
     }
 
     public UUID getId() {
@@ -118,5 +121,13 @@ public class Post {
 
     public void setSubreddit(Subreddit subreddit) {
         this.subreddit = subreddit;
+    }
+
+    public PostType getPostType() {
+        return postType;
+    }
+
+    public void setPostType(PostType postType) {
+        this.postType = postType;
     }
 }

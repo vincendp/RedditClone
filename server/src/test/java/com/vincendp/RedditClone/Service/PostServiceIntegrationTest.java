@@ -4,9 +4,11 @@ import com.vincendp.RedditClone.Dto.CreatePostRequest;
 import com.vincendp.RedditClone.Dto.CreatePostResponse;
 import com.vincendp.RedditClone.Exception.ResourceNotFoundException;
 import com.vincendp.RedditClone.Model.Post;
+import com.vincendp.RedditClone.Model.PostType;
 import com.vincendp.RedditClone.Model.Subreddit;
 import com.vincendp.RedditClone.Model.User;
 import com.vincendp.RedditClone.Repository.PostRepository;
+import com.vincendp.RedditClone.Repository.PostTypeRepository;
 import com.vincendp.RedditClone.Repository.SubredditRepository;
 import com.vincendp.RedditClone.Repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,13 +19,14 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.util.Date;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @TestPropertySource(locations="classpath:application-test.properties")
-@Sql({"/sql/redditdb.sql"})
+@Sql({"/sql/redditdb.sql", "/sql/data.sql"})
 public class PostServiceIntegrationTest {
 
     @Autowired
@@ -38,6 +41,9 @@ public class PostServiceIntegrationTest {
     @Autowired
     private SubredditRepository subredditRepository;
 
+    @Autowired
+    private PostTypeRepository postTypeRepository;
+
     private CreatePostRequest createPostRequest;
 
     private Subreddit subreddit;
@@ -50,11 +56,13 @@ public class PostServiceIntegrationTest {
     void setup(){
         subreddit = new Subreddit(null, "subreddit", new Date());
         user = new User(null, "bob", new Date());
-        post = new Post(null, "title", "description", null, false, new Date(), user, subreddit);
-
         subredditRepository.save(subreddit);
         userRepository.save(user);
-        createPostRequest = new CreatePostRequest("title", "description",user.getId().toString(), subreddit.getId().toString());
+
+        PostType postType = postTypeRepository.findById(PostType.Type.TEXT.getValue()).get();
+        createPostRequest = new CreatePostRequest("title", "description",
+                user.getId().toString(), subreddit.getId().toString(), PostType.Type.TEXT.getValue());
+        post = new Post(null, "title", new Date(), user, subreddit, postType);
     }
 
     @Test
@@ -71,6 +79,25 @@ public class PostServiceIntegrationTest {
         createPostRequest.setUser_id(UUID.randomUUID().toString());
 
         assertThrows(ResourceNotFoundException.class, () -> {
+            postService.createPost(createPostRequest);
+        });
+    }
+
+    @Test
+    void when_post_type_not_found_should_throw_error(){
+        createPostRequest.setPost_type(-1);
+
+        assertThrows(NoSuchElementException.class, () -> {
+            postService.createPost(createPostRequest);
+        });
+    }
+
+    @Test
+    void when_link_post_with_no_link_should_throw_error(){
+        createPostRequest.setPost_type(PostType.Type.LINK.getValue());
+        createPostRequest.setLink(null);
+
+        assertThrows(RuntimeException.class, () -> {
             postService.createPost(createPostRequest);
         });
     }

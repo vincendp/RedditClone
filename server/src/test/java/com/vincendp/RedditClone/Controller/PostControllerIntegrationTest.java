@@ -2,6 +2,7 @@ package com.vincendp.RedditClone.Controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vincendp.RedditClone.Dto.CreatePostRequest;
+import com.vincendp.RedditClone.Model.PostType;
 import com.vincendp.RedditClone.Model.Subreddit;
 import com.vincendp.RedditClone.Model.User;
 import com.vincendp.RedditClone.Repository.SubredditRepository;
@@ -26,7 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @TestPropertySource(locations="classpath:application-test.properties")
-@Sql({"/sql/redditdb.sql"})
+@Sql({"/sql/redditdb.sql", "/sql/data.sql"})
 public class PostControllerIntegrationTest {
 
     @Autowired
@@ -59,7 +60,7 @@ public class PostControllerIntegrationTest {
         userRepository.save(user);
 
         createPostRequest = new CreatePostRequest("title", "description"
-                , null, user.getId().toString(), subreddit.getId().toString());
+                , "https://www.google.com", user.getId().toString(), subreddit.getId().toString(), PostType.Type.TEXT.getValue());
     }
 
     @Test

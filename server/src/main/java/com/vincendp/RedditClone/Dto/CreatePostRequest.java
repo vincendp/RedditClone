@@ -1,5 +1,7 @@
 package com.vincendp.RedditClone.Dto;
 
+import com.vincendp.RedditClone.Model.PostType;
+
 public class CreatePostRequest {
 
     private String title;
@@ -7,24 +9,27 @@ public class CreatePostRequest {
     private String link;
     private String user_id;
     private String subreddit_id;
+    private Integer post_type;
 
     public CreatePostRequest() {
 
     }
 
-    public CreatePostRequest(String title, String description, String user_id, String subreddit_id) {
+    public CreatePostRequest(String title, String description, String user_id, String subreddit_id, Integer post_type) {
         this.title = title;
         this.description = description;
         this.user_id = user_id;
         this.subreddit_id = subreddit_id;
+        this.post_type = post_type;
     }
 
-    public CreatePostRequest(String title, String description, String link, String user_id, String subreddit_id) {
+    public CreatePostRequest(String title, String description, String link, String user_id, String subreddit_id, Integer post_type) {
         this.title = title;
         this.description = description;
         this.link = link;
         this.user_id = user_id;
         this.subreddit_id = subreddit_id;
+        this.post_type = post_type;
     }
 
     public String getTitle() {
@@ -65,6 +70,14 @@ public class CreatePostRequest {
 
     public void setSubreddit_id(String subreddit_id) {
         this.subreddit_id = subreddit_id;
+    }
+
+    public Integer getPost_type() {
+        return post_type;
+    }
+
+    public void setPost_type(Integer post_type) {
+        this.post_type = post_type;
     }
 }
 

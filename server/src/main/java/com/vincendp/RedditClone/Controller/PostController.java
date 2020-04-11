@@ -2,6 +2,7 @@ package com.vincendp.RedditClone.Controller;
 
 import com.vincendp.RedditClone.Dto.CreatePostRequest;
 import com.vincendp.RedditClone.Dto.CreatePostResponse;
+import com.vincendp.RedditClone.Model.PostType;
 import com.vincendp.RedditClone.Service.PostService;
 import com.vincendp.RedditClone.Utility.SuccessResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,13 +27,28 @@ public class PostController {
     ResponseEntity createPost(@RequestBody CreatePostRequest createPostRequest){
         if( createPostRequest.getTitle() == null
                 || createPostRequest.getTitle().length() <= 0){
-            throw new IllegalArgumentException("Error: title cannot be empty.");
+            throw new IllegalArgumentException("Error: Title cannot be empty.");
         }
         else if (createPostRequest.getUser_id() == null
                 || createPostRequest.getSubreddit_id() == null
                 || createPostRequest.getUser_id().length() <= 0
                 || createPostRequest.getSubreddit_id().length() <= 0){
-            throw new IllegalArgumentException("Error: user or subreddit cannot be empty.");
+            throw new IllegalArgumentException("Error: User or subreddit cannot be empty.");
+        }
+        else if(createPostRequest.getPost_type() == null){
+            throw new IllegalArgumentException("Error: Post must have a type");
+        }
+        else if(createPostRequest.getPost_type() == PostType.Type.IMAGE.getValue()){
+            throw new IllegalArgumentException("Error: Image post cannot have empty image");
+        }
+        else if(createPostRequest.getPost_type() == PostType.Type.LINK.getValue()
+                && createPostRequest.getLink() == null || createPostRequest.getLink().length() <= 0){
+            throw new IllegalArgumentException("Error: Link post cannot have empty link");
+        }
+        else if(createPostRequest.getPost_type() != PostType.Type.TEXT.getValue()
+                && createPostRequest.getPost_type() != PostType.Type.IMAGE.getValue()
+                && createPostRequest.getPost_type() != PostType.Type.LINK.getValue()){
+            throw new IllegalArgumentException("Error: Invalid post type");
         }
 
         CreatePostResponse createPostResponse = postService.createPost(createPostRequest);
