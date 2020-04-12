@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { FormBuilder, Validators } from "@angular/forms";
+import { FormBuilder, Validators, FormGroup } from "@angular/forms";
 import { UserService } from "src/app/Core/Services/user.service";
 import { ApiService } from "src/app/Core/Http/api.service";
 
@@ -9,7 +9,7 @@ import { ApiService } from "src/app/Core/Http/api.service";
   styleUrls: ["./login.component.scss"],
 })
 export class LoginComponent implements OnInit {
-  userLogin: any;
+  userLogin: FormGroup;
   submitted: boolean;
 
   constructor(
@@ -28,6 +28,5 @@ export class LoginComponent implements OnInit {
   login() {
     this.submitted = true;
     this.userService.login(this.userLogin.value);
-    console.log(this.userLogin.value);
   }
 }

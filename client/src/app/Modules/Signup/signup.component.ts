@@ -1,15 +1,15 @@
 import { Component, OnInit } from "@angular/core";
-import { FormBuilder, Validators } from "@angular/forms";
+import { FormBuilder, Validators, FormGroup } from "@angular/forms";
 import { UserService } from "src/app/Core/Services/user.service";
 import { ApiService } from "src/app/Core/Http/api.service";
 
 @Component({
   selector: "app-signup",
   templateUrl: "./signup.component.html",
-  styleUrls: ["./signup.component.scss"]
+  styleUrls: ["./signup.component.scss"],
 })
 export class SignupComponent implements OnInit {
-  userSignup: any;
+  userSignup: FormGroup;
   submitted: boolean;
 
   constructor(
@@ -22,7 +22,7 @@ export class SignupComponent implements OnInit {
     this.userSignup = this.formBuilder.group({
       username: ["", Validators.required],
       password: ["", Validators.required],
-      verifyPassword: ["", Validators.required]
+      verifyPassword: ["", Validators.required],
     });
   }
 

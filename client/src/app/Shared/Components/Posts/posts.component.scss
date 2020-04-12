@@ -1,0 +1,213 @@
+@import "src/assets/abstracts/_variables.scss";
+
+.post {
+  &__button {
+    border: none;
+    background-color: $color-grey-lighter;
+    &:hover {
+      cursor: pointer;
+      background-color: darken($color-grey-lighter, 10%);
+    }
+
+    &:active {
+      background-color: darken($color-grey-lighter, 15%);
+    }
+  }
+
+  // CREATE POST
+
+  &__create-post {
+    display: flex;
+    align-items: center;
+    min-height: 6vh;
+    padding: 0 1rem;
+    background-color: $color-grey-lighter;
+    margin-bottom: 1rem;
+  }
+
+  &__create-post-button {
+    flex: 1;
+    padding: 1rem 2rem;
+    margin-right: 1rem;
+    border: 1px solid $color-primary-darker;
+    border-radius: 4px;
+    background-color: $color-white;
+    color: $color-primary-darker;
+    font-size: 1.5rem;
+    text-align: start;
+  }
+
+  &__icon {
+    height: 3rem;
+    width: 3rem;
+    color: $color-primary-darker;
+  }
+
+  // FILTER
+
+  &__filter {
+    display: flex;
+    align-items: center;
+    min-height: 6vh;
+    padding: 0 1rem;
+    margin-bottom: 1rem;
+    background-color: $color-grey-lighter;
+  }
+
+  &__filter-button {
+    display: flex;
+    align-items: center;
+    min-width: 5rem;
+    color: $color-primary-darker;
+    margin: 0 1rem;
+  }
+
+  &__filter-button-text {
+    font-size: 1.4rem;
+  }
+
+  &__filter-button-icon {
+    height: 3rem;
+    width: 3rem;
+  }
+
+  // POSTS
+
+  &__posts {
+    display: flex;
+    flex-direction: column;
+    padding: 0 1rem;
+    background-color: $color-grey-lighter;
+  }
+
+  &__post {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+  }
+
+  &__vote-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-right: 2rem;
+  }
+
+  &__vote-number {
+    font-size: 1.5rem;
+  }
+
+  &__post-preview {
+    height: 6rem;
+    width: 10rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid $color-grey-darker;
+    border-radius: 4px;
+    margin-right: 2rem;
+  }
+
+  &__post-icon {
+    height: 2.2rem;
+    width: 2.2rem;
+    color: $color-primary-darker;
+  }
+
+  &__post-info-container {
+    height: 7rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+  }
+
+  &__post-title {
+    font-weight: 600;
+    font-size: 2.2rem;
+  }
+
+  &__post-by {
+    font-size: 1.3rem;
+  }
+
+  &__post-user {
+    text-decoration: none;
+    color: $color-black;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  &__post-buttons {
+    display: flex;
+  }
+
+  &__post-button {
+    display: flex;
+    align-items: center;
+  }
+
+  &__post-button-text {
+    margin-left: 0.5rem;
+    font-size: 1.4rem;
+  }
+}
+
+.create-post-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgb(0, 0, 0);
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 100;
+
+  &--show {
+    display: block;
+  }
+
+  &__content {
+    margin: 10% auto;
+    width: 45%;
+    background-color: $color-white;
+  }
+
+  &__post-type-select {
+    display: flex;
+  }
+
+  &__button {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: none;
+    background-color: $color-white;
+    color: $color-grey-light;
+
+    &:hover {
+      cursor: pointer;
+      background-color: darken($color-grey-lighter, 5%);
+    }
+
+    &--selected {
+      color: $color-primary-darker;
+      border-bottom: $color-primary-darker;
+    }
+  }
+
+  &__icon {
+    height: 5rem;
+    width: 5rem;
+  }
+
+  &__text {
+    text-transform: uppercase;
+    letter-spacing: 0.1rem;
+    font-size: 2rem;
+  }
+}

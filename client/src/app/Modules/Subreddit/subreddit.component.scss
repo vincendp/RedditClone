@@ -7,11 +7,11 @@
   &__button {
     &:hover {
       cursor: pointer;
-      background-color: darken($color-grey-light, 10%);
+      background-color: $color-grey-light;
     }
 
     &:active {
-      background-color: darken($color-grey-light, 15%);
+      background-color: darken($color-grey-light, 5%);
     }
   }
 
@@ -19,7 +19,7 @@
     display: flex;
     margin: 0 1rem;
     padding: 0.5rem 1rem;
-    color: $color-grey-light;
+    color: $color-grey-lighter;
     background-color: $color-primary-dark;
 
     &__info {
@@ -43,154 +43,11 @@
     display: flex;
   }
 
-  // CONTENT
-
-  &__content {
+  &__posts {
     flex: 1;
-    height: 100vh;
     margin-top: 1rem;
     margin-left: 1rem;
     margin-right: 1rem;
-
-    // CREATE POST
-
-    &__create-post {
-      display: flex;
-      align-items: center;
-      min-height: 6vh;
-      padding: 0 1rem;
-      background-color: $color-grey-light;
-      margin-bottom: 1rem;
-    }
-
-    &__create-post-button {
-      flex: 1;
-      padding: 1rem 2rem;
-      margin-right: 1rem;
-      border: 1px solid $color-primary-darker;
-      border-radius: 4px;
-      background-color: $color-white;
-      color: $color-primary-darker;
-      font-size: 1.5rem;
-      text-align: start;
-    }
-
-    &__icon {
-      height: 3rem;
-      width: 3rem;
-      color: $color-primary-darker;
-    }
-
-    // FILTER
-
-    &__filter {
-      display: flex;
-      align-items: center;
-      min-height: 6vh;
-      padding: 0 1rem;
-      margin-bottom: 1rem;
-      background-color: $color-grey-light;
-    }
-
-    &__filter-button {
-      display: flex;
-      align-items: center;
-      min-width: 5rem;
-      color: $color-primary-darker;
-      margin: 0 1rem;
-    }
-
-    &__filter-button-text {
-      font-size: 1.4rem;
-    }
-
-    &__filter-button-icon {
-      height: 3rem;
-      width: 3rem;
-    }
-
-    // POSTS
-
-    &__posts {
-      display: flex;
-      flex-direction: column;
-      padding: 0 1rem;
-      background-color: $color-grey-light;
-    }
-
-    &__post {
-      display: flex;
-      align-items: center;
-      padding: 1rem;
-    }
-
-    &__vote-container {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      margin-right: 2rem;
-    }
-
-    &__vote-number {
-      font-size: 1.5rem;
-    }
-
-    &__post-preview {
-      height: 6rem;
-      width: 10rem;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      border: 1px solid $color-grey-darker;
-      border-radius: 4px;
-      margin-right: 2rem;
-    }
-
-    &__post-icon {
-      height: 2.2rem;
-      width: 2.2rem;
-      color: $color-primary-darker;
-    }
-
-    &__post-info-container {
-      height: 7rem;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-around;
-    }
-
-    &__post-title {
-      font-weight: 600;
-      font-size: 2.2rem;
-    }
-
-    &__post-by {
-      font-size: 1.3rem;
-    }
-
-    &__post-user {
-      text-decoration: none;
-      color: $color-black;
-
-      &:hover {
-        text-decoration: underline;
-      }
-    }
-
-    &__post-buttons {
-      display: flex;
-    }
-
-    &__post-button {
-      display: flex;
-      align-items: center;
-    }
-
-    &__post-button-text {
-      margin-left: 0.5rem;
-      font-size: 1.4rem;
-    }
   }
 
   // SIDEBAR
@@ -201,14 +58,14 @@
     margin-top: 1rem;
     margin-right: 1rem;
     padding: 0.5rem 1rem;
-    background-color: $color-grey-light;
+    background-color: $color-grey-lighter;
     height: 100vh;
 
     // HEADING
 
     &__heading {
       background-color: $color-primary-dark;
-      color: $color-grey-light;
+      color: $color-grey-lighter;
       font-size: 2rem;
       padding: 0.5rem;
     }
@@ -235,7 +92,7 @@
       color: darken($color-primary-dark, 10%);
       border: 1px solid darken($color-primary-dark, 10%);
       border-radius: 4px;
-      background-color: $color-grey-light;
+      background-color: $color-grey-lighter;
 
       &:hover {
         border: 1px solid darken($color-primary-dark, 20%);

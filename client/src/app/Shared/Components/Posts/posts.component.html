@@ -1,0 +1,179 @@
+<div class="post">
+  <div class="post__create-post">
+    <button
+      class="post__create-post-button post__button"
+      (click)="onClickCreatePost(PostType.TEXT)"
+      #createTextPost
+    >
+      Create Post
+    </button>
+    <button
+      class="post__icon post__button"
+      (click)="onClickCreatePost(PostType.IMAGE)"
+      #createImagePost
+    >
+      <app-svg-icon icon_name="icon-panorama"> </app-svg-icon>
+    </button>
+    <button
+      class="post__icon post__button"
+      (click)="onClickCreatePost(PostType.LINK)"
+      #createLinkPost
+    >
+      <app-svg-icon icon_name="icon-linkinsert_link"> </app-svg-icon>
+    </button>
+  </div>
+  <div class="post__filter">
+    <button class="post__filter-button post__button">
+      <div class="post__filter-button-icon">
+        <app-svg-icon icon_name="icon-trending_up"> </app-svg-icon>
+      </div>
+      <span class="post__filter-button-text">
+        Top
+      </span>
+    </button>
+    <button class="post__filter-button post__button">
+      <div class="post__filter-button-icon">
+        <app-svg-icon icon_name="icon-new"> </app-svg-icon>
+      </div>
+      <span class="post__filter-button-text">
+        New
+      </span>
+    </button>
+  </div>
+  <div class="post__posts">
+    <div class="post__post">
+      <div class="post__vote-container">
+        <button class="post__post-icon post__button">
+          <app-svg-icon icon_name="icon-thumb_up_alt"> </app-svg-icon>
+        </button>
+        <div class="post__vote-number">
+          10
+        </div>
+        <button class="post__post-icon post__button">
+          <app-svg-icon icon_name="icon-thumb_down_alt"> </app-svg-icon>
+        </button>
+      </div>
+      <button class="post__post-preview post__button">
+        <div class="post__post-icon">
+          <app-svg-icon icon_name="icon-mode_comment"> </app-svg-icon>
+        </div>
+      </button>
+      <div class="post__post-info-container">
+        <div class="post__post-title">
+          What is the point of pointing?
+        </div>
+        <div class="post__post-by">
+          Posted by
+          <a href="#" class="post__post-user"> u/bob </a> 14 hours ago
+        </div>
+        <div class="post__post-buttons">
+          <button class="post__post-button post__button">
+            <div class="post__post-icon">
+              <app-svg-icon icon_name="icon-insert_comment"> </app-svg-icon>
+            </div>
+            <span class="post__post-button-text">
+              5 Comments
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="post__post">
+      <div class="post__vote-container">
+        <button class="post__post-icon post__button">
+          <app-svg-icon icon_name="icon-thumb_up_alt"> </app-svg-icon>
+        </button>
+        <div class="post__vote-number">
+          10
+        </div>
+        <button class="post__post-icon post__button">
+          <app-svg-icon icon_name="icon-thumb_down_alt"> </app-svg-icon>
+        </button>
+      </div>
+      <button class="post__post-preview post__button">
+        <div class="post__post-icon">
+          <app-svg-icon icon_name="icon-mode_comment"> </app-svg-icon>
+        </div>
+      </button>
+      <div class="post__post-info-container">
+        <div class="post__post-title">
+          What is the point of pointing?
+        </div>
+        <div class="post__post-by">
+          Posted by
+          <a href="#" class="post__post-user"> u/bob </a> 14 hours ago
+        </div>
+        <div class="post__post-buttons">
+          <button class="post__post-button post__button">
+            <div class="post__post-icon">
+              <app-svg-icon icon_name="icon-insert_comment"> </app-svg-icon>
+            </div>
+            <span class="post__post-button-text">
+              5 Comments
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div
+  class="create-post-modal"
+  [ngClass]="{ 'create-post-modal--show': createPostType }"
+>
+  <div class="create-post-modal__content" #createPostContent>
+    <div class="create-post-modal__post-type-select">
+      <button
+        class="create-post-modal__button"
+        (click)="onClickCreatePost(PostType.TEXT)"
+        [ngClass]="{
+          'create-post-modal__button--selected': createPostType == PostType.TEXT
+        }"
+      >
+        <div class="create-post-modal__icon">
+          <app-svg-icon icon_name="icon-mode_comment"> </app-svg-icon>
+        </div>
+        <span class="create-post-modal__text">
+          Text
+        </span>
+      </button>
+
+      <button
+        class="create-post-modal__button"
+        (click)="onClickCreatePost(PostType.IMAGE)"
+        [ngClass]="{
+          'create-post-modal__button--selected':
+            createPostType == PostType.IMAGE
+        }"
+      >
+        <div class="create-post-modal__icon">
+          <app-svg-icon icon_name="icon-panorama"> </app-svg-icon>
+        </div>
+        <span class="create-post-modal__text">
+          Image
+        </span>
+      </button>
+
+      <button
+        class="create-post-modal__button"
+        (click)="onClickCreatePost(PostType.LINK)"
+        [ngClass]="{
+          'create-post-modal__button--selected': createPostType == PostType.LINK
+        }"
+      >
+        <div class="create-post-modal__icon">
+          <app-svg-icon icon_name="icon-linkinsert_link"> </app-svg-icon>
+        </div>
+        <span class="create-post-modal__text">
+          Link
+        </span>
+      </button>
+    </div>
+
+    <form [formGroup]="">
+      <div class="create-post-modal__title"></div>
+    </form>
+  </div>
+</div>

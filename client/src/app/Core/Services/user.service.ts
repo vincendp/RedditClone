@@ -5,7 +5,7 @@ import { User } from "../Model/user.model";
 import { Router, ActivatedRoute } from "@angular/router";
 
 @Injectable({
-  providedIn: "root"
+  providedIn: "root",
 })
 export class UserService {
   private userSubject = new BehaviorSubject<User>({} as User);
@@ -29,7 +29,7 @@ export class UserService {
 
         this.router.navigateByUrl("/");
       },
-      err => {
+      (err) => {
         console.log(err);
       }
     );
@@ -41,9 +41,9 @@ export class UserService {
         console.log(data);
         this.userSubject.next({} as User);
         this.isAuthenticatedSubject.next(false);
-        this.router.navigateByUrl("/Login");
+        this.router.navigateByUrl("/login");
       },
-      err => {
+      (err) => {
         console.log(err);
       }
     );
@@ -59,7 +59,7 @@ export class UserService {
 
         this.router.navigateByUrl("/");
       },
-      err => {
+      (err) => {
         console.log(err);
       }
     );
@@ -73,7 +73,7 @@ export class UserService {
         this.userSubject.next(<User>data["result"]);
         this.isAuthenticatedSubject.next(true);
       },
-      err => {
+      (err) => {
         console.log(err);
       }
     );

@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef } from "@angular/core";
-import { UserService } from "../../Services/user.service";
-import { UtilityService } from "../../Services/utility.service";
+import { UserService } from "src/app/Core/Services/user.service";
+import { UtilityService } from "src/app/Core/Services/utility.service";
 
 @Component({
   selector: "app-header",

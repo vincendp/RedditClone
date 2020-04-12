@@ -1,14 +1,6 @@
 <div class="login">
   <div class="login__form-container">
     <app-svg-icon icon_name="icon-vpn_key"> </app-svg-icon>
-    <!-- <form action="" class="login__form">
-      <div class="login__input-label">Username</div>
-      <input type="text" class="login__input" />
-      <div class="login__input-label">Password</div>
-      <input type="password" class="login__input" />
-      <input type="submit" class="login__submit" value="Login" />
-    </form> -->
-
     <form [formGroup]="userLogin" (submit)="login()" class="login__form">
       <label for="username" class="login__input-label">Username</label>
       <input
