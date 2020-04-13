@@ -3,21 +3,21 @@
     <button
       class="post__create-post-button post__button"
       (click)="onClickCreatePost(PostType.TEXT)"
-      #createTextPost
+      #createTextButton
     >
       Create Post
     </button>
     <button
       class="post__icon post__button"
       (click)="onClickCreatePost(PostType.IMAGE)"
-      #createImagePost
+      #createImageButton
     >
       <app-svg-icon icon_name="icon-panorama"> </app-svg-icon>
     </button>
     <button
       class="post__icon post__button"
       (click)="onClickCreatePost(PostType.LINK)"
-      #createLinkPost
+      #createLinkButton
     >
       <app-svg-icon icon_name="icon-linkinsert_link"> </app-svg-icon>
     </button>
@@ -126,10 +126,11 @@
   <div class="create-post-modal__content" #createPostContent>
     <div class="create-post-modal__post-type-select">
       <button
-        class="create-post-modal__button"
+        class="create-post-modal__type-button"
         (click)="onClickCreatePost(PostType.TEXT)"
         [ngClass]="{
-          'create-post-modal__button--selected': createPostType == PostType.TEXT
+          'create-post-modal__type-button--selected':
+            createPostType == PostType.TEXT
         }"
       >
         <div class="create-post-modal__icon">
@@ -141,10 +142,10 @@
       </button>
 
       <button
-        class="create-post-modal__button"
+        class="create-post-modal__type-button"
         (click)="onClickCreatePost(PostType.IMAGE)"
         [ngClass]="{
-          'create-post-modal__button--selected':
+          'create-post-modal__type-button--selected':
             createPostType == PostType.IMAGE
         }"
       >
@@ -157,10 +158,11 @@
       </button>
 
       <button
-        class="create-post-modal__button"
+        class="create-post-modal__type-button"
         (click)="onClickCreatePost(PostType.LINK)"
         [ngClass]="{
-          'create-post-modal__button--selected': createPostType == PostType.LINK
+          'create-post-modal__type-button--selected':
+            createPostType == PostType.LINK
         }"
       >
         <div class="create-post-modal__icon">
@@ -172,8 +174,51 @@
       </button>
     </div>
 
-    <form [formGroup]="">
-      <div class="create-post-modal__title"></div>
+    <form [formGroup]="createPostForm" class="create-post-modal__form">
+      <div class="create-post-modal__title-container">
+        <textarea
+          type="text"
+          formControlName="title"
+          id="title"
+          class="create-post-modal__title"
+          placeholder="Title"
+          maxlength="300"
+        >
+        </textarea>
+        <div class="create-post-modal__title--length">
+          <span *ngIf="createPostForm.value.title"
+            >{{ createPostForm.value.title.length }}/300</span
+          >
+          <span *ngIf="!createPostForm.value.title">0/300</span>
+        </div>
+      </div>
+
+      <div
+        class="create-post-modal__description-container"
+        *ngIf="createPostType == PostType.TEXT"
+      >
+        <textarea
+          type="text"
+          formControlName="description"
+          id="description"
+          class="create-post-modal__description"
+          placeholder="Optional Description"
+        >
+        </textarea>
+      </div>
     </form>
+
+    <div class="create-post-modal__complete-buttons">
+      <button
+        class="create-post-modal__complete-button"
+        (click)="onCloseCreatePost()"
+      >
+        Cancel
+      </button>
+
+      <button class="create-post-modal__complete-button">
+        Create
+      </button>
+    </div>
   </div>
 </div>

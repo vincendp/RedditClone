@@ -109,7 +109,7 @@
       align-items: center;
 
       &:hover {
-        background-color: $color-grey-light;
+        background-color: darken($color-grey-lighter, 10%);
         cursor: pointer;
       }
     }
