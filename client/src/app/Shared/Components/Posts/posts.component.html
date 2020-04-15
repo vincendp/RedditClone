@@ -206,17 +206,53 @@
         >
         </textarea>
       </div>
+
+      <div
+        *ngIf="createPostType == PostType.IMAGE"
+        class="create-post-modal__file-container"
+      >
+        <input
+          type="file"
+          id="img"
+          name="img"
+          (change)="onChangeFile()"
+          class="create-post-modal__file-upload"
+          #fileUpload
+        />
+        <button
+          class="create-post-modal__upload-button post__button"
+          (click)="onClickUploadButton()"
+          *ngIf="!hasImage"
+        >
+          Upload Image
+        </button>
+        <img
+          *ngIf="hasImage"
+          [src]="fileSrc"
+          alt=""
+          class="create-post-modal__image-preview"
+        />
+        <div
+          class="create-post-modal__file-close"
+          *ngIf="hasImage"
+          (click)="onDeleteFile()"
+        >
+          <app-svg-icon icon_name="icon-delete"> </app-svg-icon>
+        </div>
+      </div>
     </form>
 
     <div class="create-post-modal__complete-buttons">
       <button
-        class="create-post-modal__complete-button"
+        class="create-post-modal__complete-button create-post-modal__complete-button--cancel post__button"
         (click)="onCloseCreatePost()"
       >
         Cancel
       </button>
 
-      <button class="create-post-modal__complete-button">
+      <button
+        class="create-post-modal__complete-button create-post-modal__complete-button--create post__button"
+      >
         Create
       </button>
     </div>

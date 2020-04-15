@@ -1,5 +1,4 @@
 @import "src/styles.scss";
-@import "src/assets/components/_button";
 
 .post {
   &__button {
@@ -174,6 +173,7 @@
   &__content {
     margin: 5% auto;
     width: 40%;
+    overflow: auto;
     background-color: $color-white;
   }
 
@@ -270,16 +270,57 @@
     }
   }
 
+  &__file-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: flex-end;
+    margin-bottom: 1.2rem;
+  }
+
+  &__upload-button {
+    @extend .button;
+    padding: 0.8rem 4rem;
+    font-size: 1.5rem;
+    border: 1px solid $color-primary-dark;
+    color: $color-primary-dark;
+  }
+
+  &__file-upload {
+    display: none;
+  }
+
+  &__file-close {
+    height: 2.5rem;
+    width: 2.5rem;
+    cursor: pointer;
+  }
+
+  &__image-preview {
+    height: 15rem;
+    max-width: 100%;
+  }
+
   &__complete-buttons {
     display: flex;
+    justify-content: flex-end;
+    margin-bottom: 2rem;
   }
 
   &__complete-button {
-    @extend .hello-button;
+    @extend .button;
+    padding: 0.8rem 4rem;
+    font-size: 1.5rem;
+    margin-right: 1rem;
+
     &--cancel {
+      border: 1px solid $color-grey-darker;
+      color: $color-grey-darker;
     }
 
     &--create {
+      border: 1px solid $color-primary-darker;
+      color: $color-primary-darker;
     }
   }
 }

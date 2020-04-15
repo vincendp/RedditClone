@@ -1,4 +1,4 @@
-@import "src/assets/abstracts/_variables.scss";
+@import "src/styles.scss";
 
 .nav {
   background-color: $color-primary;
@@ -36,9 +36,7 @@
   }
 
   &__svg-button {
-    border: none;
-    cursor: pointer;
-    background: none;
+    @extend .button;
     color: $color-white;
   }
 

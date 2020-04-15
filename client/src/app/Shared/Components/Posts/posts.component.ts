@@ -4,6 +4,7 @@ import {
   ViewChild,
   ElementRef,
   OnDestroy,
+  HostListener,
 } from "@angular/core";
 import { PostType } from "src/app/Core/Model/post-type.enum";
 import { UtilityService } from "src/app/Core/Services/utility.service";
@@ -30,6 +31,11 @@ export class PostsComponent implements OnInit, OnDestroy {
   createPostType: PostType;
   createPostForms: { [key: number]: FormGroup };
   createPostForm: FormGroup;
+
+  @ViewChild("fileUpload", { read: ElementRef, static: false })
+  fileUpload: ElementRef;
+  fileSrc: string | ArrayBuffer;
+  hasImage: boolean;
 
   constructor(
     private utilityService: UtilityService,
@@ -92,5 +98,28 @@ export class PostsComponent implements OnInit, OnDestroy {
     ) {
       this.onCloseCreatePost();
     }
+  }
+
+  onClickUploadButton(): void {
+    this.fileUpload.nativeElement.click();
+  }
+
+  onChangeFile(): void {
+    const fileReader = new FileReader();
+    this.hasImage = true;
+
+    if (this.fileUpload.nativeElement.files) {
+      fileReader.readAsDataURL(this.fileUpload.nativeElement.files[0]);
+    }
+
+    fileReader.onload = (e) => {
+      this.fileSrc = fileReader.result;
+    };
+  }
+
+  onDeleteFile(): void {
+    this.fileUpload.nativeElement.files = null;
+    this.fileSrc = " ";
+    this.hasImage = false;
   }
 }
