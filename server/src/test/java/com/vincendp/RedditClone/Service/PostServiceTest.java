@@ -59,8 +59,8 @@ public class PostServiceTest {
         UUID user_uuid = UUID.randomUUID();
         UUID post_uuid = UUID.randomUUID();
         postType = new PostType(PostType.Type.TEXT.getValue(), PostType.Type.TEXT.toString());
-        createPostRequest = new CreatePostRequest("title", "description",
-                null, subreddit_uuid.toString(), user_uuid.toString(), PostType.Type.TEXT.getValue());
+//        createPostRequest = new CreatePostRequest("title", "description",
+//                null, subreddit_uuid.toString(), user_uuid.toString(), PostType.Type.TEXT.getValue());
         subreddit = new Subreddit(subreddit_uuid, "subreddit", new Date());
         user = new User(user_uuid, "bob", new Date());
         post = new Post(post_uuid, "title", new Date(), user, subreddit, postType);

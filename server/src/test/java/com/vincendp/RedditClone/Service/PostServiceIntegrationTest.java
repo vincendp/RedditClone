@@ -60,8 +60,8 @@ public class PostServiceIntegrationTest {
         userRepository.save(user);
 
         PostType postType = postTypeRepository.findById(PostType.Type.TEXT.getValue()).get();
-        createPostRequest = new CreatePostRequest("title", "description",
-                user.getId().toString(), subreddit.getId().toString(), PostType.Type.TEXT.getValue());
+//        createPostRequest = new CreatePostRequest("title", "description",
+//                user.getId().toString(), subreddit.getId().toString(), PostType.Type.TEXT.getValue());
         post = new Post(null, "title", new Date(), user, subreddit, postType);
     }
 

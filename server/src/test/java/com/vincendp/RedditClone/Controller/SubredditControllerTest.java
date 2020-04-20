@@ -109,7 +109,7 @@ public class SubredditControllerTest {
 
 
         SuccessResponse successResponse = objectMapper.readValue(result.getResponse().getContentAsString(), SuccessResponse.class);
-        ArrayList<GetSubredditResponse> subreddits = (ArrayList<GetSubredditResponse>) successResponse.getData();
+        ArrayList<GetSubredditResponse> subreddits = (ArrayList<GetSubredditResponse>) successResponse.getResult();
         assertThat(subreddits.size() > 0);
     }
 

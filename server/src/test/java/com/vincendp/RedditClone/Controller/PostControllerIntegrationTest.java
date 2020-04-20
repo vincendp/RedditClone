@@ -59,8 +59,8 @@ public class PostControllerIntegrationTest {
         subredditRepository.save(subreddit);
         userRepository.save(user);
 
-        createPostRequest = new CreatePostRequest("title", "description"
-                , "https://www.google.com", user.getId().toString(), subreddit.getId().toString(), PostType.Type.TEXT.getValue());
+//        createPostRequest = new CreatePostRequest("title", "description"
+//                , "https://www.google.com", user.getId().toString(), subreddit.getId().toString(), PostType.Type.TEXT.getValue());
     }
 
     @Test

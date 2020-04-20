@@ -22,6 +22,12 @@ public class SubredditController {
         this.subredditService = subredditService;
     }
 
+    @GetMapping(value = "/{subreddit}")
+    public ResponseEntity getSubreddit(@PathVariable("subreddit") String subredditName){
+        GetSubredditResponse subreddit = subredditService.getSubreddit(subredditName);
+        return ResponseEntity.ok(new SuccessResponse(200, "Success: Got subreddit", subreddit));
+    }
+
     @GetMapping
     public ResponseEntity getSubreddits(){
         List<GetSubredditResponse> subreddits = subredditService.getSubreddits();

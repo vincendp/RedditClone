@@ -27,12 +27,15 @@ public class PostServiceImpl implements PostService{
 
     private PostTypeRepository postTypeRepository;
 
+    private StorageService storageService;
+
 
     @Autowired
     public PostServiceImpl(PostRepository postRepository,
                            UserRepository userRepository,
                            SubredditRepository subredditRepository,
-                           PostTypeRepository postTypeRepository){
+                           PostTypeRepository postTypeRepository,
+                           StorageService storageService){
         this.postRepository = postRepository;
         this.userRepository = userRepository;
         this.subredditRepository = subredditRepository;
@@ -58,10 +61,12 @@ public class PostServiceImpl implements PostService{
             throw new ResourceNotFoundException("Error: User or subreddit not found");
         }
 
+
         PostType postType = postTypeRepository.findById(createPostRequest.getPost_type()).get();
         Post post = new Post(null, createPostRequest.getTitle(), null, user, subreddit, postType);
         post.setDescription(createPostRequest.getDescription());
         post.setLink(createPostRequest.getLink());
+        post.setImage_path("/");
 
         post = postRepository.save(post);
 

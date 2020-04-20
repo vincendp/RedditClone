@@ -4,16 +4,16 @@ public class ResponseWrapper {
 
     private int status;
     private String message;
-    private Object data;
+    private Object result;
 
     public ResponseWrapper(){
 
     }
 
-    public ResponseWrapper(int status, String message, Object data) {
+    public ResponseWrapper(int status, String message, Object result) {
         this.status = status;
         this.message = message;
-        this.data = data;
+        this.result = result;
     }
 
     public int getStatus() {
@@ -32,11 +32,11 @@ public class ResponseWrapper {
         this.message = message;
     }
 
-    public Object getData() {
-        return data;
+    public Object getResult() {
+        return result;
     }
 
-    public void setData(Object data) {
-        this.data = data;
+    public void setResult(Object result) {
+        this.result = result;
     }
 }

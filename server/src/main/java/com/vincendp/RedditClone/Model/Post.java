@@ -28,6 +28,9 @@ public class Post {
     @URL
     private String link;
 
+    @Column(length = 300)
+    private String image_path;
+
     @Column
     private boolean deleted;
 
@@ -89,6 +92,14 @@ public class Post {
 
     public void setLink(String link) {
         this.link = link;
+    }
+
+    public String getImage_path() {
+        return image_path;
+    }
+
+    public void setImage_path(String image_path) {
+        this.image_path = image_path;
     }
 
     public boolean isDeleted() {

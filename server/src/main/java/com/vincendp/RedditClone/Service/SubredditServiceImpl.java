@@ -24,6 +24,12 @@ public class SubredditServiceImpl implements SubredditService{
     }
 
     @Override
+    public GetSubredditResponse getSubreddit(String subredditName) {
+        Subreddit subreddit = subredditRepository.findByName(subredditName);
+        return new GetSubredditResponse(subreddit.getId().toString(), subreddit.getName(), subreddit.getCreated_at());
+    }
+
+    @Override
     public List<GetSubredditResponse> getSubreddits() {
         List<GetSubredditResponse> subreddits = new ArrayList<>();
 

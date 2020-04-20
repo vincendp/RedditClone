@@ -6,7 +6,7 @@ public class ErrorResponse extends ResponseWrapper {
 
     }
 
-    public ErrorResponse(int status, String message, Object data){
-        super(status, message, data);
+    public ErrorResponse(int status, String message, Object result){
+        super(status, message, result);
     }
 }

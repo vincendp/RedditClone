@@ -9,6 +9,7 @@ import java.util.List;
 public interface SubredditService {
 
     CreateSubredditResponse createSubreddit(CreateSubredditRequest createSubredditRequest);
+    GetSubredditResponse getSubreddit(String subredditName);
     List<GetSubredditResponse> getSubreddits();
 
 }
