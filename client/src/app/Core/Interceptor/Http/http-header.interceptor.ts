@@ -3,7 +3,7 @@ import {
   HttpRequest,
   HttpHandler,
   HttpEvent,
-  HttpInterceptor
+  HttpInterceptor,
 } from "@angular/common/http";
 import { Observable } from "rxjs";
 
@@ -15,13 +15,17 @@ export class HttpHeaderInterceptor implements HttpInterceptor {
     request: HttpRequest<any>,
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
-    const headers = {
-      "Content-Type": "application/json",
-      Accept: "application/json"
-    };
+    let headers = {};
+    if (request.headers.keys().length <= 0) {
+      headers["Content-Type"] = "application/json";
+      headers["Accept"] = "application/json";
+    }
 
-    const req = request.clone({ setHeaders: headers, withCredentials: true });
+    let req: HttpRequest<any>;
+    req = request.clone({ setHeaders: headers, withCredentials: true });
+
     console.log(req);
+
     return next.handle(req);
   }
 }

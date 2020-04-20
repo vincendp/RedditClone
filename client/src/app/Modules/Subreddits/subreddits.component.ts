@@ -18,7 +18,7 @@ export class SubredditsComponent implements OnInit {
   loadSubreddits(): void {
     this.apiService.get("/subreddits", null).subscribe(
       (data) => {
-        this.subreddits = data["data"];
+        this.subreddits = data["result"];
       },
       (err) => {
         console.log(err);

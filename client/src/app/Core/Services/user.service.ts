@@ -21,7 +21,7 @@ export class UserService {
   ) {}
 
   login(credentials: {}) {
-    this.apiService.post("/auth/login", credentials).subscribe(
+    this.apiService.post("/auth/login", credentials, {}).subscribe(
       (data: {}) => {
         console.log(data);
         this.userSubject.next(<User>data["result"]);
@@ -36,7 +36,7 @@ export class UserService {
   }
 
   logout() {
-    this.apiService.post("/logout", null).subscribe(
+    this.apiService.post("/logout", null, {}).subscribe(
       (data: {}) => {
         console.log(data);
         this.userSubject.next({} as User);
@@ -50,10 +50,9 @@ export class UserService {
   }
 
   signup(credentials: {}) {
-    this.apiService.post("/users", credentials).subscribe(
+    this.apiService.post("/users", credentials, {}).subscribe(
       (data: {}) => {
         console.log(data);
-
         this.userSubject.next(<User>data["result"]);
         this.isAuthenticatedSubject.next(true);
 

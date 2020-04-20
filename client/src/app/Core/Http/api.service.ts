@@ -5,7 +5,7 @@ import { Observable, throwError } from "rxjs";
 import { catchError } from "rxjs/operators";
 
 @Injectable({
-  providedIn: "root"
+  providedIn: "root",
 })
 export class ApiService {
   constructor(private http: HttpClient) {}
@@ -14,19 +14,23 @@ export class ApiService {
     return this.http.get(`${environment.apiUrl}${path}`, { params }).pipe();
   }
 
-  put(path: string, body: {}): Observable<any> {
+  put(path: string, body: {}, options: {}): Observable<any> {
     return this.http
-      .put(`${environment.apiUrl}${path}`, JSON.stringify(body))
+      .put(`${environment.apiUrl}${path}`, JSON.stringify(body), options)
       .pipe();
   }
 
-  post(path: string, body: {}): Observable<any> {
+  post(path: string, body: {}, options: {}): Observable<any> {
     return this.http
-      .post(`${environment.apiUrl}${path}`, JSON.stringify(body))
+      .post(`${environment.apiUrl}${path}`, JSON.stringify(body), options)
       .pipe();
   }
 
-  delete(path: string): Observable<any> {
-    return this.http.delete(`${environment.apiUrl}${path}`).pipe();
+  postFormData(path: string, body: {}, options: {}): Observable<any> {
+    return this.http.post(`${environment.apiUrl}${path}`, body, options).pipe();
+  }
+
+  delete(path: string, options: {}): Observable<any> {
+    return this.http.delete(`${environment.apiUrl}${path}`, options).pipe();
   }
 }

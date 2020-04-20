@@ -2,21 +2,21 @@
   <div class="post__create-post">
     <button
       class="post__create-post-button post__button"
-      (click)="onClickCreatePost(PostType.TEXT)"
+      (click)="setPostType(PostType.TEXT)"
       #createTextButton
     >
       Create Post
     </button>
     <button
       class="post__icon post__button"
-      (click)="onClickCreatePost(PostType.IMAGE)"
+      (click)="setPostType(PostType.IMAGE)"
       #createImageButton
     >
       <app-svg-icon icon_name="icon-panorama"> </app-svg-icon>
     </button>
     <button
       class="post__icon post__button"
-      (click)="onClickCreatePost(PostType.LINK)"
+      (click)="setPostType(PostType.LINK)"
       #createLinkButton
     >
       <app-svg-icon icon_name="icon-linkinsert_link"> </app-svg-icon>
@@ -127,7 +127,7 @@
     <div class="create-post-modal__post-type-select">
       <button
         class="create-post-modal__type-button"
-        (click)="onClickCreatePost(PostType.TEXT)"
+        (click)="setPostType(PostType.TEXT)"
         [ngClass]="{
           'create-post-modal__type-button--selected':
             createPostType == PostType.TEXT
@@ -143,7 +143,7 @@
 
       <button
         class="create-post-modal__type-button"
-        (click)="onClickCreatePost(PostType.IMAGE)"
+        (click)="setPostType(PostType.IMAGE)"
         [ngClass]="{
           'create-post-modal__type-button--selected':
             createPostType == PostType.IMAGE
@@ -159,7 +159,7 @@
 
       <button
         class="create-post-modal__type-button"
-        (click)="onClickCreatePost(PostType.LINK)"
+        (click)="setPostType(PostType.LINK)"
         [ngClass]="{
           'create-post-modal__type-button--selected':
             createPostType == PostType.LINK
@@ -194,14 +194,14 @@
       </div>
 
       <div
-        class="create-post-modal__description-container"
+        class="create-post-modal__textarea-container"
         *ngIf="createPostType == PostType.TEXT"
       >
         <textarea
           type="text"
           formControlName="description"
           id="description"
-          class="create-post-modal__description"
+          class="create-post-modal__textarea create-post-modal__textarea--description"
           placeholder="Optional Description"
         >
         </textarea>
@@ -216,42 +216,64 @@
           id="img"
           name="img"
           (change)="onChangeFile()"
-          class="create-post-modal__file-upload"
+          class="create-post-modal__file-display-none"
           #fileUpload
         />
         <button
           class="create-post-modal__upload-button post__button"
           (click)="onClickUploadButton()"
-          *ngIf="!hasImage"
+          *ngIf="!fileSrc"
         >
           Upload Image
         </button>
         <img
-          *ngIf="hasImage"
+          *ngIf="fileSrc"
           [src]="fileSrc"
           alt=""
           class="create-post-modal__image-preview"
         />
         <div
           class="create-post-modal__file-close"
-          *ngIf="hasImage"
-          (click)="onDeleteFile()"
+          (click)="deleteFile()"
+          [ngClass]="{ 'create-post-modal__file-display-none': !fileSrc }"
         >
           <app-svg-icon icon_name="icon-delete"> </app-svg-icon>
         </div>
+      </div>
+
+      <div
+        class="create-post-modal__textarea-container"
+        *ngIf="createPostType == PostType.LINK"
+      >
+        <textarea
+          type="text"
+          formControlName="link"
+          id="link"
+          class="create-post-modal__textarea create-post-modal__textarea--link"
+          placeholder="Link"
+        >
+        </textarea>
       </div>
     </form>
 
     <div class="create-post-modal__complete-buttons">
       <button
         class="create-post-modal__complete-button create-post-modal__complete-button--cancel post__button"
-        (click)="onCloseCreatePost()"
+        (click)="closePostForm()"
       >
         Cancel
       </button>
 
       <button
         class="create-post-modal__complete-button create-post-modal__complete-button--create post__button"
+        [disabled]="
+          createPostForm.controls.title.errors ||
+          (createPostType == PostType.IMAGE &&
+            createPostForm.controls.image.errors) ||
+          (createPostType == PostType.LINK &&
+            createPostForm.controls.link.errors)
+        "
+        (click)="createPost()"
       >
         Create
       </button>

@@ -3,13 +3,19 @@
     <div class="subreddit__header__info">
       <div class="subreddit__header__title">
         <h1 class="subreddit__header__title-text">Title</h1>
-        <div class="subreddit__header__subreddit">r/{{ subreddit }}</div>
+        <div class="subreddit__header__subreddit" *ngIf="subreddit">
+          r/{{ subreddit.name }}
+        </div>
       </div>
     </div>
   </div>
 
   <div class="subreddit__main">
-    <app-posts class="subreddit__posts"> </app-posts>
+    <app-posts
+      class="subreddit__posts"
+      (createPostEvent)="onCreatePost($event)"
+    >
+    </app-posts>
 
     <div class="subreddit__sidebar">
       <h2 class="subreddit__sidebar__heading">

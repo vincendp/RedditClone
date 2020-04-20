@@ -4,12 +4,18 @@ import {
   ViewChild,
   ElementRef,
   OnDestroy,
-  HostListener,
+  Output,
+  EventEmitter,
 } from "@angular/core";
 import { PostType } from "src/app/Core/Model/post-type.enum";
 import { UtilityService } from "src/app/Core/Services/utility.service";
 import { Subscription } from "rxjs";
-import { FormBuilder, Validators, FormGroup } from "@angular/forms";
+import {
+  FormBuilder,
+  Validators,
+  FormGroup,
+  FormControl,
+} from "@angular/forms";
 
 @Component({
   selector: "app-posts",
@@ -35,7 +41,8 @@ export class PostsComponent implements OnInit, OnDestroy {
   @ViewChild("fileUpload", { read: ElementRef, static: false })
   fileUpload: ElementRef;
   fileSrc: string | ArrayBuffer;
-  hasImage: boolean;
+
+  @Output() createPostEvent: EventEmitter<{}> = new EventEmitter<{}>();
 
   constructor(
     private utilityService: UtilityService,
@@ -60,32 +67,45 @@ export class PostsComponent implements OnInit, OnDestroy {
   }
 
   initFormGroup(): void {
-    const urlPattern = /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/;
-
+    const urlPattern =
+      "^(?:http(s)?:\\/\\/)?[\\w.-]+(?:\\.[\\w\\.-]+)+[\\w\\-\\._~:/?#[\\]@!\\$&'\\(\\)\\*\\+,;=.]+$";
     this.createPostForms = {};
     this.createPostForms[PostType.TEXT] = this.formBuilder.group({
       title: ["", Validators.required],
       description: [""],
+      image: [""],
+      link: [""],
+      post_type: [""],
     });
     this.createPostForms[PostType.IMAGE] = this.formBuilder.group({
       title: ["", Validators.required],
-      image: [""],
+      description: [""],
+      image: ["", Validators.required],
+      link: [""],
+      post_type: [""],
     });
     this.createPostForms[PostType.LINK] = this.formBuilder.group({
       title: ["", Validators.required],
-      link: ["", Validators.required, Validators.pattern(urlPattern)],
+      description: [""],
+      image: [""],
+      link: [
+        "",
+        [Validators.required, Validators.pattern(new RegExp(urlPattern))],
+      ],
+      post_type: [""],
     });
 
     this.createPostForm = this.createPostForms[PostType.TEXT];
   }
 
-  onClickCreatePost(postType: PostType): void {
+  setPostType(postType: PostType): void {
     this.createPostType = postType;
     this.createPostForm = this.createPostForms[postType];
   }
 
-  onCloseCreatePost(): void {
+  closePostForm(): void {
     this.createPostType = null;
+    this.fileSrc = null;
     this.initFormGroup();
   }
 
@@ -96,7 +116,7 @@ export class PostsComponent implements OnInit, OnDestroy {
       !this.createImageButton.nativeElement.contains(target) &&
       !this.createLinkButton.nativeElement.contains(target)
     ) {
-      this.onCloseCreatePost();
+      this.closePostForm();
     }
   }
 
@@ -106,7 +126,6 @@ export class PostsComponent implements OnInit, OnDestroy {
 
   onChangeFile(): void {
     const fileReader = new FileReader();
-    this.hasImage = true;
 
     if (this.fileUpload.nativeElement.files) {
       fileReader.readAsDataURL(this.fileUpload.nativeElement.files[0]);
@@ -114,12 +133,19 @@ export class PostsComponent implements OnInit, OnDestroy {
 
     fileReader.onload = (e) => {
       this.fileSrc = fileReader.result;
+      this.createPostForm.controls.image.setValue(
+        this.fileUpload.nativeElement.files[0]
+      );
     };
   }
 
-  onDeleteFile(): void {
-    this.fileUpload.nativeElement.files = null;
-    this.fileSrc = " ";
-    this.hasImage = false;
+  deleteFile(): void {
+    this.fileSrc = null;
+    this.createPostForm.controls.image.setValue(null);
+  }
+
+  createPost() {
+    this.createPostForm.controls.post_type.setValue(this.createPostType);
+    this.createPostEvent.emit(this.createPostForm.value);
   }
 }
