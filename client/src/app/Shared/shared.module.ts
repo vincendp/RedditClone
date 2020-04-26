@@ -5,9 +5,15 @@ import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { HeaderComponent } from "./Components/Header/header.component";
 import { PostsComponent } from "./Components/Posts/posts.component";
 import { SvgIconComponent } from "./Components/SVGIcon/svg-icon.component";
+import { LazyLoadDirective } from "./Directives/lazy-load.directive";
 
 @NgModule({
-  declarations: [HeaderComponent, PostsComponent, SvgIconComponent],
+  declarations: [
+    HeaderComponent,
+    PostsComponent,
+    SvgIconComponent,
+    LazyLoadDirective,
+  ],
   imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule],
   exports: [
     CommonModule,
@@ -17,6 +23,7 @@ import { SvgIconComponent } from "./Components/SVGIcon/svg-icon.component";
     HeaderComponent,
     PostsComponent,
     SvgIconComponent,
+    LazyLoadDirective,
   ],
 })
 export class SharedModule {}

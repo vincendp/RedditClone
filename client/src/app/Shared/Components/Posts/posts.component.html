@@ -41,7 +41,7 @@
     </button>
   </div>
   <div class="post__posts">
-    <div class="post__post">
+    <div class="post__post" lazyLoad (loadedElement)="(true)">
       <div class="post__vote-container">
         <button class="post__post-icon post__button">
           <app-svg-icon icon_name="icon-thumb_up_alt"> </app-svg-icon>
@@ -79,7 +79,7 @@
       </div>
     </div>
 
-    <div class="post__post">
+    <div class="post__post" lazyLoad (loadedElement)="(true)">
       <div class="post__vote-container">
         <button class="post__post-icon post__button">
           <app-svg-icon icon_name="icon-thumb_up_alt"> </app-svg-icon>
@@ -280,3 +280,15 @@
     </div>
   </div>
 </div>
+
+<!-- <div *ngFor="let post of postss" [ngClass]="{ lazy: true }">
+  <img [src]="getSanitizedURL(post.src)" id="1" alt="nvm" />
+</div> -->
+
+<!-- <img
+  id="2"
+  src="localhost:8080/image/cc1d9706-40a1-4906-849d-7734b54478c1.png"
+  alt="nvm"
+  [(ngModel)]="post2"
+  [ngClass]="{ lazy: true }"
+/> -->

@@ -1,18 +1,10 @@
 import { Component, OnInit, OnDestroy } from "@angular/core";
 import { Router, ActivatedRoute } from "@angular/router";
 import { ApiService } from "src/app/Core/Http/api.service";
-import { HttpParams } from "@angular/common/http";
 import { Subreddit } from "src/app/Core/Model/subreddit.model";
 import { UserService } from "src/app/Core/Services/user.service";
 import { User } from "src/app/Core/Model/user.model";
-import { take } from "rxjs/operators";
 import { Subscription } from "rxjs";
-
-import { Injectable } from "@angular/core";
-import { environment } from "src/environments/environment";
-import { HttpHeaders, HttpClient } from "@angular/common/http";
-import { Observable, throwError } from "rxjs";
-import { catchError } from "rxjs/operators";
 
 @Component({
   selector: "app-subreddit",
@@ -28,8 +20,7 @@ export class SubredditComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     private apiService: ApiService,
-    private userService: UserService,
-    private http: HttpClient
+    private userService: UserService
   ) {}
 
   ngOnInit(): void {

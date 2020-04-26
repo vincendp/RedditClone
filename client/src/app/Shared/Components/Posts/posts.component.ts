@@ -10,12 +10,8 @@ import {
 import { PostType } from "src/app/Core/Model/post-type.enum";
 import { UtilityService } from "src/app/Core/Services/utility.service";
 import { Subscription } from "rxjs";
-import {
-  FormBuilder,
-  Validators,
-  FormGroup,
-  FormControl,
-} from "@angular/forms";
+import { FormBuilder, Validators, FormGroup } from "@angular/forms";
+import { DomSanitizer } from "@angular/platform-browser";
 
 @Component({
   selector: "app-posts",
@@ -44,9 +40,25 @@ export class PostsComponent implements OnInit, OnDestroy {
 
   @Output() createPostEvent: EventEmitter<{}> = new EventEmitter<{}>();
 
+  post1: any = {};
+  post2: any = {};
+
+  postss = [
+    {
+      src:
+        "http://localhost:8080/image/cc1d9706-40a1-4906-849d-7734b54478c1.png",
+    },
+    {
+      src:
+        "http://localhost:8080/image/cc1d9706-40a1-4906-849d-7734b54478c1.png",
+    },
+  ];
+
   constructor(
     private utilityService: UtilityService,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private elem: ElementRef,
+    private sanitizer: DomSanitizer
   ) {}
 
   ngOnInit(): void {
@@ -66,28 +78,30 @@ export class PostsComponent implements OnInit, OnDestroy {
     this.documentClickSubscription.unsubscribe();
   }
 
+  ngAfterViewInit() {
+    let elements = this.elem.nativeElement.querySelectorAll(".lazy");
+    elements.forEach((element) => {
+      console.log(element);
+    });
+  }
+
   initFormGroup(): void {
     const urlPattern =
-      "^(?:http(s)?:\\/\\/)?[\\w.-]+(?:\\.[\\w\\.-]+)+[\\w\\-\\._~:/?#[\\]@!\\$&'\\(\\)\\*\\+,;=.]+$";
+      "^(http:\\/\\/www\\.|https:\\/\\/www\\.|http:\\/\\/|https:\\/\\/)[a-z0-9]+([\\-\\.]{1}[a-z0-9]+)*\\.[a-z]{2,5}(:[0-9]{1,5})?(\\/.*)?$";
+
     this.createPostForms = {};
     this.createPostForms[PostType.TEXT] = this.formBuilder.group({
       title: ["", Validators.required],
       description: [""],
-      image: [""],
-      link: [""],
       post_type: [""],
     });
     this.createPostForms[PostType.IMAGE] = this.formBuilder.group({
       title: ["", Validators.required],
-      description: [""],
       image: ["", Validators.required],
-      link: [""],
       post_type: [""],
     });
     this.createPostForms[PostType.LINK] = this.formBuilder.group({
       title: ["", Validators.required],
-      description: [""],
-      image: [""],
       link: [
         "",
         [Validators.required, Validators.pattern(new RegExp(urlPattern))],
@@ -147,5 +161,9 @@ export class PostsComponent implements OnInit, OnDestroy {
   createPost() {
     this.createPostForm.controls.post_type.setValue(this.createPostType);
     this.createPostEvent.emit(this.createPostForm.value);
+  }
+
+  getSanitizedURL(url: string) {
+    return this.sanitizer.bypassSecurityTrustUrl(url);
   }
 }

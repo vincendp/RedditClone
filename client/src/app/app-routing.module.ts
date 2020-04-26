@@ -26,6 +26,11 @@ const routes: Routes = [
     path: "r/:subreddit",
     loadChildren: () =>
       import("./Modules/Subreddit/subreddit.module").then((m) => m.SubredditModule),
+  },
+  {
+    path: "r/:subreddit/:post_id",
+    loadChildren: () =>
+      import("./Modules/Post/post.module").then((m) => m.PostModule),
   }
 ];
 
