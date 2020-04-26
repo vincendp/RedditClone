@@ -1,6 +1,5 @@
 package com.vincendp.RedditClone.Controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vincendp.RedditClone.Config.TestSecurityConfiguration;
 import com.vincendp.RedditClone.Dto.CreatePostRequest;
 import com.vincendp.RedditClone.Dto.CreatePostResponse;
@@ -35,23 +34,17 @@ import static org.assertj.core.api.Assertions.*;
 public class PostControllerTest {
 
     @Autowired
-    private ObjectMapper objectMapper;
-
-    @Autowired
     private MockMvc mockMvc;
 
     @MockBean
     private PostService postService;
 
-    private CreatePostRequest createPostRequest;
-
     private MultiValueMap<String, String> params;
 
-    private MockMultipartFile file;
+    private CreatePostResponse createPostResponse;
 
     @BeforeEach
     void setup(){
-        file = new MockMultipartFile("images", "image1", "image/png", "image1".getBytes());
         params = new LinkedMultiValueMap<>();
         params.add("title", "title");
         params.add("description", "description");
@@ -59,6 +52,13 @@ public class PostControllerTest {
         params.add("user_id", UUID.randomUUID().toString());
         params.add("subreddit_id", UUID.randomUUID().toString());
         params.add("post_type", PostType.Type.TEXT.getValue() + "");
+
+        createPostResponse = new CreatePostResponse(
+                UUID.randomUUID().toString(), params.getFirst("title"),
+                params.getFirst("description"), params.getFirst("link"),
+                params.getFirst("/"), params.getFirst("user_id"),
+                params.getFirst("subreddit_id"), new Date()
+        );
     }
 
     @Test
@@ -66,7 +66,6 @@ public class PostControllerTest {
         params.set("title", null);
         assertThatThrownBy(() -> {
             mockMvc.perform(multipart("/posts")
-                    .file(file)
                     .params(params));
         }).hasCauseInstanceOf(IllegalArgumentException.class);
     }
@@ -77,80 +76,125 @@ public class PostControllerTest {
 
         assertThatThrownBy(() -> {
             mockMvc.perform(multipart("/posts")
-                    .file(file)
                     .params(params));
         }).hasCauseInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
-    void when_subreddit_id_is_empty_should_throw_error() throws Exception{
+    void when_subreddit_id_is_empty_should_throw_error(){
         params.set("subreddit_id", null);
 
         assertThatThrownBy(() -> {
             mockMvc.perform(multipart("/posts")
-                    .file(file)
                     .params(params));
         }).hasCauseInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
-    void when_post_type_is_empty_should_throw_error() throws Exception{
+    void when_post_type_is_empty_should_throw_error(){
         params.set("post_type", null);
 
         assertThatThrownBy(() -> {
             mockMvc.perform(multipart("/posts")
-                    .file(file)
                     .params(params));
         }).hasCauseInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
-    void when_link_post_and_link_is_empty_should_throw_error() throws Exception{
+    void when_link_post_and_link_is_empty_should_throw_error(){
         params.set("post_type", PostType.Type.LINK.getValue() + "");
         params.set("link", null);
 
         assertThatThrownBy(() -> {
             mockMvc.perform(multipart("/posts")
-                    .file(file)
                     .params(params));
         }).hasCauseInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
-    void when_post_type_invalid_should_throw_error() throws Exception{
+    void when_image_post_and_image_is_empty_should_throw_error(){
+        params.set("post_type", PostType.Type.IMAGE.getValue() + "");
+
+        assertThatThrownBy(() -> {
+            mockMvc.perform(multipart("/posts")
+                    .params(params));
+        }).hasCauseInstanceOf(IllegalArgumentException.class);
+
+        assertThatThrownBy(() -> {
+            mockMvc.perform(multipart("/posts")
+                    .file(new MockMultipartFile("images", "image1", "image/png", new byte[0]))
+                    .params(params));
+        }).hasCauseInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void when_image_post_and_unsupported_format_should_throw_error(){
+        params.set("post_type", PostType.Type.IMAGE.getValue() + "");
+
+        assertThatThrownBy(() -> {
+            mockMvc.perform(multipart("/posts")
+                    .file(new MockMultipartFile("images", "image1", "image/gif", "image1".getBytes()))
+                    .params(params));
+        }).hasCauseInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void when_post_type_invalid_should_throw_error(){
         params.set("post_type", "-1");
 
         assertThatThrownBy(() -> {
             mockMvc.perform(multipart("/posts")
-                    .file(file)
                     .params(params));
         }).hasCauseInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
-    void when_create_post_throws_error_should_throw_error() throws Exception{
+    void when_create_post_throws_error_should_throw_error(){
         when(postService.createPost(any(CreatePostRequest.class))).thenThrow(RuntimeException.class);
 
         assertThatThrownBy(() -> {
             mockMvc.perform(multipart("/posts")
-                    .file(file)
                     .params(params));
         }).hasCauseInstanceOf(RuntimeException.class);
     }
 
     @Test
-    void when_create_post_success_should_return_response_success() throws Exception{
-        CreatePostResponse createPostResponse = new CreatePostResponse(
-                UUID.randomUUID().toString(), params.getFirst("title"),
-                params.getFirst("description"), params.getFirst("link"),
-                params.getFirst("user_id"), params.getFirst("subreddit_id"),
-                new Date()
-        );
-
+    void when_create_text_post_success_should_return_response_success() throws Exception {
         when(postService.createPost(any(CreatePostRequest.class))).thenReturn(createPostResponse);
+        mockMvc.perform(multipart("/posts")
+                .params(params))
+                .andExpect(status().isOk())
+                .andExpect(content().string(Matchers.containsString("Success: Created post")));
+    }
+
+    @Test
+    void when_create_link_post_success_should_return_response_success() throws Exception{
+        when(postService.createPost(any(CreatePostRequest.class))).thenReturn(createPostResponse);
+        params.set("post_type", PostType.Type.LINK.getValue() + "");
+        mockMvc.perform(multipart("/posts")
+                .params(params))
+                .andExpect(status().isOk())
+                .andExpect(content().string(Matchers.containsString("Success: Created post")));
+    }
+
+    @Test
+    void when_create_image_post_success_should_return_response_success() throws Exception{
+        when(postService.createPost(any(CreatePostRequest.class))).thenReturn(createPostResponse);
+        params.set("post_type", PostType.Type.IMAGE.getValue() + "");
+        mockMvc.perform(multipart("/posts")
+                .file(new MockMultipartFile("image", "image1.png", "image/png", "image1".getBytes()))
+                .params(params))
+                .andExpect(status().isOk())
+                .andExpect(content().string(Matchers.containsString("Success: Created post")));
 
         mockMvc.perform(multipart("/posts")
-                .file(file)
+                .file(new MockMultipartFile("image", "image1.jpg", "image/jpg", "image1".getBytes()))
+                .params(params))
+                .andExpect(status().isOk())
+                .andExpect(content().string(Matchers.containsString("Success: Created post")));
+
+        mockMvc.perform(multipart("/posts")
+                .file(new MockMultipartFile("image", "image1.jpeg", "image/jpeg", "image1".getBytes()))
                 .params(params))
                 .andExpect(status().isOk())
                 .andExpect(content().string(Matchers.containsString("Success: Created post")));

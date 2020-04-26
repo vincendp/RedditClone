@@ -1,6 +1,5 @@
 package com.vincendp.RedditClone.Dto;
 
-import com.vincendp.RedditClone.Model.PostType;
 import org.springframework.web.multipart.MultipartFile;
 
 public class CreatePostRequest {

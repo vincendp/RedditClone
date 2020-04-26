@@ -15,6 +15,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 
@@ -60,8 +61,11 @@ public class PostServiceIntegrationTest {
         userRepository.save(user);
 
         PostType postType = postTypeRepository.findById(PostType.Type.TEXT.getValue()).get();
-//        createPostRequest = new CreatePostRequest("title", "description",
-//                user.getId().toString(), subreddit.getId().toString(), PostType.Type.TEXT.getValue());
+        createPostRequest = new CreatePostRequest("title", "description",
+                "https://www.google.com",
+                new MockMultipartFile("image", "image1.jpeg", "image/jpeg", "image1".getBytes()),
+                user.getId().toString(), subreddit.getId().toString(), PostType.Type.TEXT.getValue());
+
         post = new Post(null, "title", new Date(), user, subreddit, postType);
     }
 
@@ -93,6 +97,24 @@ public class PostServiceIntegrationTest {
     }
 
     @Test
+    void when_image_post_with_invalid_image_should_throw_error(){
+        createPostRequest.setPost_type(PostType.Type.IMAGE.getValue());
+        createPostRequest.setImage(null);
+
+        assertThrows(RuntimeException.class, () -> {
+            postService.createPost(createPostRequest);
+        });
+
+        createPostRequest.setImage(
+                new MockMultipartFile("image", "image1.jpeg",
+                        "image/jpeg", new byte[0]));
+
+        assertThrows(RuntimeException.class, () -> {
+            postService.createPost(createPostRequest);
+        });
+    }
+
+    @Test
     void when_link_post_with_no_link_should_throw_error(){
         createPostRequest.setPost_type(PostType.Type.LINK.getValue());
         createPostRequest.setLink(null);
@@ -103,7 +125,17 @@ public class PostServiceIntegrationTest {
     }
 
     @Test
-    void when_valid_user_and_subreddit_should_return_response(){
+    void when_link_post_with_invalid_link_should_throw_error(){
+        createPostRequest.setPost_type(PostType.Type.LINK.getValue());
+        createPostRequest.setLink("www.");
+
+        assertThrows(RuntimeException.class, () -> {
+            postService.createPost(createPostRequest);
+        });
+    }
+
+    @Test
+    void when_valid_text_post_should_return_response(){
         CreatePostResponse createPostResponse = postService.createPost(createPostRequest);
 
         assertNotNull(createPostResponse);
@@ -112,4 +144,51 @@ public class PostServiceIntegrationTest {
         assertEquals(user.getId().toString(), createPostResponse.getUser_id());
         assertEquals(post.getTitle(), createPostResponse.getTitle());
     }
+
+    @Test
+    void when_valid_image_post_should_return_response(){
+        createPostRequest.setPost_type(PostType.Type.IMAGE.getValue());
+
+        CreatePostResponse createPostResponse = postService.createPost(createPostRequest);
+        assertNotNull(createPostResponse);
+        assertNotNull(createPostResponse.getId());
+        assertEquals(subreddit.getId().toString(), createPostResponse.getSubreddit_id());
+        assertEquals(user.getId().toString(), createPostResponse.getUser_id());
+        assertEquals(post.getTitle(), createPostResponse.getTitle());
+
+        createPostRequest.setImage(
+                new MockMultipartFile("image", "image1.jpg",
+                        "image/jpg", "image".getBytes()));
+
+        createPostResponse = postService.createPost(createPostRequest);
+        assertNotNull(createPostResponse);
+        assertNotNull(createPostResponse.getId());
+        assertEquals(subreddit.getId().toString(), createPostResponse.getSubreddit_id());
+        assertEquals(user.getId().toString(), createPostResponse.getUser_id());
+        assertEquals(post.getTitle(), createPostResponse.getTitle());
+
+        createPostRequest.setImage(
+                new MockMultipartFile("image", "image1.png",
+                        "image/png", "image".getBytes()));
+
+        createPostResponse = postService.createPost(createPostRequest);
+        assertNotNull(createPostResponse);
+        assertNotNull(createPostResponse.getId());
+        assertEquals(subreddit.getId().toString(), createPostResponse.getSubreddit_id());
+        assertEquals(user.getId().toString(), createPostResponse.getUser_id());
+        assertEquals(post.getTitle(), createPostResponse.getTitle());
+    }
+
+    @Test
+    void when_valid_link_post_should_return_response(){
+        createPostRequest.setPost_type(PostType.Type.LINK.getValue());
+        CreatePostResponse createPostResponse = postService.createPost(createPostRequest);
+
+        assertNotNull(createPostResponse);
+        assertNotNull(createPostResponse.getId());
+        assertEquals(subreddit.getId().toString(), createPostResponse.getSubreddit_id());
+        assertEquals(user.getId().toString(), createPostResponse.getUser_id());
+        assertEquals(post.getTitle(), createPostResponse.getTitle());
+    }
+
 }

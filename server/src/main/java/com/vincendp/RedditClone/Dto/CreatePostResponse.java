@@ -8,6 +8,7 @@ public class CreatePostResponse {
     private String title;
     private String description;
     private String link;
+    private String path;
     private String user_id;
     private String subreddit_id;
     private Date created_at;
@@ -16,11 +17,13 @@ public class CreatePostResponse {
 
     }
 
-    public CreatePostResponse(String id, String title, String description, String link, String user_id, String subreddit_id, Date created_at) {
+    public CreatePostResponse(String id, String title, String description, String link, String path,
+                              String user_id, String subreddit_id, Date created_at) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.link = link;
+        this.path = path;
         this.user_id = user_id;
         this.subreddit_id = subreddit_id;
         this.created_at = created_at;
@@ -56,6 +59,14 @@ public class CreatePostResponse {
 
     public void setLink(String link) {
         this.link = link;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
     }
 
     public String getUser_id() {

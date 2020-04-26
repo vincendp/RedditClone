@@ -14,13 +14,18 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 import java.util.Date;
 import java.util.UUID;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -51,6 +56,10 @@ public class PostControllerIntegrationTest {
 
     private CreatePostRequest createPostRequest;
 
+    private MultiValueMap<String, String> params;
+
+    private MockMultipartFile file;
+
     @BeforeEach
     void setup(){
         subreddit = new Subreddit(null, "subreddit", new Date());
@@ -59,39 +68,76 @@ public class PostControllerIntegrationTest {
         subredditRepository.save(subreddit);
         userRepository.save(user);
 
-//        createPostRequest = new CreatePostRequest("title", "description"
-//                , "https://www.google.com", user.getId().toString(), subreddit.getId().toString(), PostType.Type.TEXT.getValue());
+        params = new LinkedMultiValueMap<>();
+        params.add("title", "title");
+        params.add("description", "description");
+        params.add("link", "https://www.google.com");
+        params.add("user_id", user.getId().toString());
+        params.add("subreddit_id", subreddit.getId().toString());
+        params.add("post_type", PostType.Type.TEXT.getValue() + "");
     }
 
     @Test
     void when_invalid_user_should_have_status_4xx() throws Exception{
-        createPostRequest.setUser_id(UUID.randomUUID().toString());
-        String json = objectMapper.writeValueAsString(createPostRequest);
-
-        mockMvc.perform(post("/posts")
-                .header("Content-Type", "application/json")
-                .content(json))
+        params.set("user_id", UUID.randomUUID().toString());
+        mockMvc.perform(multipart("/posts")
+                .params(params))
                 .andExpect(status().is4xxClientError());
     }
 
     @Test
     void when_invalid_subreddit_should_have_status_4xx() throws Exception{
-        createPostRequest.setSubreddit_id(UUID.randomUUID().toString());
-        String json = objectMapper.writeValueAsString(createPostRequest);
-
-        mockMvc.perform(post("/posts")
-                .header("Content-Type", "application/json")
-                .content(json))
+        params.set("subreddit_id", UUID.randomUUID().toString());
+        mockMvc.perform(multipart("/posts")
+                .params(params))
                 .andExpect(status().is4xxClientError());
     }
 
     @Test
-    void when_create_post_valid_should_return_response_success() throws Exception{
-        String json = objectMapper.writeValueAsString(createPostRequest);
+    void when_link_post_and_link_invalid_should_throw_error() throws Exception{
+        params.set("post_type", PostType.Type.LINK.getValue() + "");
+        params.set("link", "hi");
 
-        mockMvc.perform(post("/posts")
-                .header("Content-Type", "application/json")
-                .content(json))
+        mockMvc.perform(multipart("/posts")
+                .params(params))
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    void when_create_text_post_success_should_return_response_success() throws Exception {
+        mockMvc.perform(multipart("/posts")
+                .params(params))
+                .andExpect(status().isOk())
+                .andExpect(content().string(Matchers.containsString("Success: Created post")));
+    }
+
+    @Test
+    void when_create_link_post_success_should_return_response_success() throws Exception{
+        params.set("post_type", PostType.Type.LINK.getValue() + "");
+        mockMvc.perform(multipart("/posts")
+                .params(params))
+                .andExpect(status().isOk())
+                .andExpect(content().string(Matchers.containsString("Success: Created post")));
+    }
+
+    @Test
+    void when_create_image_post_success_should_return_response_success() throws Exception{
+        params.set("post_type", PostType.Type.IMAGE.getValue() + "");
+        mockMvc.perform(multipart("/posts")
+                .file(new MockMultipartFile("image", "image1.png", "image/png", "image1".getBytes()))
+                .params(params))
+                .andExpect(status().isOk())
+                .andExpect(content().string(Matchers.containsString("Success: Created post")));
+
+        mockMvc.perform(multipart("/posts")
+                .file(new MockMultipartFile("image", "image1.jpg", "image/jpg", "image1".getBytes()))
+                .params(params))
+                .andExpect(status().isOk())
+                .andExpect(content().string(Matchers.containsString("Success: Created post")));
+
+        mockMvc.perform(multipart("/posts")
+                .file(new MockMultipartFile("image", "image1.jpeg", "image/jpeg", "image1".getBytes()))
+                .params(params))
                 .andExpect(status().isOk())
                 .andExpect(content().string(Matchers.containsString("Success: Created post")));
     }

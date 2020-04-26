@@ -40,6 +40,7 @@ public class PostServiceImpl implements PostService{
         this.userRepository = userRepository;
         this.subredditRepository = subredditRepository;
         this.postTypeRepository = postTypeRepository;
+        this.storageService = storageService;
     }
 
     @Override
@@ -61,17 +62,21 @@ public class PostServiceImpl implements PostService{
             throw new ResourceNotFoundException("Error: User or subreddit not found");
         }
 
+        String filename = null;
+        if(createPostRequest.getPost_type() == PostType.Type.IMAGE.getValue()){
+            filename = storageService.store(createPostRequest.getImage());
+        }
 
         PostType postType = postTypeRepository.findById(createPostRequest.getPost_type()).get();
         Post post = new Post(null, createPostRequest.getTitle(), null, user, subreddit, postType);
         post.setDescription(createPostRequest.getDescription());
         post.setLink(createPostRequest.getLink());
-        post.setImage_path("/");
+        post.setImage_path(filename);
 
         post = postRepository.save(post);
 
         return new CreatePostResponse(post.getId().toString(), post.getTitle(), post.getDescription(),
-                post.getLink(), post.getUser().getId().toString(), post.getSubreddit().getId().toString(),
-                post.getCreated_at());
+                post.getLink(), post.getImage_path(), post.getUser().getId().toString(),
+                post.getSubreddit().getId().toString(), post.getCreated_at());
     }
 }
