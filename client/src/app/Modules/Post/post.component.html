@@ -1,1 +1,167 @@
-<p>post works!</p>
+<div class="post">
+  <div class="post__main">
+    <div class="post__content">
+      <div class="post__vote-container">
+        <button class="post__post-icon post__post-icon--regular post__button">
+          <app-svg-icon icon_name="icon-thumb_up_alt"> </app-svg-icon>
+        </button>
+        <div class="post__vote-number">
+          10
+        </div>
+        <button class="post__post-icon post__post-icon--regular post__button">
+          <app-svg-icon icon_name="icon-thumb_down_alt"> </app-svg-icon>
+        </button>
+      </div>
+      <div class="post__content__details">
+        <div class="post__content__by">
+          <a href="#" class="post__content__by__subreddit post__link">
+            r/popheads
+          </a>
+          <span class="post__content__by__user">
+            Posted by
+            <a href="#" class="post__link">
+              u/Vince
+            </a>
+          </span>
+          <span class="post__content__by__time"> 5 hours ago</span>
+        </div>
+        <div class="post__content__title">
+          This is the title of the post
+        </div>
+        <div class="post__content__text post__content__post-type" *ngIf="false">
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Cum
+          cupiditate dolore doloribus blanditiis necessitatibus iste
+          praesentium, maiores quaerat? Quos ipsum aliquam accusantium tempore
+          praesentium facere eveniet sint ipsa culpa debitis. Lorem ipsum dolor
+          sit amet consectetur adipisicing elit. Quae, a. Consectetur pariatur
+          vero ad. Libero, officia, distinctio excepturi optio quo praesentium
+          fugiat, maiores ratione dolor saepe corporis impedit ad! Impedit!
+          Lorem ipsum dolor sit, amet consectetur adipisicing elit. Aperiam iste
+          odit ducimus, provident quia dolorum vero! Dolore facilis accusamus,
+          quia quisquam cumque quos! Reprehenderit voluptatibus maiores sunt
+          animi expedita dicta. Lorem ipsum dolor sit amet consectetur
+          adipisicing elit. Iste, officia architecto at mollitia cumque nulla,
+          doloremque reiciendis ad ipsa a odio doloribus temporibus amet earum.
+          Maxime facilis voluptatum est suscipit?
+        </div>
+        <div class="post__content__link post__content__post-type" *ngIf="true">
+          <a href="#" class="post__link post__content__link-container">
+            <div class="post__post-icon post__post-icon--regular">
+              <app-svg-icon icon_name="icon-linkinsert_link"> </app-svg-icon>
+            </div>
+            <span class="post__post-url">
+              https://www.google.com
+            </span>
+          </a>
+        </div>
+
+        <div class="post__content__post-type" *ngIf="false">
+          <img
+            src="https://images.unsplash.com/photo-1493809775746-c98e2ebe96d6?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1500&q=80"
+            alt=""
+            class="post__content__image"
+          />
+        </div>
+
+        <div class="post__content__buttons">
+          <div class="post__content__button">
+            <div class="post__post-icon post__post-icon--regular">
+              <app-svg-icon icon_name="icon-insert_comment"> </app-svg-icon>
+            </div>
+            <span class="post__content__button-text"> 5 Comments </span>
+          </div>
+        </div>
+
+        <textarea
+          type="text"
+          class="post__content__textarea post__content__textarea--description"
+          placeholder="Add a comment"
+        ></textarea>
+
+        <button class="post__button post__content__submit">
+          Submit
+        </button>
+      </div>
+    </div>
+
+    <div class="post__comments">
+      <div class="post__comment-container">
+        <div class="post__vote-container">
+          <button class="post__post-icon post__post-icon--small post__button">
+            <app-svg-icon icon_name="icon-thumb_up_alt"> </app-svg-icon>
+          </button>
+          <div class="post__vote-number">
+            10
+          </div>
+          <button class="post__post-icon post__post-icon--small post__button">
+            <app-svg-icon icon_name="icon-thumb_down_alt"> </app-svg-icon>
+          </button>
+        </div>
+        <div class="post__comment">
+          <div class="post__comment__details">
+            <a href="#" class="post__comment__details__user post__link">
+              bob1234
+            </a>
+            <span class="post__comment__details__points"> 101 points</span>
+            <span class="post__comment__details__time"> 3 hours ago</span>
+          </div>
+          <div class="post__comment__content">
+            hi
+          </div>
+        </div>
+      </div>
+
+      <div class="post__comment-container">
+        <div class="post__vote-container">
+          <button class="post__post-icon post__post-icon--small post__button">
+            <app-svg-icon icon_name="icon-thumb_up_alt"> </app-svg-icon>
+          </button>
+          <div class="post__vote-number">
+            10
+          </div>
+          <button class="post__post-icon post__post-icon--small post__button">
+            <app-svg-icon icon_name="icon-thumb_down_alt"> </app-svg-icon>
+          </button>
+        </div>
+        <div class="post__comment">
+          <div class="post__comment__details">
+            <a href="#" class="post__comment__details__user post__link">
+              bob1234
+            </a>
+            <span class="post__comment__details__points"> 101 points</span>
+            <span class="post__comment__details__time"> 3 hours ago</span>
+          </div>
+          <div class="post__comment__content">
+            hi
+          </div>
+        </div>
+      </div>
+
+      <div class="post__comment-container">
+        <div class="post__vote-container">
+          <button class="post__post-icon post__post-icon--small post__button">
+            <app-svg-icon icon_name="icon-thumb_up_alt"> </app-svg-icon>
+          </button>
+          <div class="post__vote-number">
+            10
+          </div>
+          <button class="post__post-icon post__post-icon--small post__button">
+            <app-svg-icon icon_name="icon-thumb_down_alt"> </app-svg-icon>
+          </button>
+        </div>
+        <div class="post__comment">
+          <div class="post__comment__details">
+            <a href="#" class="post__comment__details__user post__link">
+              bob1234
+            </a>
+            <span class="post__comment__details__points"> 101 points</span>
+            <span class="post__comment__details__time"> 3 hours ago</span>
+          </div>
+          <div class="post__comment__content">
+            hi
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

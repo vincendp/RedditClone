@@ -1,0 +1,212 @@
+@import "src/styles.scss";
+
+.post {
+  display: flex;
+
+  &__link {
+    text-decoration: none;
+    color: inherit;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  &__vote-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-right: 2rem;
+  }
+
+  &__post-icon {
+    color: $color-primary-darker;
+
+    &--regular {
+      height: 2.2rem;
+      width: 2.2rem;
+    }
+
+    &--small {
+      height: 2rem;
+      width: 2rem;
+    }
+  }
+
+  &__button {
+    border: none;
+    background-color: $color-grey-lighter;
+    &:hover {
+      cursor: pointer;
+      background-color: darken($color-grey-lighter, 10%);
+    }
+
+    &:active {
+      background-color: darken($color-grey-lighter, 15%);
+    }
+
+    &:disabled {
+      border: 1px solid $color-grey-lighter;
+      color: $color-grey-dark;
+      background-color: $color-grey-lighter;
+      cursor: not-allowed;
+    }
+  }
+
+  &__vote-number {
+    font-size: 1.5rem;
+  }
+
+  // main
+  &__main {
+    flex: 1;
+    background-color: $color-grey-lighter;
+    margin-top: 1rem;
+    margin-left: 1rem;
+    margin-right: 1rem;
+  }
+
+  &__content {
+    display: flex;
+    align-items: flex-start;
+
+    &__details {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      font-size: 1.5rem;
+      flex: 1;
+    }
+
+    &__by {
+    }
+
+    &__by__subreddit {
+      font-weight: 600;
+      color: $color-black;
+      margin-right: 0.5rem;
+    }
+
+    &__by__user {
+      color: $color-grey-darker;
+      margin: 0 0.2rem;
+    }
+
+    &__by__time {
+      color: $color-grey-darker;
+      margin: 0 0.2rem;
+    }
+
+    &__title {
+      font-size: 2.5rem;
+      margin-top: 0.8rem;
+      font-weight: 600;
+    }
+
+    &__post-type {
+      margin-top: 1rem;
+    }
+
+    &__text {
+      width: 98%;
+    }
+
+    &__link {
+      color: $color-primary-darker;
+    }
+
+    &__link-container {
+      display: flex;
+      align-items: center;
+    }
+
+    &__image {
+      max-width: 98%;
+    }
+
+    &__buttons {
+      margin-top: 1rem;
+    }
+
+    &__button {
+      display: flex;
+      align-items: center;
+    }
+
+    &__button-text {
+      margin-left: 0.2rem;
+    }
+
+    &__textarea {
+      width: 98%;
+      height: 20rem;
+      border: 1px solid $color-grey-light;
+      font-size: 1.5rem;
+      font-family: inherit;
+      padding: 0.1rem 0.5rem;
+      resize: none;
+      margin-top: 1rem;
+
+      &:focus {
+        outline: 1px solid $color-primary-darker;
+      }
+    }
+
+    &__submit {
+      @extend .button;
+      border: 1px solid $color-primary;
+      color: $color-primary;
+      padding: 0.8rem 4rem;
+      font-size: 1.5rem;
+      border-radius: 4px;
+      align-self: flex-end;
+      margin-right: 2%;
+      margin-top: 1rem;
+    }
+  }
+
+  &__comments {
+    display: flex;
+    flex-direction: column;
+    margin-top: 1.5rem;
+  }
+
+  &__comment-container {
+    display: flex;
+    align-items: flex-start;
+    width: 98%;
+    margin-bottom: 2rem;
+  }
+
+  &__comment {
+    display: flex;
+    flex-direction: column;
+
+    &__details {
+      display: flex;
+      font-size: 1.3rem;
+
+      & > * {
+        margin-right: 0.4rem;
+      }
+    }
+
+    &__details__user {
+    }
+
+    &__details__points {
+      color: $color-grey-darker;
+    }
+
+    &__details__time {
+      color: $color-grey-darker;
+    }
+
+    &__content {
+      display: flex;
+      font-size: 1.5rem;
+      margin: 0.3rem 0;
+    }
+  }
+}
