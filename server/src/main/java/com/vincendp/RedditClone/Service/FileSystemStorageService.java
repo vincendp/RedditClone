@@ -31,10 +31,12 @@ public class FileSystemStorageService implements StorageService {
     @PostConstruct
     public void init() {
         try{
-            Files.createDirectory(location);
+            if(!Files.isDirectory(Paths.get(location.toString()))){
+                Files.createDirectory(location);
+            }
         }
         catch(Exception e){
-            System.out.println(e);
+            throw new StorageException("Error: Could not initialize directory");
         }
     }
 

@@ -2,6 +2,7 @@ package com.vincendp.RedditClone.Service;
 
 import com.vincendp.RedditClone.Dto.CreatePostRequest;
 import com.vincendp.RedditClone.Dto.CreatePostResponse;
+import com.vincendp.RedditClone.Exception.ResourceNotFoundException;
 import com.vincendp.RedditClone.Exception.StorageException;
 import com.vincendp.RedditClone.Model.Post;
 import com.vincendp.RedditClone.Model.PostType;
@@ -91,8 +92,8 @@ public class PostServiceTest {
 
     @Test
     void when_subreddit_not_found_throws_error(){
-        when(subredditRepository.getById(any())).thenThrow(NoSuchElementException.class);
-        assertThrows(NoSuchElementException.class, () -> {
+        when(subredditRepository.getById(any())).thenThrow(ResourceNotFoundException.class);
+        assertThrows(ResourceNotFoundException.class, () -> {
             postService.createPost(createPostRequest);
         });
     }
@@ -100,9 +101,9 @@ public class PostServiceTest {
     @Test
     void when_user_not_found_throws_error(){
         when(subredditRepository.getById(any())).thenReturn(subreddit);
-        when(userRepository.getById(any())).thenThrow(NoSuchElementException.class);
+        when(userRepository.getById(any())).thenThrow(ResourceNotFoundException.class);
 
-        assertThrows(NoSuchElementException.class, () -> {
+        assertThrows(ResourceNotFoundException.class, () -> {
             postService.createPost(createPostRequest);
         });
     }

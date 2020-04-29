@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
@@ -78,6 +79,7 @@ public class PostControllerIntegrationTest {
     }
 
     @Test
+    @WithMockUser("mockUser")
     void when_invalid_user_should_have_status_4xx() throws Exception{
         params.set("user_id", UUID.randomUUID().toString());
         mockMvc.perform(multipart("/posts")
@@ -86,6 +88,7 @@ public class PostControllerIntegrationTest {
     }
 
     @Test
+    @WithMockUser("mockUser")
     void when_invalid_subreddit_should_have_status_4xx() throws Exception{
         params.set("subreddit_id", UUID.randomUUID().toString());
         mockMvc.perform(multipart("/posts")
@@ -94,6 +97,7 @@ public class PostControllerIntegrationTest {
     }
 
     @Test
+    @WithMockUser("mockUser")
     void when_link_post_and_link_invalid_should_throw_error() throws Exception{
         params.set("post_type", PostType.Type.LINK.getValue() + "");
         params.set("link", "hi");
@@ -104,6 +108,7 @@ public class PostControllerIntegrationTest {
     }
 
     @Test
+    @WithMockUser("mockUser")
     void when_create_text_post_success_should_return_response_success() throws Exception {
         mockMvc.perform(multipart("/posts")
                 .params(params))
@@ -112,6 +117,7 @@ public class PostControllerIntegrationTest {
     }
 
     @Test
+    @WithMockUser("mockUser")
     void when_create_link_post_success_should_return_response_success() throws Exception{
         params.set("post_type", PostType.Type.LINK.getValue() + "");
         mockMvc.perform(multipart("/posts")
@@ -121,6 +127,7 @@ public class PostControllerIntegrationTest {
     }
 
     @Test
+    @WithMockUser("mockUser")
     void when_create_image_post_success_should_return_response_success() throws Exception{
         params.set("post_type", PostType.Type.IMAGE.getValue() + "");
         mockMvc.perform(multipart("/posts")
