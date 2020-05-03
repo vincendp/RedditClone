@@ -8,4 +8,7 @@ import java.util.UUID;
 
 @Repository
 public interface CommentRepository extends CrudRepository<Comment, UUID> {
+
+    Comment getById(UUID id);
+
 }

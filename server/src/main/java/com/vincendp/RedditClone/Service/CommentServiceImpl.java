@@ -55,9 +55,7 @@ public class CommentServiceImpl implements CommentService{
 
         comment = commentRepository.save(comment);
 
-        CreateCommentResponse createCommentResponse
-                = new CreateCommentResponse(comment.getId().toString(), comment.getComment(),
+        return new CreateCommentResponse(comment.getId().toString(), comment.getComment(),
                 comment.getUser().getId().toString(), comment.getPost().getId().toString(), comment.getCreated_at());
-        return createCommentResponse;
     }
 }

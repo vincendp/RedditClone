@@ -63,7 +63,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http.cors().and().csrf().disable()
                 .authorizeRequests().antMatchers(HttpMethod.GET, "/users")
                 .authenticated()
-                .antMatchers(HttpMethod.POST, "/posts", "/comments").authenticated()
+                .antMatchers(HttpMethod.POST, "/posts", "/comments", "/votes").authenticated()
                 .anyRequest().permitAll()
                 .and().exceptionHandling().authenticationEntryPoint(authenticationEntryPoint)
                 .accessDeniedHandler(accessDeniedHandler)
