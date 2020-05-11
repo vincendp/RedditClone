@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
@@ -66,6 +67,7 @@ public class VotePostControllerIntegrationTest {
     }
 
     @Test
+    @WithMockUser("mockUser")
     void when_create_post_success_returns_response_ok() throws Exception{
         String json = objectMapper.writeValueAsString(votePostDTO);
 
@@ -83,6 +85,7 @@ public class VotePostControllerIntegrationTest {
     }
 
     @Test
+    @WithMockUser("mockUser")
     void when_update_post_success_returns_response_ok() throws Exception{
         String json = objectMapper.writeValueAsString(votePostDTO);
         mockMvc.perform(post("/votes/posts")
@@ -100,6 +103,7 @@ public class VotePostControllerIntegrationTest {
     }
 
     @Test
+    @WithMockUser("mockUser")
     void when_delete_post_success_returns_response_ok() throws Exception{
         String json = objectMapper.writeValueAsString(votePostDTO);
         mockMvc.perform(post("/votes/posts")

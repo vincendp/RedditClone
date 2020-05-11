@@ -4,6 +4,7 @@ import com.vincendp.RedditClone.Dto.CreateSubredditRequest;
 import com.vincendp.RedditClone.Dto.CreateSubredditResponse;
 import com.vincendp.RedditClone.Dto.GetSubredditResponse;
 import com.vincendp.RedditClone.Exception.ResourceAlreadyExistsException;
+import com.vincendp.RedditClone.Exception.ResourceNotFoundException;
 import com.vincendp.RedditClone.Model.Subreddit;
 import com.vincendp.RedditClone.Repository.SubredditRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,10 @@ public class SubredditServiceImpl implements SubredditService{
     @Override
     public GetSubredditResponse getSubreddit(String subredditName) {
         Subreddit subreddit = subredditRepository.findByName(subredditName);
+        if(subreddit == null){
+            throw new ResourceNotFoundException("Error: Subreddit not found");
+        }
+
         return new GetSubredditResponse(subreddit.getId().toString(), subreddit.getName(), subreddit.getCreated_at());
     }
 

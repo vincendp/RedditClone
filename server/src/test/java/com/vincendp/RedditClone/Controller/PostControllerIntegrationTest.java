@@ -2,9 +2,12 @@ package com.vincendp.RedditClone.Controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vincendp.RedditClone.Dto.CreatePostRequest;
+import com.vincendp.RedditClone.Model.Post;
 import com.vincendp.RedditClone.Model.PostType;
 import com.vincendp.RedditClone.Model.Subreddit;
 import com.vincendp.RedditClone.Model.User;
+import com.vincendp.RedditClone.Repository.PostRepository;
+import com.vincendp.RedditClone.Repository.PostTypeRepository;
 import com.vincendp.RedditClone.Repository.SubredditRepository;
 import com.vincendp.RedditClone.Repository.UserRepository;
 import com.vincendp.RedditClone.Service.PostService;
@@ -25,6 +28,7 @@ import org.springframework.util.MultiValueMap;
 import java.util.Date;
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -51,9 +55,17 @@ public class PostControllerIntegrationTest {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private PostRepository postRepository;
+
+    @Autowired
+    private PostTypeRepository postTypeRepository;
+
     private Subreddit subreddit;
 
     private User user;
+
+    private Post post;
 
     private CreatePostRequest createPostRequest;
 
@@ -68,6 +80,9 @@ public class PostControllerIntegrationTest {
 
         subredditRepository.save(subreddit);
         userRepository.save(user);
+
+        PostType postType = postTypeRepository.findById(PostType.Type.TEXT.getValue()).get();
+        post = postRepository.save(new Post(null, "title", new Date(), user, subreddit, postType));
 
         params = new LinkedMultiValueMap<>();
         params.add("title", "title");
@@ -147,5 +162,18 @@ public class PostControllerIntegrationTest {
                 .params(params))
                 .andExpect(status().isOk())
                 .andExpect(content().string(Matchers.containsString("Success: Created post")));
+    }
+
+    @Test
+    void when_get_post_not_found_should_return_status_404() throws Exception{
+        mockMvc.perform(get("/posts/{post_id}", UUID.randomUUID().toString()))
+        .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void when_get_post_should_return_response_success() throws Exception{
+        mockMvc.perform(get("/posts/{post_id}", post.getId().toString()))
+                .andExpect(status().isOk())
+                .andExpect(content().string(Matchers.containsString("Success: Got post")));
     }
 }

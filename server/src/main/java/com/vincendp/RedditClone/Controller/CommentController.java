@@ -2,14 +2,14 @@ package com.vincendp.RedditClone.Controller;
 
 import com.vincendp.RedditClone.Dto.CreateCommentRequest;
 import com.vincendp.RedditClone.Dto.CreateCommentResponse;
+import com.vincendp.RedditClone.Dto.GetCommentDTO;
 import com.vincendp.RedditClone.Service.CommentService;
 import com.vincendp.RedditClone.Utility.SuccessResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("comments")
@@ -20,6 +20,12 @@ public class CommentController {
     @Autowired
     public CommentController(CommentService commentService){
         this.commentService = commentService;
+    }
+
+    @GetMapping("/posts/{post_id}")
+    public ResponseEntity getCommentsFromPost(@PathVariable String post_id){
+        List<GetCommentDTO> dtos = commentService.getCommentsFromPost(post_id);
+        return ResponseEntity.ok(new SuccessResponse(200, "Success: Got comments", dtos));
     }
 
     @PostMapping

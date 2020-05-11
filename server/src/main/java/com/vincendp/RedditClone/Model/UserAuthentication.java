@@ -20,6 +20,14 @@ public class UserAuthentication {
     @MapsId
     private User user;
 
+    public UserAuthentication() {
+    }
+
+    public UserAuthentication(UUID user_id, String password, User user) {
+        this.user_id = user_id;
+        this.password = password;
+        this.user = user;
+    }
 
     public UUID getUser_id() {
         return user_id;

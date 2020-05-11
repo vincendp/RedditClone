@@ -2,16 +2,15 @@ package com.vincendp.RedditClone.Service;
 
 import com.vincendp.RedditClone.Dto.CreatePostRequest;
 import com.vincendp.RedditClone.Dto.CreatePostResponse;
+import com.vincendp.RedditClone.Dto.GetPostDTO;
 import com.vincendp.RedditClone.Exception.ResourceNotFoundException;
-import com.vincendp.RedditClone.Model.Post;
-import com.vincendp.RedditClone.Model.PostType;
-import com.vincendp.RedditClone.Model.Subreddit;
-import com.vincendp.RedditClone.Model.User;
+import com.vincendp.RedditClone.Model.*;
 import com.vincendp.RedditClone.Repository.PostRepository;
 import com.vincendp.RedditClone.Repository.PostTypeRepository;
 import com.vincendp.RedditClone.Repository.SubredditRepository;
 import com.vincendp.RedditClone.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -41,6 +40,43 @@ public class PostServiceImpl implements PostService{
         this.subredditRepository = subredditRepository;
         this.postTypeRepository = postTypeRepository;
         this.storageService = storageService;
+    }
+
+    @Override
+    public GetPostDTO getPost(String post_id) {
+        UUID post_uuid = null;
+        try{
+            post_uuid = UUID.fromString(post_id);
+        }
+        catch(IllegalArgumentException e){
+            throw new IllegalArgumentException("Error: Invalid post");
+        }
+
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        CustomUserDetails userDetails = null;
+        System.out.println(principal);
+        if(principal instanceof CustomUserDetails){
+            userDetails = (CustomUserDetails) principal;
+        }
+        else{
+            System.out.println("%%%%%%%%%%");
+        }
+
+        GetPostDTO getPostDTO;
+
+        if(userDetails != null && userDetails.getId() != null){
+            System.out.println(userDetails.getId());
+            getPostDTO = postRepository.getPost(post_uuid, userDetails.getId());
+        }
+        else{
+            System.out.println("hi@@@@@@@@");
+            getPostDTO = postRepository.getPost(post_uuid, null);
+        }
+        if(getPostDTO == null){
+            throw new ResourceNotFoundException("Error: Post not found");
+        }
+
+        return getPostDTO;
     }
 
     @Override

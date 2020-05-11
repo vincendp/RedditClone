@@ -2,12 +2,10 @@ package com.vincendp.RedditClone.Service;
 
 import com.vincendp.RedditClone.Dto.CreatePostRequest;
 import com.vincendp.RedditClone.Dto.CreatePostResponse;
+import com.vincendp.RedditClone.Dto.GetPostDTO;
 import com.vincendp.RedditClone.Exception.ResourceNotFoundException;
 import com.vincendp.RedditClone.Exception.StorageException;
-import com.vincendp.RedditClone.Model.Post;
-import com.vincendp.RedditClone.Model.PostType;
-import com.vincendp.RedditClone.Model.Subreddit;
-import com.vincendp.RedditClone.Model.User;
+import com.vincendp.RedditClone.Model.*;
 import com.vincendp.RedditClone.Repository.PostRepository;
 import com.vincendp.RedditClone.Repository.PostTypeRepository;
 import com.vincendp.RedditClone.Repository.SubredditRepository;
@@ -19,6 +17,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.Date;
 import java.util.NoSuchElementException;
@@ -179,6 +179,35 @@ public class PostServiceTest {
         CreatePostResponse createPostResponse = postService.createPost(createPostRequest);
         assertNotNull(createPostResponse);
         assertEquals(createPostRequest.getTitle(), createPostResponse.getTitle());
+    }
+
+    @Test
+    void when_get_post_uuid_invalid_should_throw_error(){
+        assertThrows(IllegalArgumentException.class, () -> {
+            postService.getPost("1");
+        });
+    }
+
+    @Test
+    void when_get_post_with_auth_and_post_not_found_should_throw_error(){
+        SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(user, null));
+        assertThrows(ResourceNotFoundException.class, () -> {
+            postService.getPost(UUID.randomUUID().toString());
+        });
+    }
+
+    @Test
+    void when_get_post_with_no_auth_and_post_not_found_should_throw_error(){
+        assertThrows(ResourceNotFoundException.class, () -> {
+            postService.getPost(UUID.randomUUID().toString());
+        });
+    }
+
+    @Test
+    void when_get_post_success_then_return_dto(){
+        when(postRepository.getPost(any(UUID.class), any())).thenReturn(new GetPostDTO());
+        GetPostDTO getPostDTO = postService.getPost(UUID.randomUUID().toString());
+        assertNotNull(getPostDTO);
     }
 
 }

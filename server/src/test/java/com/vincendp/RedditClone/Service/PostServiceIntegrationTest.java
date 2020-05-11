@@ -2,23 +2,23 @@ package com.vincendp.RedditClone.Service;
 
 import com.vincendp.RedditClone.Dto.CreatePostRequest;
 import com.vincendp.RedditClone.Dto.CreatePostResponse;
+import com.vincendp.RedditClone.Dto.GetPostDTO;
 import com.vincendp.RedditClone.Exception.ResourceNotFoundException;
-import com.vincendp.RedditClone.Model.Post;
-import com.vincendp.RedditClone.Model.PostType;
-import com.vincendp.RedditClone.Model.Subreddit;
-import com.vincendp.RedditClone.Model.User;
-import com.vincendp.RedditClone.Repository.PostRepository;
-import com.vincendp.RedditClone.Repository.PostTypeRepository;
-import com.vincendp.RedditClone.Repository.SubredditRepository;
-import com.vincendp.RedditClone.Repository.UserRepository;
+import com.vincendp.RedditClone.Model.*;
+import com.vincendp.RedditClone.Repository.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 
+import javax.annotation.PostConstruct;
 import java.util.Date;
 import java.util.NoSuchElementException;
 import java.util.UUID;
@@ -40,6 +40,9 @@ public class PostServiceIntegrationTest {
     private UserRepository userRepository;
 
     @Autowired
+    private UserAuthenticationRepository userAuthenticationRepository;
+
+    @Autowired
     private SubredditRepository subredditRepository;
 
     @Autowired
@@ -59,6 +62,9 @@ public class PostServiceIntegrationTest {
         user = new User(null, "bob", new Date());
         subredditRepository.save(subreddit);
         userRepository.save(user);
+
+        UserAuthentication userAuthentication = new UserAuthentication(user.getId(), "123456", user);
+        userAuthenticationRepository.save(userAuthentication);
 
         PostType postType = postTypeRepository.findById(PostType.Type.TEXT.getValue()).get();
         createPostRequest = new CreatePostRequest("title", "description",
@@ -189,6 +195,26 @@ public class PostServiceIntegrationTest {
         assertEquals(subreddit.getId().toString(), createPostResponse.getSubreddit_id());
         assertEquals(user.getId().toString(), createPostResponse.getUser_id());
         assertEquals(post.getTitle(), createPostResponse.getTitle());
+    }
+
+    @Test
+    @WithUserDetails("bob")
+    void when_auth_user_with_post_created_by_user_returns_dto(){
+        postRepository.save(post);
+        GetPostDTO getPostDTO = postService.getPost(post.getId().toString());
+        assertNotNull(getPostDTO);
+        assertEquals(getPostDTO.getTitle(), post.getTitle());
+        assertTrue(getPostDTO.getUser_voted_for_post());
+    }
+
+    @Test
+    void when_auth_user_with_post_not_created_by_user_returns_dto(){
+
+    }
+
+    @Test
+    void when_no_auth_user_returns_dto(){
+
     }
 
 }

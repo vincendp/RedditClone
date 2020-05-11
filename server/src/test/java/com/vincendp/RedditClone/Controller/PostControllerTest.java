@@ -3,6 +3,7 @@ package com.vincendp.RedditClone.Controller;
 import com.vincendp.RedditClone.Config.TestSecurityConfiguration;
 import com.vincendp.RedditClone.Dto.CreatePostRequest;
 import com.vincendp.RedditClone.Dto.CreatePostResponse;
+import com.vincendp.RedditClone.Dto.GetPostDTO;
 import com.vincendp.RedditClone.Model.PostType;
 import com.vincendp.RedditClone.Service.PostService;
 import org.junit.jupiter.api.BeforeEach;
@@ -198,5 +199,22 @@ public class PostControllerTest {
                 .params(params))
                 .andExpect(status().isOk())
                 .andExpect(content().string(Matchers.containsString("Success: Created post")));
+    }
+
+    @Test
+    void when_get_post_service_throws_error_should_throw_error(){
+        when(postService.getPost(anyString())).thenThrow(RuntimeException.class);
+
+        assertThatThrownBy(() -> {
+            mockMvc.perform(get("/posts/{post_id}", UUID.randomUUID().toString()));
+        }).hasCauseInstanceOf(RuntimeException.class);
+    }
+
+    @Test
+    void when_get_post_success_should_return_response_ok() throws Exception{
+        when(postService.getPost(anyString())).thenReturn(new GetPostDTO());
+        mockMvc.perform(get("/posts/{post_id}", UUID.randomUUID().toString()))
+                .andExpect(status().isOk())
+                .andExpect(content().string(Matchers.containsString("Success: Got post")));
     }
 }

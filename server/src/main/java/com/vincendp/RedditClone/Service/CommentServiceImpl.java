@@ -2,16 +2,20 @@ package com.vincendp.RedditClone.Service;
 
 import com.vincendp.RedditClone.Dto.CreateCommentRequest;
 import com.vincendp.RedditClone.Dto.CreateCommentResponse;
+import com.vincendp.RedditClone.Dto.GetCommentDTO;
 import com.vincendp.RedditClone.Exception.ResourceNotFoundException;
 import com.vincendp.RedditClone.Model.Comment;
+import com.vincendp.RedditClone.Model.CustomUserDetails;
 import com.vincendp.RedditClone.Model.Post;
 import com.vincendp.RedditClone.Model.User;
 import com.vincendp.RedditClone.Repository.CommentRepository;
 import com.vincendp.RedditClone.Repository.PostRepository;
 import com.vincendp.RedditClone.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -29,6 +33,49 @@ public class CommentServiceImpl implements CommentService{
         this.commentRepository = commentRepository;
         this.postRepository = postRepository;
         this.userRepository = userRepository;
+    }
+
+    @Override
+    public List<GetCommentDTO> getCommentsFromPost(String post_id) {
+        Post post = null;
+        UUID post_uuid = null;
+
+        try{
+            post_uuid = UUID.fromString(post_id);
+            post = postRepository.getById(post_uuid);
+        }
+        catch(IllegalArgumentException e){
+            throw new IllegalArgumentException("Error: Invalid post");
+        }
+
+        if(post == null){
+            throw new ResourceNotFoundException("Error: Post not found");
+        }
+
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        CustomUserDetails userDetails = null;
+        if(principal instanceof CustomUserDetails){
+            userDetails = (CustomUserDetails) principal;
+        }
+
+        List<GetCommentDTO> dtos;
+
+        if(userDetails != null && userDetails.getId() != null){
+            dtos = commentRepository.getCommentsFromPost(post_uuid, userDetails.getId());
+        }
+        else{
+            dtos = commentRepository.getCommentsFromPost(post_uuid, null);
+        }
+
+        System.out.println(dtos);
+        System.out.println(dtos.size());
+        for(GetCommentDTO dto: dtos){
+            System.out.println(dto.getComment());
+            System.out.println(dto.getVotes());
+            System.out.println(dto.getUser_voted_for_comment());
+        }
+
+        return dtos;
     }
 
     @Override
