@@ -67,14 +67,6 @@ public class CommentServiceImpl implements CommentService{
             dtos = commentRepository.getCommentsFromPost(post_uuid, null);
         }
 
-        System.out.println(dtos);
-        System.out.println(dtos.size());
-        for(GetCommentDTO dto: dtos){
-            System.out.println(dto.getComment());
-            System.out.println(dto.getVotes());
-            System.out.println(dto.getUser_voted_for_comment());
-        }
-
         return dtos;
     }
 

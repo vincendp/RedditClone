@@ -54,22 +54,15 @@ public class PostServiceImpl implements PostService{
 
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         CustomUserDetails userDetails = null;
-        System.out.println(principal);
         if(principal instanceof CustomUserDetails){
             userDetails = (CustomUserDetails) principal;
         }
-        else{
-            System.out.println("%%%%%%%%%%");
-        }
-
         GetPostDTO getPostDTO;
 
         if(userDetails != null && userDetails.getId() != null){
-            System.out.println(userDetails.getId());
             getPostDTO = postRepository.getPost(post_uuid, userDetails.getId());
         }
         else{
-            System.out.println("hi@@@@@@@@");
             getPostDTO = postRepository.getPost(post_uuid, null);
         }
         if(getPostDTO == null){

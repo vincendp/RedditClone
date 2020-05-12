@@ -13,17 +13,15 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 
-import javax.annotation.PostConstruct;
 import java.util.Date;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @TestPropertySource(locations="classpath:application-test.properties")
@@ -48,31 +46,47 @@ public class PostServiceIntegrationTest {
     @Autowired
     private PostTypeRepository postTypeRepository;
 
+    @Autowired
+    private VotePostRepository votePostRepository;
+
     private CreatePostRequest createPostRequest;
 
     private Subreddit subreddit;
 
-    private User user;
+    private User[] users;
 
     private Post post;
 
+    private UserAuthentication userAuthentication;
+
     @BeforeEach
     void setup(){
+        users = new User[6];
         subreddit = new Subreddit(null, "subreddit", new Date());
-        user = new User(null, "bob", new Date());
         subredditRepository.save(subreddit);
-        userRepository.save(user);
+        users[0] = userRepository.save(new User(null, "bob", new Date()));
+        users[1] = userRepository.save(new User(null, "bob2", new Date()));
+        users[2] = userRepository.save(new User(null, "bob3", new Date()));
+        users[3] = userRepository.save(new User(null, "bob4", new Date()));
+        users[4] = userRepository.save(new User(null, "bob5", new Date()));
+        users[5] = userRepository.save(new User(null, "bob6", new Date()));
 
-        UserAuthentication userAuthentication = new UserAuthentication(user.getId(), "123456", user);
-        userAuthenticationRepository.save(userAuthentication);
+        userAuthentication = userAuthenticationRepository.save(new UserAuthentication(users[0].getId(), "123456", users[0]));
 
         PostType postType = postTypeRepository.findById(PostType.Type.TEXT.getValue()).get();
         createPostRequest = new CreatePostRequest("title", "description",
                 "https://www.google.com",
                 new MockMultipartFile("image", "image1.jpeg", "image/jpeg", "image1".getBytes()),
-                user.getId().toString(), subreddit.getId().toString(), PostType.Type.TEXT.getValue());
+                users[0].getId().toString(), subreddit.getId().toString(), PostType.Type.TEXT.getValue());
 
-        post = new Post(null, "title", new Date(), user, subreddit, postType);
+        post = new Post(null, "title", new Date(), users[0], subreddit, postType);
+
+        postRepository.save(post);
+        votePostRepository.save(new VotePost(new VotePostId(users[0], post), true));
+        votePostRepository.save(new VotePost(new VotePostId(users[1], post), true));
+        votePostRepository.save(new VotePost(new VotePostId(users[2], post), false));
+        votePostRepository.save(new VotePost(new VotePostId(users[3], post), true));
+        votePostRepository.save(new VotePost(new VotePostId(users[4], post), true));
     }
 
     @Test
@@ -147,7 +161,7 @@ public class PostServiceIntegrationTest {
         assertNotNull(createPostResponse);
         assertNotNull(createPostResponse.getId());
         assertEquals(subreddit.getId().toString(), createPostResponse.getSubreddit_id());
-        assertEquals(user.getId().toString(), createPostResponse.getUser_id());
+        assertEquals(users[0].getId().toString(), createPostResponse.getUser_id());
         assertEquals(post.getTitle(), createPostResponse.getTitle());
     }
 
@@ -159,7 +173,7 @@ public class PostServiceIntegrationTest {
         assertNotNull(createPostResponse);
         assertNotNull(createPostResponse.getId());
         assertEquals(subreddit.getId().toString(), createPostResponse.getSubreddit_id());
-        assertEquals(user.getId().toString(), createPostResponse.getUser_id());
+        assertEquals(users[0].getId().toString(), createPostResponse.getUser_id());
         assertEquals(post.getTitle(), createPostResponse.getTitle());
 
         createPostRequest.setImage(
@@ -170,7 +184,7 @@ public class PostServiceIntegrationTest {
         assertNotNull(createPostResponse);
         assertNotNull(createPostResponse.getId());
         assertEquals(subreddit.getId().toString(), createPostResponse.getSubreddit_id());
-        assertEquals(user.getId().toString(), createPostResponse.getUser_id());
+        assertEquals(users[0].getId().toString(), createPostResponse.getUser_id());
         assertEquals(post.getTitle(), createPostResponse.getTitle());
 
         createPostRequest.setImage(
@@ -181,7 +195,7 @@ public class PostServiceIntegrationTest {
         assertNotNull(createPostResponse);
         assertNotNull(createPostResponse.getId());
         assertEquals(subreddit.getId().toString(), createPostResponse.getSubreddit_id());
-        assertEquals(user.getId().toString(), createPostResponse.getUser_id());
+        assertEquals(users[0].getId().toString(), createPostResponse.getUser_id());
         assertEquals(post.getTitle(), createPostResponse.getTitle());
     }
 
@@ -193,28 +207,48 @@ public class PostServiceIntegrationTest {
         assertNotNull(createPostResponse);
         assertNotNull(createPostResponse.getId());
         assertEquals(subreddit.getId().toString(), createPostResponse.getSubreddit_id());
-        assertEquals(user.getId().toString(), createPostResponse.getUser_id());
+        assertEquals(users[0].getId().toString(), createPostResponse.getUser_id());
         assertEquals(post.getTitle(), createPostResponse.getTitle());
     }
 
     @Test
-    @WithUserDetails("bob")
+    void when_post_not_found_throws_error(){
+        assertThrows(ResourceNotFoundException.class, () -> {
+            postService.getPost(UUID.randomUUID().toString());
+        });
+    }
+
+    @Test
     void when_auth_user_with_post_created_by_user_returns_dto(){
-        postRepository.save(post);
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken(new CustomUserDetails(users[0], userAuthentication)
+                , null));
         GetPostDTO getPostDTO = postService.getPost(post.getId().toString());
         assertNotNull(getPostDTO);
         assertEquals(getPostDTO.getTitle(), post.getTitle());
         assertTrue(getPostDTO.getUser_voted_for_post());
+        assertEquals(3, getPostDTO.getVotes());
     }
 
     @Test
     void when_auth_user_with_post_not_created_by_user_returns_dto(){
-
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken(new CustomUserDetails(users[5], userAuthentication)
+                        , null));
+        GetPostDTO getPostDTO = postService.getPost(post.getId().toString());
+        assertNotNull(getPostDTO);
+        assertEquals(getPostDTO.getTitle(), post.getTitle());
+        assertFalse(getPostDTO.getUser_voted_for_post());
+        assertEquals(3, getPostDTO.getVotes());
     }
 
     @Test
     void when_no_auth_user_returns_dto(){
-
+        when(SecurityContextHolder.getContext().getAuthentication().getPrincipal()).thenReturn(null);
+        GetPostDTO getPostDTO = postService.getPost(post.getId().toString());
+        assertNotNull(getPostDTO);
+        assertEquals(getPostDTO.getTitle(), post.getTitle());
+        assertFalse(getPostDTO.getUser_voted_for_post());
+        assertEquals(3, getPostDTO.getVotes());
     }
-
 }

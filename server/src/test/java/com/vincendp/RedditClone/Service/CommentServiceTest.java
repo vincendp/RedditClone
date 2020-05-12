@@ -2,6 +2,7 @@ package com.vincendp.RedditClone.Service;
 
 import com.vincendp.RedditClone.Dto.CreateCommentRequest;
 import com.vincendp.RedditClone.Dto.CreateCommentResponse;
+import com.vincendp.RedditClone.Dto.GetCommentDTO;
 import com.vincendp.RedditClone.Exception.ResourceNotFoundException;
 import com.vincendp.RedditClone.Model.*;
 import com.vincendp.RedditClone.Repository.CommentRepository;
@@ -13,9 +14,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 
-import java.util.Date;
-import java.util.UUID;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -51,7 +53,6 @@ public class CommentServiceTest {
         post = new Post(UUID.randomUUID(), "title", new Date(), user, subreddit,
                 new PostType(PostType.Type.TEXT.getValue(), PostType.Type.TEXT.toString()));
         createCommentRequest = new CreateCommentRequest("Comment", user.getId().toString(), post.getId().toString());
-
     }
 
     @Test
@@ -111,5 +112,38 @@ public class CommentServiceTest {
 
         assertNotNull(createCommentResponse);
         assertEquals(createCommentResponse.getComment(), createCommentRequest.getComment());
+    }
+
+    @Test
+    void when_get_comment_invalid_post_id_then_throw_error(){
+        assertThrows(IllegalArgumentException.class, () -> {
+           commentService.getCommentsFromPost("1");
+        });
+    }
+
+    @Test
+    void when_get_comment_post_not_found_throws_error(){
+        assertThrows(ResourceNotFoundException.class, () -> {
+            commentService.getCommentsFromPost(UUID.randomUUID().toString());
+        });
+    }
+
+    @Test
+    void when_get_comment_with_auth_success_then_returns_dtos(){
+        when(postRepository.getById(any(UUID.class))).thenReturn(post);
+        SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(user, null));
+        when(commentRepository.getCommentsFromPost(any(UUID.class), any())).thenReturn(
+                new ArrayList<>(Arrays.asList(new GetCommentDTO())));
+        List<GetCommentDTO> dtos = commentService.getCommentsFromPost(UUID.randomUUID().toString());
+        assertNotNull(dtos);
+    }
+
+    @Test
+    void when_get_comment_with_no_auth_success_then_returns_dtos(){
+        when(postRepository.getById(any(UUID.class))).thenReturn(post);
+        when(commentRepository.getCommentsFromPost(any(UUID.class), any())).thenReturn(
+                new ArrayList<>(Arrays.asList(new GetCommentDTO())));
+        List<GetCommentDTO> dtos = commentService.getCommentsFromPost(UUID.randomUUID().toString());
+        assertNotNull(dtos);
     }
 }

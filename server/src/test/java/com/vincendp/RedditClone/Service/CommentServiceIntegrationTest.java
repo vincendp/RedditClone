@@ -3,14 +3,8 @@ package com.vincendp.RedditClone.Service;
 import com.vincendp.RedditClone.Dto.CreateCommentRequest;
 import com.vincendp.RedditClone.Dto.CreateCommentResponse;
 import com.vincendp.RedditClone.Exception.ResourceNotFoundException;
-import com.vincendp.RedditClone.Model.Post;
-import com.vincendp.RedditClone.Model.PostType;
-import com.vincendp.RedditClone.Model.Subreddit;
-import com.vincendp.RedditClone.Model.User;
-import com.vincendp.RedditClone.Repository.CommentRepository;
-import com.vincendp.RedditClone.Repository.PostRepository;
-import com.vincendp.RedditClone.Repository.SubredditRepository;
-import com.vincendp.RedditClone.Repository.UserRepository;
+import com.vincendp.RedditClone.Model.*;
+import com.vincendp.RedditClone.Repository.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -45,29 +39,62 @@ public class CommentServiceIntegrationTest {
     @Autowired
     private SubredditRepository subredditRepository;
 
+    @Autowired
+    private VoteCommentRepository voteCommentRepository;
+
+    @Autowired
+    private UserAuthenticationRepository userAuthenticationRepository;
+
     private Subreddit subreddit;
 
-    private Post post;
+    private Post[] posts;
 
-    private User user;
+    private User[] users;
+
+    private Comment[] comments;
 
     private CreateCommentRequest createCommentRequest;
 
+    private UserAuthentication userAuthentication;
+
     @BeforeEach
     void init(){
-        user = new User(null, "bob", null);
-        subreddit = new Subreddit(null, "subreddit", null);
+        users = new User[6];
+        users[0] = userRepository.save(new User(null, "bob1", null));
+        users[1] = userRepository.save(new User(null, "bob2", null));
+        users[2] = userRepository.save(new User(null, "bob3", null));
+        users[3] = userRepository.save(new User(null, "bob4", null));
+        users[4] = userRepository.save(new User(null, "bob5", null));
+        users[5] = userRepository.save(new User(null, "bob6", null));
 
-        userRepository.save(user);
-        subredditRepository.save(subreddit);
+        subreddit = subredditRepository.save(new Subreddit(null, "subreddit", null));
 
-        post = new Post(null, "title", null, user, subreddit,
-                new PostType(PostType.Type.TEXT.getValue(), PostType.Type.TEXT.toString()));
+        userAuthentication = userAuthenticationRepository.save(new UserAuthentication(users[0].getId(), "123456", users[0]));
 
-        postRepository.save(post);
+        posts = new Post[2];
+        posts[0] = postRepository.save(new Post(null, "title1", null, users[0], subreddit,
+                new PostType(PostType.Type.TEXT.getValue(), PostType.Type.TEXT.toString())));
+        posts[1] = postRepository.save(new Post(null, "title2", null, users[0], subreddit,
+                new PostType(PostType.Type.TEXT.getValue(), PostType.Type.TEXT.toString())));
+
+        comments = new Comment[2];
+        comments[0] = commentRepository.save(new Comment(null, "comment1", false, new Date(), users[0], posts[0]));
+        comments[1] = commentRepository.save(new Comment(null, "comment2", false, new Date(), users[1], posts[0]));
+
+        voteCommentRepository.save(new VoteComment(new VoteCommentId(users[0], comments[0]), true));
+        voteCommentRepository.save(new VoteComment(new VoteCommentId(users[1], comments[0]), false));
+        voteCommentRepository.save(new VoteComment(new VoteCommentId(users[2], comments[0]), true));
+        voteCommentRepository.save(new VoteComment(new VoteCommentId(users[3], comments[0]), true));
+        voteCommentRepository.save(new VoteComment(new VoteCommentId(users[4], comments[0]), true));
+
+        voteCommentRepository.save(new VoteComment(new VoteCommentId(users[1], comments[1]), false));
+        voteCommentRepository.save(new VoteComment(new VoteCommentId(users[2], comments[1]), false));
+        voteCommentRepository.save(new VoteComment(new VoteCommentId(users[3], comments[1]), false));
+        voteCommentRepository.save(new VoteComment(new VoteCommentId(users[4], comments[1]), true));
+        voteCommentRepository.save(new VoteComment(new VoteCommentId(users[5], comments[1]), false));
 
         createCommentRequest = new CreateCommentRequest("Comment"
-                , user.getId().toString(), post.getId().toString());
+                , users[0].getId().toString(), posts[0].getId().toString());
     }
 
     @Test
@@ -96,4 +123,13 @@ public class CommentServiceIntegrationTest {
         assertNotNull(createCommentResponse.getId());
         assertEquals(createCommentResponse.getComment(), createCommentRequest.getComment());
     }
+
+    @Test
+    void when_post_not_found_throws_error(){
+        assertThrows(ResourceNotFoundException.class, () -> {
+            commentService.getCommentsFromPost(UUID.randomUUID().toString());
+        });
+    }
+
+
 }

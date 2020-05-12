@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vincendp.RedditClone.Config.TestSecurityConfiguration;
 import com.vincendp.RedditClone.Dto.CreateCommentRequest;
 import com.vincendp.RedditClone.Dto.CreateCommentResponse;
+import com.vincendp.RedditClone.Dto.GetCommentDTO;
 import com.vincendp.RedditClone.Service.CommentService;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,6 +17,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.UUID;
 
@@ -108,5 +111,25 @@ public class CommentControllerTest {
                 .content(json))
                 .andExpect(status().isOk())
                 .andExpect(content().string(Matchers.containsString("Success: Created comment")));
+    }
+
+    @Test
+    void when_get_comment_service_throws_error_should_throw_error(){
+        when(commentService.getCommentsFromPost(anyString())).thenThrow(RuntimeException.class);
+        assertThatThrownBy(() -> {
+            mockMvc.perform(get("/comments/posts/{post_id}", UUID.randomUUID().toString())
+                    .header("Content-Type", "application/json"));
+        }).hasCauseInstanceOf(RuntimeException.class);
+    }
+
+    @Test
+    void when_get_comment_service_success_returns_response_ok() throws Exception{
+        when(commentService.getCommentsFromPost(anyString())).thenReturn(
+                new ArrayList<>(Arrays.asList(new GetCommentDTO())));
+
+        mockMvc.perform(get("/comments/posts/{post_id}", UUID.randomUUID().toString())
+                .header("Content-Type", "application/json"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(Matchers.containsString("Success: Got comments")));
     }
 }

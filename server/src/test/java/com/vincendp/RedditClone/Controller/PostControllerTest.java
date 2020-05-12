@@ -204,16 +204,17 @@ public class PostControllerTest {
     @Test
     void when_get_post_service_throws_error_should_throw_error(){
         when(postService.getPost(anyString())).thenThrow(RuntimeException.class);
-
         assertThatThrownBy(() -> {
-            mockMvc.perform(get("/posts/{post_id}", UUID.randomUUID().toString()));
+            mockMvc.perform(get("/posts/{post_id}", UUID.randomUUID().toString())
+                    .header("Content-Type", "application/json"));
         }).hasCauseInstanceOf(RuntimeException.class);
     }
 
     @Test
     void when_get_post_success_should_return_response_ok() throws Exception{
         when(postService.getPost(anyString())).thenReturn(new GetPostDTO());
-        mockMvc.perform(get("/posts/{post_id}", UUID.randomUUID().toString()))
+        mockMvc.perform(get("/posts/{post_id}", UUID.randomUUID().toString())
+                .header("Content-Type", "application/json"))
                 .andExpect(status().isOk())
                 .andExpect(content().string(Matchers.containsString("Success: Got post")));
     }

@@ -23,7 +23,7 @@ public interface CommentRepository extends CrudRepository<Comment, UUID> {
     "INNER JOIN User u ON (u.id = c.user.id) " +
     "LEFT JOIN VoteComment vc ON (vc.voteCommentId.comment.id = c.id) " +
     "WHERE c.post.id = :post_id " +
-    "GROUP BY c.id, vc.vote")
+    "GROUP BY c.id")
     List<GetCommentDTO> getCommentsFromPost(UUID post_id, UUID user_id);
 
 }

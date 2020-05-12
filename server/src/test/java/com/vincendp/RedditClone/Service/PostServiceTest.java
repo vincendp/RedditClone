@@ -198,6 +198,7 @@ public class PostServiceTest {
 
     @Test
     void when_get_post_with_no_auth_and_post_not_found_should_throw_error(){
+        when(SecurityContextHolder.getContext().getAuthentication().getPrincipal()).thenReturn(null);
         assertThrows(ResourceNotFoundException.class, () -> {
             postService.getPost(UUID.randomUUID().toString());
         });

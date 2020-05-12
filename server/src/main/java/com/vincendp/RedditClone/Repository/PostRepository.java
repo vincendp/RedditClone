@@ -22,7 +22,7 @@ public interface PostRepository extends CrudRepository<Post, UUID> {
     "INNER JOIN Subreddit s ON (s.id = p.subreddit.id) " +
     "LEFT JOIN VotePost vp ON (p.id = vp.votePostId.post.id) " +
     "WHERE p.id = :post_id " +
-    "GROUP BY p.id, vp.vote"
+    "GROUP BY p.id"
     )
     GetPostDTO getPost(UUID post_id, UUID user_id);
 
