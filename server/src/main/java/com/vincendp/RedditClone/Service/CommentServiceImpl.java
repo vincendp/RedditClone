@@ -12,6 +12,7 @@ import com.vincendp.RedditClone.Repository.CommentRepository;
 import com.vincendp.RedditClone.Repository.PostRepository;
 import com.vincendp.RedditClone.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -52,8 +53,13 @@ public class CommentServiceImpl implements CommentService{
             throw new ResourceNotFoundException("Error: Post not found");
         }
 
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Object principal = null;
         CustomUserDetails userDetails = null;
+
+        if(authentication != null) {
+            principal = authentication.getPrincipal();
+        }
         if(principal instanceof CustomUserDetails){
             userDetails = (CustomUserDetails) principal;
         }

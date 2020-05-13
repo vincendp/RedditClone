@@ -2,6 +2,7 @@ package com.vincendp.RedditClone.Service;
 
 import com.vincendp.RedditClone.Dto.CreateCommentRequest;
 import com.vincendp.RedditClone.Dto.CreateCommentResponse;
+import com.vincendp.RedditClone.Dto.GetCommentDTO;
 import com.vincendp.RedditClone.Exception.ResourceNotFoundException;
 import com.vincendp.RedditClone.Model.*;
 import com.vincendp.RedditClone.Repository.*;
@@ -11,13 +12,18 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 
+import javax.transaction.Transactional;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @TestPropertySource(locations="classpath:application-test.properties")
@@ -131,5 +137,71 @@ public class CommentServiceIntegrationTest {
         });
     }
 
+    @Test
+    void when_get_comments_with_auth_returns_dtos(){
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken(
+                new CustomUserDetails(users[0], userAuthentication), null)
+        );
+        List<GetCommentDTO> dtos1 = commentService.getCommentsFromPost(posts[0].getId().toString());
+        assertNotNull(dtos1);
+
+        GetCommentDTO comment1;
+        GetCommentDTO comment2;
+        if(dtos1.get(0).getComment().equals("comment1")){
+            comment1 = dtos1.get(0);
+            comment2 = dtos1.get(1);
+        }
+        else{
+            comment1 = dtos1.get(1);
+            comment2 = dtos1.get(0);
+        }
+
+        assertNotNull(comment1);
+        assertNotNull(comment1.getComment());
+        assertEquals(users[0].getId().toString(), comment1.getUser_id());
+        assertEquals(3, comment1.getVotes());
+        assertTrue(comment1.getUser_voted_for_comment());
+
+        assertNotNull(comment2);
+        assertNotNull(comment2.getComment());
+        assertNotEquals(users[0].getId().toString(), comment2.getUser_id());
+        assertEquals(-3, comment2.getVotes());
+        assertFalse(comment2.getUser_voted_for_comment());
+
+        List<GetCommentDTO> dtos2 = commentService.getCommentsFromPost(posts[1].getId().toString());
+        assertNotNull(dtos2);
+        assertTrue(dtos2.isEmpty());
+    }
+
+    @Test
+    void when_get_comments_without_auth_returns_dtos(){
+        List<GetCommentDTO> dtos1 = commentService.getCommentsFromPost(posts[0].getId().toString());
+        assertNotNull(dtos1);
+        GetCommentDTO comment1;
+        GetCommentDTO comment2;
+        if(dtos1.get(0).getComment().equals("comment1")){
+            comment1 = dtos1.get(0);
+            comment2 = dtos1.get(1);
+        }
+        else{
+            comment1 = dtos1.get(1);
+            comment2 = dtos1.get(0);
+        }
+
+        assertNotNull(comment1);
+        assertNotNull(comment1.getComment());
+        assertEquals(3, comment1.getVotes());
+        assertFalse(comment1.getUser_voted_for_comment());
+
+        assertNotNull(comment2);
+        assertNotNull(comment2.getComment());
+        assertEquals(-3, comment2.getVotes());
+        assertFalse(comment2.getUser_voted_for_comment());
+
+        List<GetCommentDTO> dtos2 = commentService.getCommentsFromPost(posts[1].getId().toString());
+        assertNotNull(dtos2);
+        assertTrue(dtos2.isEmpty());
+    }
 
 }

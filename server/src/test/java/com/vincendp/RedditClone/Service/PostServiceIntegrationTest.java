@@ -21,7 +21,6 @@ import java.util.NoSuchElementException;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @TestPropertySource(locations="classpath:application-test.properties")
@@ -213,6 +212,9 @@ public class PostServiceIntegrationTest {
 
     @Test
     void when_post_not_found_throws_error(){
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken(new CustomUserDetails(users[0], userAuthentication)
+                        , null));
         assertThrows(ResourceNotFoundException.class, () -> {
             postService.getPost(UUID.randomUUID().toString());
         });
@@ -244,7 +246,6 @@ public class PostServiceIntegrationTest {
 
     @Test
     void when_no_auth_user_returns_dto(){
-        when(SecurityContextHolder.getContext().getAuthentication().getPrincipal()).thenReturn(null);
         GetPostDTO getPostDTO = postService.getPost(post.getId().toString());
         assertNotNull(getPostDTO);
         assertEquals(getPostDTO.getTitle(), post.getTitle());
