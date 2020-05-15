@@ -28,9 +28,17 @@ const routes: Routes = [
       import("./Modules/Subreddit/subreddit.module").then((m) => m.SubredditModule),
   },
   {
-    path: "r/:subreddit/:post_id",
+    path: "r/:subreddit/:postId",
     loadChildren: () =>
       import("./Modules/Post/post.module").then((m) => m.PostModule),
+  },
+  {
+    path: "error",
+    loadChildren: () =>
+      import("./Modules/Error/error.module").then((m) => m.ErrorModule),
+  },
+  {
+    path: "**", redirectTo: "/error/not-found"
   }
 ];
 

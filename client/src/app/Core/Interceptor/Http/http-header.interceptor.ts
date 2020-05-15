@@ -4,8 +4,10 @@ import {
   HttpHandler,
   HttpEvent,
   HttpInterceptor,
+  HttpErrorResponse,
 } from "@angular/common/http";
-import { Observable } from "rxjs";
+import { Observable, throwError } from "rxjs";
+import { catchError } from "rxjs/operators";
 
 @Injectable()
 export class HttpHeaderInterceptor implements HttpInterceptor {
@@ -26,6 +28,18 @@ export class HttpHeaderInterceptor implements HttpInterceptor {
 
     console.log(req);
 
-    return next.handle(req);
+    return next.handle(req).pipe(
+      catchError((error: HttpErrorResponse) => {
+        let message = "";
+        if (error.error instanceof ErrorEvent) {
+          message = "Error client: " + error.error.message;
+        } else {
+          message = "Error server: " + error.status + "    " + error.message;
+        }
+
+        alert(message);
+        return throwError(message);
+      })
+    );
   }
 }

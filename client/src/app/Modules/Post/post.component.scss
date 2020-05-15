@@ -52,6 +52,14 @@
       background-color: $color-grey-lighter;
       cursor: not-allowed;
     }
+
+    &--user-upvoted {
+      color: $color-primary-complementary-1;
+    }
+
+    &--user-downvoted {
+      color: $color-primary-complementary-2;
+    }
   }
 
   &__vote-number {
@@ -193,10 +201,6 @@
     }
 
     &__details__user {
-    }
-
-    &__details__points {
-      color: $color-grey-darker;
     }
 
     &__details__time {
