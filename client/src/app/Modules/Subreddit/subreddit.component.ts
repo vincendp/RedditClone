@@ -64,7 +64,9 @@ export class SubredditComponent implements OnInit, OnDestroy {
 
     this.apiService.postFormData("/posts", formData, options).subscribe(
       (data) => {
-        console.log(data);
+        this.router.navigate([`${data.result.id}`], {
+          relativeTo: this.route,
+        });
       },
       (err) => {
         console.log(err);

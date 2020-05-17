@@ -30,7 +30,12 @@ export class ApiService {
     return this.http.post(`${environment.apiUrl}${path}`, body, options).pipe();
   }
 
-  delete(path: string, options: {}): Observable<any> {
-    return this.http.delete(`${environment.apiUrl}${path}`, options).pipe();
+  delete(path: string, body: {}, options: {}): Observable<any> {
+    return this.http
+      .request("delete", `${environment.apiUrl}${path}`, {
+        body: { ...body },
+        ...options,
+      })
+      .pipe();
   }
 }

@@ -12,6 +12,6 @@ export interface Post {
   subreddit: string;
   user_id: string;
   username: string;
-  user_voted_for_post: Boolean;
+  user_voted_for_post: number;
   votes: number;
 }

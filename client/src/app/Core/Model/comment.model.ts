@@ -5,5 +5,5 @@ export interface Comment {
   user_id: string;
   username: string;
   votes: number;
-  user_voted_for_comment: Boolean;
+  user_voted_for_comment: number;
 }

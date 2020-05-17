@@ -37,6 +37,7 @@ export class HttpHeaderInterceptor implements HttpInterceptor {
           message = "Error server: " + error.status + "    " + error.message;
         }
 
+        console.log(error);
         alert(message);
         return throwError(message);
       })

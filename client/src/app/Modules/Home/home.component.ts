@@ -14,27 +14,4 @@ export class HomeComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {}
-
-  createPost() {
-    this.apiService
-      .post(
-        "/posts",
-        {
-          title: "Test Post",
-          description: "HELLO WOORLD",
-          link: "ASDAFAFAF",
-          user_id: "333",
-          subreddit_id: "333",
-        },
-        {}
-      )
-      .subscribe(
-        (data: {}) => {
-          console.log(data);
-        },
-        (err) => {
-          console.log(err);
-        }
-      );
-  }
 }

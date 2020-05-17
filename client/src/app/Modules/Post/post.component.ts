@@ -66,7 +66,6 @@ export class PostComponent implements OnInit, OnDestroy {
       .subscribe(
         (post) => {
           this.post = post["result"] as Post;
-          console.log(this.post);
 
           if (this.subreddit.id != this.post.subreddit_id) {
             this.router.navigateByUrl("/error/not-found");
@@ -94,21 +93,191 @@ export class PostComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {}
 
   submitComment(): void {
+    if (
+      this.commentForm.value &&
+      this.commentForm.value.length > 0 &&
+      this.user &&
+      this.user.id &&
+      this.post &&
+      this.post.post_id
+    ) {
+      this.apiService
+        .post(
+          "/comments",
+          {
+            comment: this.commentForm.value,
+            user_id: this.user.id,
+            post_id: this.post.post_id,
+          },
+          {}
+        )
+        .subscribe(
+          (data) => {
+            console.log(data);
+            window.location.reload();
+          },
+
+          (err) => {
+            console.log(err);
+          }
+        );
+    }
+  }
+
+  castVoteForPost(vote: boolean) {
+    if (this.post.user_voted_for_post != 0) {
+      if (
+        (this.post.user_voted_for_post == -1 && !vote) ||
+        (this.post.user_voted_for_post == 1 && vote)
+      ) {
+        this.deleteVoteForPost(vote);
+      } else {
+        this.updateVoteForPost(vote);
+      }
+    } else {
+      this.createVoteForPost(vote);
+    }
+  }
+
+  createVoteForPost(vote: boolean) {
     this.apiService
       .post(
-        "/comments",
+        "/votes/posts",
         {
-          comment: "hi",
-          user_id: "b37cc7f0-1f93-4c22-98dd-72c5d26bd342",
-          post_id: "af8c0603-af45-45ed-bc78-eebd88969c5f",
+          post_id: this.post.post_id,
+          user_id: this.user.id,
+          vote: vote,
         },
         {}
       )
       .subscribe(
-        (data) => {
-          console.log(data);
+        () => {
+          this.post.votes += vote ? 1 : -1;
+          this.post.user_voted_for_post = vote ? 1 : -1;
         },
+        (err) => {
+          console.log(err);
+        }
+      );
+  }
 
+  updateVoteForPost(vote: boolean) {
+    this.apiService
+      .put(
+        "/votes/posts",
+        {
+          post_id: this.post.post_id,
+          user_id: this.user.id,
+          vote: vote,
+        },
+        {}
+      )
+      .subscribe(
+        () => {
+          this.post.votes += vote ? 2 : -2;
+          this.post.user_voted_for_post = vote ? 1 : -1;
+        },
+        (err) => {
+          console.log(err);
+        }
+      );
+  }
+
+  deleteVoteForPost(vote: boolean) {
+    this.apiService
+      .delete(
+        "/votes/posts",
+        {
+          post_id: this.post.post_id,
+          user_id: this.user.id,
+        },
+        {}
+      )
+      .subscribe(
+        () => {
+          this.post.votes += vote ? -1 : 1;
+          this.post.user_voted_for_post = 0;
+        },
+        (err) => {
+          console.log(err);
+        }
+      );
+  }
+
+  castVoteForComment(comment: Comment, vote: boolean) {
+    if (comment.user_voted_for_comment != 0) {
+      if (
+        (comment.user_voted_for_comment == -1 && !vote) ||
+        (comment.user_voted_for_comment == 1 && vote)
+      ) {
+        this.deleteVoteForComment(comment, vote);
+      } else {
+        this.updateVoteForComment(comment, vote);
+      }
+    } else {
+      this.createVoteForComment(comment, vote);
+    }
+  }
+
+  createVoteForComment(comment: Comment, vote: boolean) {
+    this.apiService
+      .post(
+        "/votes/comments",
+        {
+          comment_id: comment.comment_id,
+          user_id: this.user.id,
+          vote: vote,
+        },
+        {}
+      )
+      .subscribe(
+        () => {
+          comment.votes += vote ? 1 : -1;
+          comment.user_voted_for_comment = vote ? 1 : -1;
+        },
+        (err) => {
+          console.log(err);
+        }
+      );
+  }
+
+  updateVoteForComment(comment: Comment, vote: boolean) {
+    this.apiService
+      .put(
+        "/votes/comments",
+        {
+          comment_id: comment.comment_id,
+          user_id: this.user.id,
+          vote: vote,
+        },
+        {}
+      )
+      .subscribe(
+        () => {
+          comment.votes += vote ? 2 : -2;
+          comment.user_voted_for_comment = vote ? 1 : -1;
+        },
+        (err) => {
+          console.log(err);
+        }
+      );
+  }
+
+  deleteVoteForComment(comment: Comment, vote: boolean) {
+    this.apiService
+      .delete(
+        "/votes/comments",
+        {
+          comment_id: comment.comment_id,
+          user_id: this.user.id,
+        },
+        {}
+      )
+      .subscribe(
+        () => {
+          comment.votes += vote ? -1 : 1;
+          comment.user_voted_for_comment = 0;
+        },
         (err) => {
           console.log(err);
         }

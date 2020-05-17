@@ -5,8 +5,9 @@
         <button
           class="post__post-icon post__post-icon--regular post__button"
           [ngClass]="{
-            'post__button--user-upvoted': post.user_voted_for_post == true
+            'post__button--user-upvoted': post.user_voted_for_post > 0
           }"
+          (click)="castVoteForPost(true)"
         >
           <app-svg-icon icon_name="icon-thumb_up_alt"> </app-svg-icon>
         </button>
@@ -16,8 +17,9 @@
         <button
           class="post__post-icon post__post-icon--regular post__button"
           [ngClass]="{
-            'post__button--user-downvoted': post.user_voted_for_post == false
+            'post__button--user-downvoted': post.user_voted_for_post < 0
           }"
+          (click)="castVoteForPost(false)"
         >
           <app-svg-icon icon_name="icon-thumb_down_alt"> </app-svg-icon>
         </button>
@@ -95,13 +97,25 @@
     <div class="post__comments">
       <div class="post__comment-container" *ngFor="let comment of comments">
         <div class="post__vote-container">
-          <button class="post__post-icon post__post-icon--small post__button">
+          <button
+            class="post__post-icon post__post-icon--small post__button"
+            [ngClass]="{
+              'post__button--user-upvoted': comment.user_voted_for_comment > 0
+            }"
+            (click)="castVoteForComment(comment, true)"
+          >
             <app-svg-icon icon_name="icon-thumb_up_alt"> </app-svg-icon>
           </button>
           <div class="post__vote-number">
             {{ comment.votes }}
           </div>
-          <button class="post__post-icon post__post-icon--small post__button">
+          <button
+            class="post__post-icon post__post-icon--small post__button"
+            [ngClass]="{
+              'post__button--user-upvoted': comment.user_voted_for_comment < 0
+            }"
+            (click)="castVoteForComment(comment, false)"
+          >
             <app-svg-icon icon_name="icon-thumb_down_alt"> </app-svg-icon>
           </button>
         </div>
