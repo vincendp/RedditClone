@@ -15,8 +15,9 @@ public interface PostRepository extends CrudRepository<Post, UUID> {
     "SELECT NEW com.vincendp.RedditClone.Dto.GetPostDTO(" +
     "p.id, p.title, p.description, p.link, p.image_path, p.created_at, p.postType.id, p.user.id, " +
     "p.subreddit.id, u.username, s.name," +
-    "SUM(CASE WHEN vp.vote IS NULL THEN 0 WHEN vp.vote = true THEN 1 WHEN vp.vote = false THEN -1 ELSE 0 END), " +
-    "SUM(CASE WHEN vp.votePostId.user.id = :user_id AND vp.vote = true THEN 1 ELSE 0 END)) " +
+    "SUM(CASE WHEN vp.vote = true THEN 1 WHEN vp.vote = false THEN -1 ELSE 0 END), " +
+    "SUM(CASE WHEN vp.votePostId.user.id = :user_id AND vp.vote = true THEN 1 " +
+    "WHEN vp.votePostId.user.id = :user_id AND vp.vote = false THEN -1 ELSE 0 END )) " +
     "FROM Post p " +
     "INNER JOIN User u ON (u.id = p.user.id) " +
     "INNER JOIN Subreddit s ON (s.id = p.subreddit.id) " +

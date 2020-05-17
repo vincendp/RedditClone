@@ -10,8 +10,8 @@ public class GetCommentDTO {
     Date created_at;
     String user_id;
     String username;
-    Integer votes;
-    Boolean user_voted_for_comment;
+    Long votes;
+    Long user_voted_for_comment;
 
     public GetCommentDTO() {
     }
@@ -22,8 +22,8 @@ public class GetCommentDTO {
         this.created_at = created_at;
         this.user_id = user_id.toString();
         this.username = username;
-        this.votes = votes.intValue();
-        this.user_voted_for_comment = user_voted_for_comment >= 1;
+        this.votes = votes;
+        this.user_voted_for_comment = user_voted_for_comment;
     }
 
     public String getComment_id() {
@@ -66,19 +66,19 @@ public class GetCommentDTO {
         this.username = username;
     }
 
-    public Integer getVotes() {
+    public Long getVotes() {
         return votes;
     }
 
-    public void setVotes(Integer votes) {
+    public void setVotes(Long votes) {
         this.votes = votes;
     }
 
-    public Boolean getUser_voted_for_comment() {
+    public Long getUser_voted_for_comment() {
         return user_voted_for_comment;
     }
 
-    public void setUser_voted_for_comment(Boolean user_voted_for_comment) {
+    public void setUser_voted_for_comment(Long user_voted_for_comment) {
         this.user_voted_for_comment = user_voted_for_comment;
     }
 }

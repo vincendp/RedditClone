@@ -17,8 +17,9 @@ public interface CommentRepository extends CrudRepository<Comment, UUID> {
     @Query(
     "SELECT NEW com.vincendp.RedditClone.Dto.GetCommentDTO(" +
     "c.id, c.comment, c.created_at, u.id, u.username, " +
-    "SUM(CASE WHEN vc.vote IS NULL THEN 0 WHEN vc.vote = true THEN 1 WHEN vc.vote = false THEN -1 ELSE 0 END), " +
-    "SUM(CASE WHEN vc.voteCommentId.user.id = :user_id AND vc.vote = true THEN 1 ELSE 0 END)) " +
+    "SUM(CASE WHEN vc.vote = true THEN 1 WHEN vc.vote = false THEN -1 ELSE 0 END), " +
+    "SUM(CASE WHEN vc.voteCommentId.user.id = :user_id AND vc.vote = true THEN 1 " +
+    "WHEN vc.voteCommentId.user.id = :user_id AND vc.vote = false THEN -1 ELSE 0 END)) " +
     "FROM Comment c " +
     "INNER JOIN User u ON (u.id = c.user.id) " +
     "LEFT JOIN VoteComment vc ON (vc.voteCommentId.comment.id = c.id) " +

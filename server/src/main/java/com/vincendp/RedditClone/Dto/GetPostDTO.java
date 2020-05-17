@@ -16,8 +16,8 @@ public class GetPostDTO{
     String subreddit_id;
     String username;
     String subreddit;
-    Integer votes;
-    Boolean user_voted_for_post;
+    Long votes;
+    Long user_voted_for_post;
 
     public GetPostDTO() {
     }
@@ -36,8 +36,8 @@ public class GetPostDTO{
         this.subreddit_id = subreddit_id.toString();
         this.username = username;
         this.subreddit = subreddit;
-        this.votes = votes.intValue();
-        this.user_voted_for_post = user_voted_for_post >= 1;
+        this.votes = votes;
+        this.user_voted_for_post = user_voted_for_post;
     }
 
     public String getPost_id() {
@@ -128,19 +128,19 @@ public class GetPostDTO{
         this.subreddit = subreddit;
     }
 
-    public Integer getVotes() {
+    public Long getVotes() {
         return votes;
     }
 
-    public void setVotes(Integer votes) {
+    public void setVotes(Long votes) {
         this.votes = votes;
     }
 
-    public Boolean getUser_voted_for_post() {
+    public Long getUser_voted_for_post() {
         return user_voted_for_post;
     }
 
-    public void setUser_voted_for_post(Boolean user_voted_for_post) {
+    public void setUser_voted_for_post(Long user_voted_for_post) {
         this.user_voted_for_post = user_voted_for_post;
     }
 }

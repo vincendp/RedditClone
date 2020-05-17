@@ -161,13 +161,13 @@ public class CommentServiceIntegrationTest {
         assertNotNull(comment1.getComment());
         assertEquals(users[0].getId().toString(), comment1.getUser_id());
         assertEquals(3, comment1.getVotes());
-        assertTrue(comment1.getUser_voted_for_comment());
+        assertTrue(comment1.getUser_voted_for_comment() > 0);
 
         assertNotNull(comment2);
         assertNotNull(comment2.getComment());
         assertNotEquals(users[0].getId().toString(), comment2.getUser_id());
         assertEquals(-3, comment2.getVotes());
-        assertFalse(comment2.getUser_voted_for_comment());
+        assertFalse(comment2.getUser_voted_for_comment() > 0);
 
         List<GetCommentDTO> dtos2 = commentService.getCommentsFromPost(posts[1].getId().toString());
         assertNotNull(dtos2);
@@ -192,12 +192,12 @@ public class CommentServiceIntegrationTest {
         assertNotNull(comment1);
         assertNotNull(comment1.getComment());
         assertEquals(3, comment1.getVotes());
-        assertFalse(comment1.getUser_voted_for_comment());
+        assertTrue(comment1.getUser_voted_for_comment() == 0);
 
         assertNotNull(comment2);
         assertNotNull(comment2.getComment());
         assertEquals(-3, comment2.getVotes());
-        assertFalse(comment2.getUser_voted_for_comment());
+        assertTrue(comment2.getUser_voted_for_comment() == 0);
 
         List<GetCommentDTO> dtos2 = commentService.getCommentsFromPost(posts[1].getId().toString());
         assertNotNull(dtos2);

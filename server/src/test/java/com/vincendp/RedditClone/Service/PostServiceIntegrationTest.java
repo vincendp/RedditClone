@@ -228,7 +228,7 @@ public class PostServiceIntegrationTest {
         GetPostDTO getPostDTO = postService.getPost(post.getId().toString());
         assertNotNull(getPostDTO);
         assertEquals(getPostDTO.getTitle(), post.getTitle());
-        assertTrue(getPostDTO.getUser_voted_for_post());
+        assertTrue(getPostDTO.getUser_voted_for_post() > 0);
         assertEquals(3, getPostDTO.getVotes());
     }
 
@@ -240,7 +240,7 @@ public class PostServiceIntegrationTest {
         GetPostDTO getPostDTO = postService.getPost(post.getId().toString());
         assertNotNull(getPostDTO);
         assertEquals(getPostDTO.getTitle(), post.getTitle());
-        assertFalse(getPostDTO.getUser_voted_for_post());
+        assertTrue(getPostDTO.getUser_voted_for_post() == 0);
         assertEquals(3, getPostDTO.getVotes());
     }
 
@@ -249,7 +249,7 @@ public class PostServiceIntegrationTest {
         GetPostDTO getPostDTO = postService.getPost(post.getId().toString());
         assertNotNull(getPostDTO);
         assertEquals(getPostDTO.getTitle(), post.getTitle());
-        assertFalse(getPostDTO.getUser_voted_for_post());
+        assertTrue(getPostDTO.getUser_voted_for_post() == 0);
         assertEquals(3, getPostDTO.getVotes());
     }
 }
