@@ -3,6 +3,7 @@ package com.vincendp.RedditClone.Controller;
 import com.vincendp.RedditClone.Dto.CreatePostRequest;
 import com.vincendp.RedditClone.Dto.CreatePostResponse;
 import com.vincendp.RedditClone.Dto.GetPostDTO;
+import com.vincendp.RedditClone.Dto.GetPostPreviewDTO;
 import com.vincendp.RedditClone.Model.PostType;
 import com.vincendp.RedditClone.Service.PostService;
 import com.vincendp.RedditClone.Utility.SuccessResponse;
@@ -11,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.List;
 
 @RestController
 @RequestMapping("posts")
@@ -27,6 +29,12 @@ public class PostController {
     ResponseEntity getPost(@PathVariable String post_id){
         GetPostDTO getPostDTO = postService.getPost(post_id);
         return ResponseEntity.ok(new SuccessResponse(200, "Success: Got post", getPostDTO));
+    }
+
+    @GetMapping
+    ResponseEntity getAllPostPreviews(){
+        List<GetPostPreviewDTO> postPreviews = postService.getAllPostPreviews();
+        return ResponseEntity.ok(new SuccessResponse(200, "Success: Got post previews", postPreviews));
     }
 
     @PostMapping(consumes = { "multipart/form-data" })

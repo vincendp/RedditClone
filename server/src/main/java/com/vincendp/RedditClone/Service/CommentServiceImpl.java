@@ -11,9 +11,8 @@ import com.vincendp.RedditClone.Model.User;
 import com.vincendp.RedditClone.Repository.CommentRepository;
 import com.vincendp.RedditClone.Repository.PostRepository;
 import com.vincendp.RedditClone.Repository.UserRepository;
+import com.vincendp.RedditClone.Utility.SecurityContextUtility;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,12 +27,15 @@ public class CommentServiceImpl implements CommentService{
 
     private UserRepository userRepository;
 
+    private SecurityContextUtility securityContextUtility;
+
     @Autowired
     public CommentServiceImpl(CommentRepository commentRepository, PostRepository postRepository,
-                              UserRepository userRepository){
+                              UserRepository userRepository, SecurityContextUtility securityContextUtility){
         this.commentRepository = commentRepository;
         this.postRepository = postRepository;
         this.userRepository = userRepository;
+        this.securityContextUtility = securityContextUtility;
     }
 
     @Override
@@ -53,17 +55,7 @@ public class CommentServiceImpl implements CommentService{
             throw new ResourceNotFoundException("Error: Post not found");
         }
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Object principal = null;
-        CustomUserDetails userDetails = null;
-
-        if(authentication != null) {
-            principal = authentication.getPrincipal();
-        }
-        if(principal instanceof CustomUserDetails){
-            userDetails = (CustomUserDetails) principal;
-        }
-
+        CustomUserDetails userDetails = securityContextUtility.getUserDetailsFromSecurityContext();
         List<GetCommentDTO> dtos;
 
         if(userDetails != null && userDetails.getId() != null){

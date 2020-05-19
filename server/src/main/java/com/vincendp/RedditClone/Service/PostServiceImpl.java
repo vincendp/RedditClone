@@ -3,17 +3,19 @@ package com.vincendp.RedditClone.Service;
 import com.vincendp.RedditClone.Dto.CreatePostRequest;
 import com.vincendp.RedditClone.Dto.CreatePostResponse;
 import com.vincendp.RedditClone.Dto.GetPostDTO;
+import com.vincendp.RedditClone.Dto.GetPostPreviewDTO;
 import com.vincendp.RedditClone.Exception.ResourceNotFoundException;
 import com.vincendp.RedditClone.Model.*;
 import com.vincendp.RedditClone.Repository.PostRepository;
 import com.vincendp.RedditClone.Repository.PostTypeRepository;
 import com.vincendp.RedditClone.Repository.SubredditRepository;
 import com.vincendp.RedditClone.Repository.UserRepository;
+import com.vincendp.RedditClone.Utility.ProjectionUtility;
+import com.vincendp.RedditClone.Utility.SecurityContextUtility;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -29,18 +31,26 @@ public class PostServiceImpl implements PostService{
 
     private StorageService storageService;
 
+    private ProjectionUtility projectionUtility;
+
+    private SecurityContextUtility securityContextUtility;
+
 
     @Autowired
     public PostServiceImpl(PostRepository postRepository,
                            UserRepository userRepository,
                            SubredditRepository subredditRepository,
                            PostTypeRepository postTypeRepository,
-                           StorageService storageService){
+                           StorageService storageService,
+                           ProjectionUtility projectionUtility,
+                           SecurityContextUtility securityContextUtility){
         this.postRepository = postRepository;
         this.userRepository = userRepository;
         this.subredditRepository = subredditRepository;
         this.postTypeRepository = postTypeRepository;
         this.storageService = storageService;
+        this.projectionUtility = projectionUtility;
+        this.securityContextUtility = securityContextUtility;
     }
 
     @Override
@@ -53,16 +63,7 @@ public class PostServiceImpl implements PostService{
             throw new IllegalArgumentException("Error: Invalid post");
         }
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Object principal = null;
-        CustomUserDetails userDetails = null;
-
-        if(authentication != null) {
-            principal = authentication.getPrincipal();
-        }
-        if(principal instanceof CustomUserDetails){
-            userDetails = (CustomUserDetails) principal;
-        }
+        CustomUserDetails userDetails = securityContextUtility.getUserDetailsFromSecurityContext();
         GetPostDTO getPostDTO;
 
         if(userDetails != null && userDetails.getId() != null){
@@ -76,6 +77,72 @@ public class PostServiceImpl implements PostService{
         }
 
         return getPostDTO;
+    }
+
+    @Override
+    public List<GetPostPreviewDTO> getAllPostPreviews() {
+        CustomUserDetails userDetails = securityContextUtility.getUserDetailsFromSecurityContext();
+        List<Object[]> objects;
+        List<GetPostPreviewDTO> postPreviews;
+
+        if(userDetails != null && userDetails.getId() != null){
+            objects = postRepository.getAllPostPreviews(userDetails.getId());
+        }
+        else{
+            objects = postRepository.getAllPostPreviews(null);
+        }
+        postPreviews = projectionUtility.getPostPreviewDTO(objects);
+        return postPreviews;
+    }
+
+    @Override
+    public List<GetPostPreviewDTO> getAllPostPreviewsByUser(String user_id) {
+        UUID user_uuid = null;
+        try{
+            user_uuid = UUID.fromString(user_id);
+        }
+        catch(IllegalArgumentException e){
+            throw new IllegalArgumentException("Error: Invalid user");
+        }
+
+        CustomUserDetails userDetails = securityContextUtility.getUserDetailsFromSecurityContext();
+        List<Object[]> objects;
+        List<GetPostPreviewDTO> postPreviews;
+
+        if(userDetails != null && userDetails.getId() != null){
+            objects = postRepository.getAllPostPreviewsByUser(user_uuid, userDetails.getId());
+        }
+        else{
+            objects = postRepository.getAllPostPreviewsByUser(user_uuid,null);
+        }
+
+        postPreviews = projectionUtility.getPostPreviewDTO(objects);
+        return postPreviews;
+    }
+
+    @Override
+    public List<GetPostPreviewDTO> getAllPostPreviewsBySubreddit(String subreddit_id) {
+        UUID subreddit_uuid = null;
+        try{
+            subreddit_uuid = UUID.fromString(subreddit_id);
+        }
+        catch(IllegalArgumentException e){
+            throw new IllegalArgumentException("Error: Invalid subreddit");
+        }
+
+        CustomUserDetails userDetails = securityContextUtility.getUserDetailsFromSecurityContext();
+        List<Object[]> objects;
+        List<GetPostPreviewDTO> postPreviews;
+
+        if(userDetails != null && userDetails.getId() != null){
+            objects = postRepository.getAllPostPreviewsBySubreddit(subreddit_uuid, userDetails.getId());
+        }
+        else{
+            objects = postRepository.getAllPostPreviewsBySubreddit(subreddit_uuid,null);
+
+        }
+        postPreviews = projectionUtility.getPostPreviewDTO(objects);
+        return postPreviews;
     }
 
     @Override
