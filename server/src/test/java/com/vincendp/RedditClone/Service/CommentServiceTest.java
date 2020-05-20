@@ -8,6 +8,7 @@ import com.vincendp.RedditClone.Model.*;
 import com.vincendp.RedditClone.Repository.CommentRepository;
 import com.vincendp.RedditClone.Repository.PostRepository;
 import com.vincendp.RedditClone.Repository.UserRepository;
+import com.vincendp.RedditClone.Utility.SecurityContextUtility;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -38,6 +39,9 @@ public class CommentServiceTest {
     @Mock
     private UserRepository userRepository;
 
+    @Mock
+    private SecurityContextUtility securityContextUtility;
+
     private Subreddit subreddit;
 
     private Post post;
@@ -56,7 +60,7 @@ public class CommentServiceTest {
     }
 
     @Test
-    void when_user_uuid_invalid_throw_error(){
+    void when_create_comment_and_user_uuid_invalid_throw_error(){
         createCommentRequest.setUser_id("1");
         assertThrows(IllegalArgumentException.class, () -> {
             commentService.createComment(createCommentRequest);
@@ -64,7 +68,7 @@ public class CommentServiceTest {
     }
 
     @Test
-    void when_post_uuid_invalid_throw_error(){
+    void when_create_comment_and_post_uuid_invalid_throw_error(){
         createCommentRequest.setPost_id("1");
         assertThrows(IllegalArgumentException.class, () -> {
             commentService.createComment(createCommentRequest);
@@ -72,7 +76,7 @@ public class CommentServiceTest {
     }
 
     @Test
-    void when_user_not_found_throws_error(){
+    void when_create_comment_and_user_not_found_throws_error(){
         when(userRepository.getById(any())).thenThrow(ResourceNotFoundException.class);
         assertThrows(ResourceNotFoundException.class, () -> {
             commentService.createComment(createCommentRequest);
@@ -80,7 +84,7 @@ public class CommentServiceTest {
     }
 
     @Test
-    void when_post_not_found_throws_error(){
+    void when_create_comment_and_post_not_found_throws_error(){
         when(userRepository.getById(any())).thenReturn(user);
         when(postRepository.getById(any())).thenThrow(ResourceNotFoundException.class);
 
@@ -90,7 +94,7 @@ public class CommentServiceTest {
     }
 
     @Test
-    void when_comment_save_error_throws_error(){
+    void when_create_comment_and_comment_save_error_throws_error(){
         when(userRepository.getById(any())).thenReturn(user);
         when(postRepository.getById(any())).thenReturn(post);
         when(commentRepository.save(any())).thenThrow(RuntimeException.class);
@@ -101,7 +105,7 @@ public class CommentServiceTest {
     }
 
     @Test
-    void when_comment_save_success_return_comment_response(){
+    void when_create_comment_and_comment_save_success_return_comment_response(){
         Comment comment = new Comment(UUID.randomUUID(),
                 createCommentRequest.getComment() ,false, new Date(), user, post);
         when(userRepository.getById(any())).thenReturn(user);
@@ -131,7 +135,8 @@ public class CommentServiceTest {
     @Test
     void when_get_comment_with_auth_success_then_returns_dtos(){
         when(postRepository.getById(any(UUID.class))).thenReturn(post);
-        SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(user, null));
+        when(securityContextUtility.getUserDetailsFromSecurityContext()).thenReturn(
+                new CustomUserDetails(user, new UserAuthentication()));
         when(commentRepository.getCommentsFromPost(any(UUID.class), any())).thenReturn(
                 new ArrayList<>(Arrays.asList(new GetCommentDTO())));
         List<GetCommentDTO> dtos = commentService.getCommentsFromPost(UUID.randomUUID().toString());
@@ -141,6 +146,7 @@ public class CommentServiceTest {
     @Test
     void when_get_comment_with_no_auth_success_then_returns_dtos(){
         when(postRepository.getById(any(UUID.class))).thenReturn(post);
+        when(securityContextUtility.getUserDetailsFromSecurityContext()).thenReturn(null);
         when(commentRepository.getCommentsFromPost(any(UUID.class), any())).thenReturn(
                 new ArrayList<>(Arrays.asList(new GetCommentDTO())));
         List<GetCommentDTO> dtos = commentService.getCommentsFromPost(UUID.randomUUID().toString());

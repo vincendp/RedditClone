@@ -17,21 +17,24 @@ public class ProjectionUtility {
     public List<GetPostPreviewDTO> getPostPreviewDTO(List<Object[]> objectList){
         List<GetPostPreviewDTO> postPreviews = new ArrayList<>();
         for(Object[] object: objectList){
-            GetPostPreviewDTO postPreviewDTO = new GetPostPreviewDTO(
-                extractUUIDFromBytes((byte[]) object[0]),
-                (String) object[1],
-                object[2] != null ? (String) object[2] : null,
-                object[3] != null ? (String) object[3] : null,
-                (Date) object[4],
-                (Integer) object[5],
-                extractUUIDFromBytes((byte[]) object[6]),
-                extractUUIDFromBytes((byte[]) object[7]),
-                (String) object[8],
-                (String) object[9],
-                ((BigDecimal) object[10]).intValueExact(),
-                ((BigDecimal) object[11]).intValueExact(),
-                object[12] != null ? ((BigInteger) object[12]).intValueExact() : 0
-            );
+            UUID post_id = extractUUIDFromBytes((byte[]) object[0]);
+            String title = (String) object[1];
+            String link = object[2] != null ? (String) object[2] : null;
+            String image_path = object[3] != null ? (String) object[3] : null;
+            Date created_at = (Date) object[4];
+            Integer post_type_id = (Integer) object[5];
+            UUID user_id = extractUUIDFromBytes((byte[]) object[6]);
+            UUID subreddit_id = extractUUIDFromBytes((byte[]) object[7]);
+            String username = (String) object[8];
+            String subreddit = (String) object[9];
+            Integer votes = object[10] instanceof BigDecimal ? ((BigDecimal) object[10]).intValueExact() :
+                    ((BigInteger) object[10]).intValueExact();
+            Integer user_voted_for_post = object[11] instanceof BigDecimal ? ((BigDecimal) object[11]).intValueExact() :
+                    ((BigInteger) object[11]).intValueExact();
+            Integer comments = object[12] != null ? ((BigInteger) object[12]).intValueExact() : 0;
+
+            GetPostPreviewDTO postPreviewDTO = new GetPostPreviewDTO(post_id, title, link, image_path, created_at,
+                    post_type_id, user_id, subreddit_id, username, subreddit, votes, user_voted_for_post, comments);
             postPreviews.add(postPreviewDTO);
         }
 

@@ -3,6 +3,7 @@ package com.vincendp.RedditClone.Service;
 import com.vincendp.RedditClone.Dto.CreatePostRequest;
 import com.vincendp.RedditClone.Dto.CreatePostResponse;
 import com.vincendp.RedditClone.Dto.GetPostDTO;
+import com.vincendp.RedditClone.Dto.GetPostPreviewDTO;
 import com.vincendp.RedditClone.Exception.ResourceNotFoundException;
 import com.vincendp.RedditClone.Model.*;
 import com.vincendp.RedditClone.Repository.*;
@@ -16,9 +17,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 
-import java.util.Date;
-import java.util.NoSuchElementException;
-import java.util.UUID;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -50,19 +49,21 @@ public class PostServiceIntegrationTest {
 
     private CreatePostRequest createPostRequest;
 
-    private Subreddit subreddit;
+    private Subreddit[] subreddits;
+
+    private Post[] posts;
 
     private User[] users;
 
-    private Post post;
-
-    private UserAuthentication userAuthentication;
+    private UserAuthentication[] userAuthentications;
 
     @BeforeEach
     void setup(){
         users = new User[6];
-        subreddit = new Subreddit(null, "subreddit", new Date());
-        subredditRepository.save(subreddit);
+        subreddits = new Subreddit[2];
+        subreddits[0] = subredditRepository.save(new Subreddit(null, "subreddit1", new Date()));
+        subreddits[1] = subredditRepository.save(new Subreddit(null, "subreddit2", new Date()));
+
         users[0] = userRepository.save(new User(null, "bob", new Date()));
         users[1] = userRepository.save(new User(null, "bob2", new Date()));
         users[2] = userRepository.save(new User(null, "bob3", new Date()));
@@ -70,22 +71,31 @@ public class PostServiceIntegrationTest {
         users[4] = userRepository.save(new User(null, "bob5", new Date()));
         users[5] = userRepository.save(new User(null, "bob6", new Date()));
 
-        userAuthentication = userAuthenticationRepository.save(new UserAuthentication(users[0].getId(), "123456", users[0]));
+        userAuthentications = new UserAuthentication[3];
+        userAuthentications[0] = userAuthenticationRepository.save(new UserAuthentication(users[0].getId(), "123456", users[0]));
+        userAuthentications[0] = userAuthenticationRepository.save(new UserAuthentication(users[1].getId(), "123456", users[1]));
+        userAuthentications[0] = userAuthenticationRepository.save(new UserAuthentication(users[2].getId(), "123456", users[2]));
 
         PostType postType = postTypeRepository.findById(PostType.Type.TEXT.getValue()).get();
-        createPostRequest = new CreatePostRequest("title", "description",
+        createPostRequest = new CreatePostRequest("title1", "description",
                 "https://www.google.com",
                 new MockMultipartFile("image", "image1.jpeg", "image/jpeg", "image1".getBytes()),
-                users[0].getId().toString(), subreddit.getId().toString(), PostType.Type.TEXT.getValue());
+                users[0].getId().toString(), subreddits[0].getId().toString(), PostType.Type.TEXT.getValue());
 
-        post = new Post(null, "title", new Date(), users[0], subreddit, postType);
+        posts = new Post[6];
 
-        postRepository.save(post);
-        votePostRepository.save(new VotePost(new VotePostId(users[0], post), true));
-        votePostRepository.save(new VotePost(new VotePostId(users[1], post), true));
-        votePostRepository.save(new VotePost(new VotePostId(users[2], post), false));
-        votePostRepository.save(new VotePost(new VotePostId(users[3], post), true));
-        votePostRepository.save(new VotePost(new VotePostId(users[4], post), true));
+        posts[0] = postRepository.save(new Post(null, "title1", new Date(), users[0], subreddits[0], postType));
+        posts[1] = postRepository.save(new Post(null, "title2", new Date(), users[0], subreddits[0], postType));
+        posts[2] = postRepository.save(new Post(null, "title3", new Date(), users[0], subreddits[1], postType));
+        posts[3] = postRepository.save(new Post(null, "title4", new Date(), users[1], subreddits[1], postType));
+        posts[4] = postRepository.save(new Post(null, "title5", new Date(), users[2], subreddits[1], postType));
+        posts[5] = postRepository.save(new Post(null, "title6", new Date(), users[2], subreddits[1], postType));
+
+        votePostRepository.save(new VotePost(new VotePostId(users[0], posts[0]), true));
+        votePostRepository.save(new VotePost(new VotePostId(users[1], posts[0]), true));
+        votePostRepository.save(new VotePost(new VotePostId(users[2], posts[0]), false));
+        votePostRepository.save(new VotePost(new VotePostId(users[3], posts[0]), true));
+        votePostRepository.save(new VotePost(new VotePostId(users[4], posts[0]), true));
     }
 
     @Test
@@ -159,9 +169,9 @@ public class PostServiceIntegrationTest {
 
         assertNotNull(createPostResponse);
         assertNotNull(createPostResponse.getId());
-        assertEquals(subreddit.getId().toString(), createPostResponse.getSubreddit_id());
+        assertEquals(subreddits[0].getId().toString(), createPostResponse.getSubreddit_id());
         assertEquals(users[0].getId().toString(), createPostResponse.getUser_id());
-        assertEquals(post.getTitle(), createPostResponse.getTitle());
+        assertEquals(posts[0].getTitle(), createPostResponse.getTitle());
     }
 
     @Test
@@ -171,9 +181,9 @@ public class PostServiceIntegrationTest {
         CreatePostResponse createPostResponse = postService.createPost(createPostRequest);
         assertNotNull(createPostResponse);
         assertNotNull(createPostResponse.getId());
-        assertEquals(subreddit.getId().toString(), createPostResponse.getSubreddit_id());
+        assertEquals(subreddits[0].getId().toString(), createPostResponse.getSubreddit_id());
         assertEquals(users[0].getId().toString(), createPostResponse.getUser_id());
-        assertEquals(post.getTitle(), createPostResponse.getTitle());
+        assertEquals(posts[0].getTitle(), createPostResponse.getTitle());
 
         createPostRequest.setImage(
                 new MockMultipartFile("image", "image1.jpg",
@@ -182,9 +192,9 @@ public class PostServiceIntegrationTest {
         createPostResponse = postService.createPost(createPostRequest);
         assertNotNull(createPostResponse);
         assertNotNull(createPostResponse.getId());
-        assertEquals(subreddit.getId().toString(), createPostResponse.getSubreddit_id());
+        assertEquals(subreddits[0].getId().toString(), createPostResponse.getSubreddit_id());
         assertEquals(users[0].getId().toString(), createPostResponse.getUser_id());
-        assertEquals(post.getTitle(), createPostResponse.getTitle());
+        assertEquals(posts[0].getTitle(), createPostResponse.getTitle());
 
         createPostRequest.setImage(
                 new MockMultipartFile("image", "image1.png",
@@ -193,9 +203,9 @@ public class PostServiceIntegrationTest {
         createPostResponse = postService.createPost(createPostRequest);
         assertNotNull(createPostResponse);
         assertNotNull(createPostResponse.getId());
-        assertEquals(subreddit.getId().toString(), createPostResponse.getSubreddit_id());
+        assertEquals(subreddits[0].getId().toString(), createPostResponse.getSubreddit_id());
         assertEquals(users[0].getId().toString(), createPostResponse.getUser_id());
-        assertEquals(post.getTitle(), createPostResponse.getTitle());
+        assertEquals(posts[0].getTitle(), createPostResponse.getTitle());
     }
 
     @Test
@@ -205,15 +215,15 @@ public class PostServiceIntegrationTest {
 
         assertNotNull(createPostResponse);
         assertNotNull(createPostResponse.getId());
-        assertEquals(subreddit.getId().toString(), createPostResponse.getSubreddit_id());
+        assertEquals(subreddits[0].getId().toString(), createPostResponse.getSubreddit_id());
         assertEquals(users[0].getId().toString(), createPostResponse.getUser_id());
-        assertEquals(post.getTitle(), createPostResponse.getTitle());
+        assertEquals(posts[0].getTitle(), createPostResponse.getTitle());
     }
 
     @Test
     void when_post_not_found_throws_error(){
         SecurityContextHolder.getContext().setAuthentication(
-                new UsernamePasswordAuthenticationToken(new CustomUserDetails(users[0], userAuthentication)
+                new UsernamePasswordAuthenticationToken(new CustomUserDetails(users[0], userAuthentications[0])
                         , null));
         assertThrows(ResourceNotFoundException.class, () -> {
             postService.getPost(UUID.randomUUID().toString());
@@ -223,11 +233,11 @@ public class PostServiceIntegrationTest {
     @Test
     void when_auth_user_with_post_created_by_user_returns_dto(){
         SecurityContextHolder.getContext().setAuthentication(
-                new UsernamePasswordAuthenticationToken(new CustomUserDetails(users[0], userAuthentication)
+                new UsernamePasswordAuthenticationToken(new CustomUserDetails(users[0], userAuthentications[0])
                 , null));
-        GetPostDTO getPostDTO = postService.getPost(post.getId().toString());
+        GetPostDTO getPostDTO = postService.getPost(posts[0].getId().toString());
         assertNotNull(getPostDTO);
-        assertEquals(getPostDTO.getTitle(), post.getTitle());
+        assertEquals(getPostDTO.getTitle(), posts[0].getTitle());
         assertTrue(getPostDTO.getUser_voted_for_post() > 0);
         assertEquals(3, getPostDTO.getVotes());
     }
@@ -235,21 +245,212 @@ public class PostServiceIntegrationTest {
     @Test
     void when_auth_user_with_post_not_created_by_user_returns_dto(){
         SecurityContextHolder.getContext().setAuthentication(
-                new UsernamePasswordAuthenticationToken(new CustomUserDetails(users[5], userAuthentication)
+                new UsernamePasswordAuthenticationToken(new CustomUserDetails(users[5], userAuthentications[0])
                         , null));
-        GetPostDTO getPostDTO = postService.getPost(post.getId().toString());
+        GetPostDTO getPostDTO = postService.getPost(posts[0].getId().toString());
         assertNotNull(getPostDTO);
-        assertEquals(getPostDTO.getTitle(), post.getTitle());
+        assertEquals(getPostDTO.getTitle(), posts[0].getTitle());
         assertTrue(getPostDTO.getUser_voted_for_post() == 0);
         assertEquals(3, getPostDTO.getVotes());
     }
 
     @Test
     void when_no_auth_user_returns_dto(){
-        GetPostDTO getPostDTO = postService.getPost(post.getId().toString());
+        GetPostDTO getPostDTO = postService.getPost(posts[0].getId().toString());
         assertNotNull(getPostDTO);
-        assertEquals(getPostDTO.getTitle(), post.getTitle());
+        assertEquals(getPostDTO.getTitle(), posts[0].getTitle());
         assertTrue(getPostDTO.getUser_voted_for_post() == 0);
         assertEquals(3, getPostDTO.getVotes());
+    }
+
+    @Test
+    void when_auth_user_with_all_post_previews_should_return_dto(){
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken(new CustomUserDetails(users[0], userAuthentications[0])
+                        , null));
+        List<GetPostPreviewDTO> postPreviews = postService.getAllPostPreviews();
+        postPreviews.sort(Comparator.comparing(GetPostPreviewDTO::getTitle));
+
+        assertNotNull(postPreviews);
+        assertEquals(6, postPreviews.size());
+        assertTrue(postPreviews.get(0).getUser_voted_for_post() > 0);
+        assertTrue(postPreviews.get(1).getUser_voted_for_post() == 0);
+        assertEquals(users[0].getId().toString(), postPreviews.get(0).getUser_id());
+        assertEquals(users[0].getId().toString(), postPreviews.get(1).getUser_id());
+        assertEquals(users[0].getId().toString(), postPreviews.get(2).getUser_id());
+        assertNotEquals(users[0].getId().toString(), postPreviews.get(3).getUser_id());
+        assertNotEquals(users[0].getId().toString(), postPreviews.get(4).getUser_id());
+        assertNotEquals(users[0].getId().toString(), postPreviews.get(5).getUser_id());
+
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken(new CustomUserDetails(users[1], userAuthentications[1])
+                        , null));
+
+        postPreviews = postService.getAllPostPreviews();
+        postPreviews.sort(Comparator.comparing(GetPostPreviewDTO::getTitle));
+
+        assertNotNull(postPreviews);
+        assertEquals(6, postPreviews.size());
+        assertTrue(postPreviews.get(0).getUser_voted_for_post() > 0);
+        assertTrue(postPreviews.get(1).getUser_voted_for_post() == 0);
+        assertNotEquals(users[1].getId().toString(), postPreviews.get(0).getUser_id());
+        assertNotEquals(users[1].getId().toString(), postPreviews.get(1).getUser_id());
+        assertNotEquals(users[1].getId().toString(), postPreviews.get(2).getUser_id());
+        assertEquals(users[1].getId().toString(), postPreviews.get(3).getUser_id());
+        assertNotEquals(users[1].getId().toString(), postPreviews.get(4).getUser_id());
+        assertNotEquals(users[1].getId().toString(), postPreviews.get(5).getUser_id());
+
+
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken(new CustomUserDetails(users[2], userAuthentications[2])
+                        , null));
+
+        postPreviews = postService.getAllPostPreviews();
+        postPreviews.sort(Comparator.comparing(GetPostPreviewDTO::getTitle));
+
+        assertNotNull(postPreviews);
+        assertEquals(6, postPreviews.size());
+        assertTrue(postPreviews.get(0).getUser_voted_for_post() < 0);
+        assertTrue(postPreviews.get(1).getUser_voted_for_post() == 0);
+        assertNotEquals(users[2].getId().toString(), postPreviews.get(0).getUser_id());
+        assertNotEquals(users[2].getId().toString(), postPreviews.get(1).getUser_id());
+        assertNotEquals(users[2].getId().toString(), postPreviews.get(2).getUser_id());
+        assertNotEquals(users[2].getId().toString(), postPreviews.get(3).getUser_id());
+        assertEquals(users[2].getId().toString(), postPreviews.get(4).getUser_id());
+        assertEquals(users[2].getId().toString(), postPreviews.get(5).getUser_id());
+    }
+
+    @Test
+    void when_without_auth_with_all_post_previews_should_return_dto(){
+        List<GetPostPreviewDTO> postPreviews = postService.getAllPostPreviews();
+        postPreviews.sort(Comparator.comparing(GetPostPreviewDTO::getTitle));
+        assertNotNull(postPreviews);
+        assertEquals(6, postPreviews.size());
+        assertTrue(postPreviews.get(0).getUser_voted_for_post() == 0);
+        assertTrue(postPreviews.get(1).getUser_voted_for_post() == 0);
+    }
+
+    @Test
+    void when_get_all_post_previews_by_user_and_user_has_no_posts_should_return_empty_list(){
+        List<GetPostPreviewDTO> postPreviews = postService.getAllPostPreviewsByUser(UUID.randomUUID().toString());
+        assertNotNull(postPreviews);
+        assertEquals(0, postPreviews.size());
+    }
+
+    @Test
+    void when_auth_user_with_all_post_previews_by_specific_user_should_return_dto(){
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken(new CustomUserDetails(users[0], userAuthentications[0])
+                        , null));
+        List<GetPostPreviewDTO> postPreviews = postService.getAllPostPreviewsByUser(users[0].getId().toString());
+        postPreviews.sort(Comparator.comparing(GetPostPreviewDTO::getTitle));
+        assertNotNull(postPreviews);
+        assertEquals(3, postPreviews.size());
+        assertTrue(postPreviews.get(0).getUser_voted_for_post() > 0);
+        assertTrue(postPreviews.get(1).getUser_voted_for_post() == 0);
+        assertEquals(users[0].getId().toString(), postPreviews.get(0).getUser_id());
+        assertEquals(users[0].getId().toString(), postPreviews.get(1).getUser_id());
+        assertEquals(users[0].getId().toString(), postPreviews.get(2).getUser_id());
+
+
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken(new CustomUserDetails(users[1], userAuthentications[1])
+                        , null));
+        postPreviews = postService.getAllPostPreviewsByUser(users[0].getId().toString());
+        postPreviews.sort(Comparator.comparing(GetPostPreviewDTO::getTitle));
+        assertNotNull(postPreviews);
+        assertEquals(3, postPreviews.size());
+        assertTrue(postPreviews.get(0).getUser_voted_for_post() > 0);
+        assertTrue(postPreviews.get(1).getUser_voted_for_post() == 0);
+        assertNotEquals(users[1].getId().toString(), postPreviews.get(0).getUser_id());
+        assertNotEquals(users[1].getId().toString(), postPreviews.get(1).getUser_id());
+        assertNotEquals(users[1].getId().toString(), postPreviews.get(2).getUser_id());
+
+
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken(new CustomUserDetails(users[1], userAuthentications[1])
+                        , null));
+        postPreviews = postService.getAllPostPreviewsByUser(users[1].getId().toString());
+        assertNotNull(postPreviews);
+        assertEquals(1, postPreviews.size());
+        assertTrue(postPreviews.get(0).getUser_voted_for_post() == 0);
+        assertEquals(users[1].getId().toString(), postPreviews.get(0).getUser_id());
+
+
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken(new CustomUserDetails(users[2], userAuthentications[2])
+                        , null));
+        postPreviews = postService.getAllPostPreviewsByUser(users[2].getId().toString());
+        assertNotNull(postPreviews);
+        assertEquals(2, postPreviews.size());
+        assertTrue(postPreviews.get(0).getUser_voted_for_post() == 0);
+        assertTrue(postPreviews.get(1).getUser_voted_for_post() == 0);
+        assertEquals(users[2].getId().toString(), postPreviews.get(0).getUser_id());
+        assertEquals(users[2].getId().toString(), postPreviews.get(1).getUser_id());
+    }
+
+    @Test
+    void when_without_auth_with_all_post_previews_by_specific_user_should_return_dto(){
+        List<GetPostPreviewDTO> postPreviews = postService.getAllPostPreviewsByUser(users[0].getId().toString());
+        assertEquals(3, postPreviews.size());
+        assertTrue(postPreviews.get(0).getUser_voted_for_post() == 0);
+        assertTrue(postPreviews.get(1).getUser_voted_for_post() == 0);
+
+        postPreviews = postService.getAllPostPreviewsByUser(users[1].getId().toString());
+        assertEquals(1, postPreviews.size());
+        assertTrue(postPreviews.get(0).getUser_voted_for_post() == 0);
+
+        postPreviews = postService.getAllPostPreviewsByUser(users[2].getId().toString());
+        assertEquals(2, postPreviews.size());
+        assertTrue(postPreviews.get(0).getUser_voted_for_post() == 0);
+        assertTrue(postPreviews.get(1).getUser_voted_for_post() == 0);
+    }
+
+    @Test
+    void when_get_all_post_previews_by_subreddit_and_subreddit_has_no_posts_should_return_empty_list(){
+        List<GetPostPreviewDTO> postPreviews = postService.getAllPostPreviewsBySubreddit(UUID.randomUUID().toString());
+        assertNotNull(postPreviews);
+        assertEquals(0, postPreviews.size());
+    }
+
+    @Test
+    void when_auth_user_with_all_post_previews_by_specific_subreddit_should_return_dto(){
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken(new CustomUserDetails(users[0], userAuthentications[0])
+                        , null));
+        List<GetPostPreviewDTO> postPreviews = postService.getAllPostPreviewsBySubreddit(subreddits[0].getId().toString());
+        postPreviews.sort(Comparator.comparing(GetPostPreviewDTO::getTitle));
+        assertNotNull(postPreviews);
+        assertEquals(2, postPreviews.size());
+        assertTrue(postPreviews.get(0).getUser_voted_for_post() > 0);
+        assertTrue(postPreviews.get(1).getUser_voted_for_post() == 0);
+        assertEquals(users[0].getId().toString(), postPreviews.get(0).getUser_id());
+        assertEquals(users[0].getId().toString(), postPreviews.get(1).getUser_id());
+
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken(new CustomUserDetails(users[1], userAuthentications[0])
+                        , null));
+        postPreviews = postService.getAllPostPreviewsBySubreddit(subreddits[1].getId().toString());
+        postPreviews.sort(Comparator.comparing(GetPostPreviewDTO::getTitle));
+        assertNotNull(postPreviews);
+        assertEquals(4, postPreviews.size());
+        assertTrue(postPreviews.get(0).getUser_voted_for_post() == 0);
+        assertTrue(postPreviews.get(1).getUser_voted_for_post() == 0);
+        assertEquals(users[0].getId().toString(), postPreviews.get(0).getUser_id());
+        assertEquals(users[1].getId().toString(), postPreviews.get(1).getUser_id());
+        assertEquals(users[2].getId().toString(), postPreviews.get(2).getUser_id());
+    }
+
+    @Test
+    void when_without_auth_with_all_post_previews_by_specific_subreddit_should_return_dto(){
+        List<GetPostPreviewDTO> postPreviews = postService.getAllPostPreviewsBySubreddit(subreddits[0].getId().toString());
+        assertEquals(2, postPreviews.size());
+        assertTrue(postPreviews.get(0).getUser_voted_for_post() == 0);
+        assertTrue(postPreviews.get(1).getUser_voted_for_post() == 0);
+
+        postPreviews = postService.getAllPostPreviewsBySubreddit(subreddits[1].getId().toString());
+        assertEquals(4, postPreviews.size());
+        assertTrue(postPreviews.get(0).getUser_voted_for_post() == 0);
+        assertTrue(postPreviews.get(1).getUser_voted_for_post() == 0);
     }
 }

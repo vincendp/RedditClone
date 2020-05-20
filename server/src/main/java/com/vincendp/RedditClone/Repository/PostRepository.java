@@ -1,7 +1,6 @@
 package com.vincendp.RedditClone.Repository;
 
 import com.vincendp.RedditClone.Dto.GetPostDTO;
-import com.vincendp.RedditClone.Dto.GetPostPreviewDTO;
 import com.vincendp.RedditClone.Model.Post;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
