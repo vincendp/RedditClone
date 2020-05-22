@@ -58,9 +58,9 @@ export class PostComponent implements OnInit, OnDestroy {
 
           return this.apiService.get(`/posts/${postId}`, null);
         }),
-        catchError((error) => {
+        catchError((err) => {
           this.router.navigateByUrl("/error/not-found");
-          return throwError(error);
+          return throwError(err);
         })
       )
       .subscribe(

@@ -4,7 +4,9 @@ import { ApiService } from "src/app/Core/Http/api.service";
 import { Subreddit } from "src/app/Core/Model/subreddit.model";
 import { UserService } from "src/app/Core/Services/user.service";
 import { User } from "src/app/Core/Model/user.model";
-import { Subscription } from "rxjs";
+import { Subscription, throwError } from "rxjs";
+import { PostPreview } from "src/app/Core/Model/post-preview.model";
+import { switchMap, catchError } from "rxjs/operators";
 
 @Component({
   selector: "app-subreddit",
@@ -15,6 +17,7 @@ export class SubredditComponent implements OnInit, OnDestroy {
   userSubscription: Subscription;
   subreddit: Subreddit;
   user: User;
+  postPreviews: Array<PostPreview>;
 
   constructor(
     private route: ActivatedRoute,
@@ -25,18 +28,39 @@ export class SubredditComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     let subredditName = this.route.snapshot.params.subreddit;
-    this.apiService.get(`/subreddits/${subredditName}`, null).subscribe(
-      (data) => {
-        this.subreddit = data["result"] as Subreddit;
-      },
-      (err) => {}
-    );
     this.userSubscription = this.userService.user.subscribe(
       (data) => {
         this.user = data as User;
       },
       (err) => {}
     );
+
+    this.apiService
+      .get(`/subreddits/${subredditName}`, null)
+      .pipe(
+        switchMap((subreddit) => {
+          this.subreddit = subreddit["result"] as Subreddit;
+          console.log(this.subreddit);
+
+          return this.apiService.get(
+            `/posts/subreddits/${this.subreddit.id}`,
+            null
+          );
+        }),
+        catchError((err) => {
+          this.router.navigateByUrl("/error/not-found");
+          return throwError(err);
+        })
+      )
+      .subscribe(
+        (postPreviews) => {
+          this.postPreviews = postPreviews["result"] as Array<PostPreview>;
+          console.log(this.postPreviews);
+        },
+        (err) => {
+          console.log(err);
+        }
+      );
   }
 
   ngOnDestroy(): void {

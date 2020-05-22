@@ -54,11 +54,11 @@
     }
 
     &--user-upvoted {
-      color: $color-primary-complementary-1;
+      color: $color-primary-complementary-1 !important;
     }
 
     &--user-downvoted {
-      color: $color-primary-complementary-2;
+      color: $color-primary-complementary-2 !important;
     }
   }
 

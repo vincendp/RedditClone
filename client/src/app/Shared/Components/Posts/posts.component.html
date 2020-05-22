@@ -41,78 +41,99 @@
     </button>
   </div>
   <div class="post__posts">
-    <div class="post__post" lazyLoad (loadedElement)="(true)">
+    <div
+      class="post__post"
+      lazyLoad
+      (loadedElement)="hi()"
+      *ngFor="let postPreview of postPreviews"
+    >
       <div class="post__vote-container">
-        <button class="post__post-icon post__button">
+        <button
+          class="post__post-icon post__button"
+          [ngClass]="{
+            'post__button--user-upvoted': postPreview.user_voted_for_post > 0
+          }"
+        >
           <app-svg-icon icon_name="icon-thumb_up_alt"> </app-svg-icon>
         </button>
         <div class="post__vote-number">
-          10
+          {{ postPreview.votes }}
         </div>
-        <button class="post__post-icon post__button">
+        <button
+          class="post__post-icon post__button"
+          [ngClass]="{
+            'post__button--user-downvoted': postPreview.user_voted_for_post < 0
+          }"
+        >
           <app-svg-icon icon_name="icon-thumb_down_alt"> </app-svg-icon>
         </button>
       </div>
-      <button class="post__post-preview post__button">
+
+      <a
+        routerLink="/r/{{ postPreview.subreddit }}/{{ postPreview.post_id }}"
+        class="post__post-preview post__button"
+        *ngIf="postPreview.post_type_id == PostType.TEXT"
+      >
         <div class="post__post-icon">
           <app-svg-icon icon_name="icon-mode_comment"> </app-svg-icon>
         </div>
-      </button>
-      <div class="post__post-info-container">
-        <div class="post__post-title">
-          What is the point of pointing?
-        </div>
-        <div class="post__post-by">
-          Posted by
-          <a href="#" class="post__post-user"> u/bob </a> 14 hours ago
-        </div>
-        <div class="post__post-buttons">
-          <button class="post__post-button post__button">
-            <div class="post__post-icon">
-              <app-svg-icon icon_name="icon-insert_comment"> </app-svg-icon>
-            </div>
-            <span class="post__post-button-text">
-              5 Comments
-            </span>
-          </button>
-        </div>
-      </div>
-    </div>
+      </a>
 
-    <div class="post__post" lazyLoad (loadedElement)="(true)">
-      <div class="post__vote-container">
-        <button class="post__post-icon post__button">
-          <app-svg-icon icon_name="icon-thumb_up_alt"> </app-svg-icon>
-        </button>
-        <div class="post__vote-number">
-          10
-        </div>
-        <button class="post__post-icon post__button">
-          <app-svg-icon icon_name="icon-thumb_down_alt"> </app-svg-icon>
-        </button>
-      </div>
-      <button class="post__post-preview post__button">
+      <a
+        href="{{ postPreview.link }}"
+        target="_blank"
+        class="post__post-preview post__button"
+        *ngIf="postPreview.post_type_id == PostType.LINK"
+      >
         <div class="post__post-icon">
           <app-svg-icon icon_name="icon-linkinsert_link"> </app-svg-icon>
         </div>
-      </button>
+      </a>
+
+      <a
+        href="{{ apiUrl }}/image/{{ postPreview.image_path }}"
+        target="_blank"
+        class="post__post-preview post__button"
+        *ngIf="postPreview.post_type_id == PostType.IMAGE"
+      >
+        <img
+          src="{{ apiUrl }}/image/{{ postPreview.image_path }}"
+          alt=""
+          class="post__post-image"
+        />
+      </a>
+
       <div class="post__post-info-container">
         <div class="post__post-title">
-          What is the point of pointing?
+          <a
+            routerLink="/r/{{ postPreview.subreddit }}/{{
+              postPreview.post_id
+            }}"
+            class="post__link"
+            >{{ postPreview.title }}</a
+          >
         </div>
         <div class="post__post-by">
           Posted by
-          <a href="#" class="post__post-user"> u/bob </a> 14 hours ago
+          <a routerLink="/u/{{ postPreview.username }}" class="post__post-user">
+            u/{{ postPreview.username }}
+          </a>
+          {{ postPreview.created_at }}
         </div>
         <div class="post__post-buttons">
-          <button class="post__post-button post__button">
+          <a
+            routerLink="/r/{{ postPreview.subreddit }}/{{
+              postPreview.post_id
+            }}"
+            class="post__post-button post__button"
+          >
             <div class="post__post-icon">
               <app-svg-icon icon_name="icon-insert_comment"> </app-svg-icon>
             </div>
             <span class="post__post-button-text">
-              5 Comments
+              {{ postPreview.comments }} Comments
             </span>
-          </button>
+          </a>
         </div>
       </div>
     </div>
@@ -280,15 +301,3 @@
     </div>
   </div>
 </div>
-
-<!-- <div *ngFor="let post of postss" [ngClass]="{ lazy: true }">
-  <img [src]="getSanitizedURL(post.src)" id="1" alt="nvm" />
-</div> -->
-
-<!-- <img
-  id="2"
-  src="localhost:8080/image/cc1d9706-40a1-4906-849d-7734b54478c1.png"
-  alt="nvm"
-  [(ngModel)]="post2"
-  [ngClass]="{ lazy: true }"
-/> -->

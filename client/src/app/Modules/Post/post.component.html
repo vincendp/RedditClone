@@ -55,6 +55,7 @@
         >
           <a
             [href]="post.link"
+            target="_blank"
             class="post__link post__content__link-container"
           >
             <div class="post__post-icon post__post-icon--regular">
@@ -70,11 +71,13 @@
           class="post__content__post-type"
           *ngIf="post.post_type_id == PostType.IMAGE"
         >
-          <img
-            src="{{ apiUrl }}/image/{{ post.image_path }}"
-            alt=""
-            class="post__content__image"
-          />
+          <a href="{{ apiUrl }}/image/{{ post.image_path }}" target="_blank">
+            <img
+              src="{{ apiUrl }}/image/{{ post.image_path }}"
+              alt=""
+              class="post__content__image"
+            />
+          </a>
         </div>
 
         <textarea

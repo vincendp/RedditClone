@@ -1,6 +1,15 @@
 @import "src/styles.scss";
 
 .post {
+  &__link {
+    text-decoration: none;
+
+    &:link,
+    &:visited {
+      color: $color-black;
+    }
+  }
+
   &__button {
     border: none;
     background-color: $color-grey-lighter;
@@ -11,6 +20,14 @@
 
     &:active {
       background-color: darken($color-grey-lighter, 15%);
+    }
+
+    &--user-upvoted {
+      color: $color-primary-complementary-1 !important;
+    }
+
+    &--user-downvoted {
+      color: $color-primary-complementary-2 !important;
     }
   }
 
@@ -115,6 +132,11 @@
     color: $color-primary-darker;
   }
 
+  &__post-image {
+    height: 5.5rem;
+    width: 9.5rem;
+  }
+
   &__post-info-container {
     height: 7rem;
     display: flex;
@@ -147,6 +169,12 @@
   &__post-button {
     display: flex;
     align-items: center;
+    text-decoration: none;
+
+    &:link,
+    &:visited {
+      color: inherit;
+    }
   }
 
   &__post-button-text {

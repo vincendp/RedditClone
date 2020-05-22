@@ -6,12 +6,16 @@ import {
   OnDestroy,
   Output,
   EventEmitter,
+  Input,
 } from "@angular/core";
+import { environment } from "src/environments/environment";
 import { PostType } from "src/app/Core/Model/post-type.enum";
 import { UtilityService } from "src/app/Core/Services/utility.service";
 import { Subscription } from "rxjs";
 import { FormBuilder, Validators, FormGroup } from "@angular/forms";
 import { DomSanitizer } from "@angular/platform-browser";
+import { PostPreview } from "src/app/Core/Model/post-preview.model";
+import { ApiService } from "src/app/Core/Http/api.service";
 
 @Component({
   selector: "app-posts",
@@ -19,6 +23,9 @@ import { DomSanitizer } from "@angular/platform-browser";
   styleUrls: ["./posts.component.scss"],
 })
 export class PostsComponent implements OnInit, OnDestroy {
+  @Input() postPreviews: Array<PostPreview>;
+  @Output() createPostEvent: EventEmitter<{}> = new EventEmitter<{}>();
+
   @ViewChild("createTextButton", { read: ElementRef, static: false })
   createTextButton: ElementRef;
   @ViewChild("createImageButton", { read: ElementRef, static: false })
@@ -27,7 +34,8 @@ export class PostsComponent implements OnInit, OnDestroy {
   createLinkButton: ElementRef;
   @ViewChild("createPostContent", { read: ElementRef, static: false })
   createPostContent: ElementRef;
-  documentClickSubscription: Subscription;
+
+  apiUrl: string = environment.apiUrl;
 
   PostType = PostType;
   createPostType: PostType;
@@ -38,27 +46,14 @@ export class PostsComponent implements OnInit, OnDestroy {
   fileUpload: ElementRef;
   fileSrc: string | ArrayBuffer;
 
-  @Output() createPostEvent: EventEmitter<{}> = new EventEmitter<{}>();
-
-  post1: any = {};
-  post2: any = {};
-
-  postss = [
-    {
-      src:
-        "http://localhost:8080/image/cc1d9706-40a1-4906-849d-7734b54478c1.png",
-    },
-    {
-      src:
-        "http://localhost:8080/image/cc1d9706-40a1-4906-849d-7734b54478c1.png",
-    },
-  ];
+  documentClickSubscription: Subscription;
 
   constructor(
     private utilityService: UtilityService,
     private formBuilder: FormBuilder,
     private elem: ElementRef,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private apiService: ApiService
   ) {}
 
   ngOnInit(): void {
@@ -158,7 +153,7 @@ export class PostsComponent implements OnInit, OnDestroy {
     this.createPostForm.controls.image.setValue(null);
   }
 
-  createPost() {
+  createPost(): void {
     this.createPostForm.controls.post_type.setValue(this.createPostType);
     this.createPostEvent.emit(this.createPostForm.value);
   }
@@ -166,4 +161,73 @@ export class PostsComponent implements OnInit, OnDestroy {
   getSanitizedURL(url: string) {
     return this.sanitizer.bypassSecurityTrustUrl(url);
   }
+
+  hi() {
+    console.log("IN VIEW");
+  }
+
+  // createVoteForPost(postPreview: PostPreview, vote: boolean) {
+  //   this.apiService
+  //     .post(
+  //       "/votes/posts",
+  //       {
+  //         post_id: postPreview.post_id,
+  //         user_id: this.user.id,
+  //         vote: vote,
+  //       },
+  //       {}
+  //     )
+  //     .subscribe(
+  //       () => {
+  //         postPreview.votes += vote ? 1 : -1;
+  //         postPreview.user_voted_for_post = vote ? 1 : -1;
+  //       },
+  //       (err) => {
+  //         console.log(err);
+  //       }
+  //     );
+  // }
+
+  // updateVoteForPost(postPreview: PostPreview, vote: boolean) {
+  //   this.apiService
+  //     .put(
+  //       "/votes/posts",
+  //       {
+  //         post_id: postPreview.post_id,
+  //         user_id: this.user.id,
+  //         vote: vote,
+  //       },
+  //       {}
+  //     )
+  //     .subscribe(
+  //       () => {
+  //         postPreview.votes += vote ? 2 : -2;
+  //         postPreview.user_voted_for_post = vote ? 1 : -1;
+  //       },
+  //       (err) => {
+  //         console.log(err);
+  //       }
+  //     );
+  // }
+
+  // deleteVoteForPost(postPreview: PostPreview, vote: boolean) {
+  //   this.apiService
+  //     .delete(
+  //       "/votes/posts",
+  //       {
+  //         post_id: postPreview.post_id,
+  //         user_id: this.user.id,
+  //       },
+  //       {}
+  //     )
+  //     .subscribe(
+  //       () => {
+  //         postPreview.votes += vote ? -1 : 1;
+  //         postPreview.user_voted_for_post = 0;
+  //       },
+  //       (err) => {
+  //         console.log(err);
+  //       }
+  //     );
+  // }
 }
