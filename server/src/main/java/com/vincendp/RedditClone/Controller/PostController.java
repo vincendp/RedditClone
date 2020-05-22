@@ -37,6 +37,18 @@ public class PostController {
         return ResponseEntity.ok(new SuccessResponse(200, "Success: Got post previews", postPreviews));
     }
 
+    @GetMapping("/users/{user_id}")
+    ResponseEntity getAllPostPreviewsByUser(@PathVariable String user_id){
+        List<GetPostPreviewDTO> postPreviews = postService.getAllPostPreviewsByUser(user_id);
+        return ResponseEntity.ok(new SuccessResponse(200, "Success: Got post previews by user", postPreviews));
+    }
+
+    @GetMapping("/subreddits/{subreddit_id}")
+    ResponseEntity getAllPostPreviewsBySubreddit(@PathVariable String subreddit_id){
+        List<GetPostPreviewDTO> postPreviews = postService.getAllPostPreviewsBySubreddit(subreddit_id);
+        return ResponseEntity.ok(new SuccessResponse(200, "Success: Got post previews by subreddit", postPreviews));
+    }
+
     @PostMapping(consumes = { "multipart/form-data" })
     ResponseEntity createPost(@ModelAttribute("createPostForm") CreatePostRequest createPostRequest){
         if( createPostRequest.getTitle() == null

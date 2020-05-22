@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.apache.commons.io.FilenameUtils;
 
 @RestController
 @RequestMapping("image")
@@ -24,7 +25,25 @@ public class ImageController {
     @GetMapping("/{path}")
     ResponseEntity loadImage(@PathVariable String path){
         Resource resource = storageService.loadAsResource(path);
-        return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
-                "inline").body(resource);
+        String contentType;
+
+        switch(FilenameUtils.getExtension(path)){
+            case "jpg":
+                contentType = "image/jpg";
+                break;
+            case "jpeg":
+                contentType = "image/jpeg";
+                break;
+            case "png":
+                contentType = "image/png";
+                break;
+            default:
+                throw new IllegalArgumentException("Error: Not an image");
+        }
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(HttpHeaders.CONTENT_DISPOSITION, "inline");
+        headers.set(HttpHeaders.CONTENT_TYPE, contentType);
+        return ResponseEntity.ok().headers(headers).body(resource);
     }
 }

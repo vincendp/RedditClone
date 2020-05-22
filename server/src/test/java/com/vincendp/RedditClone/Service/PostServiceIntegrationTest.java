@@ -426,6 +426,8 @@ public class PostServiceIntegrationTest {
         assertTrue(postPreviews.get(1).getUser_voted_for_post() == 0);
         assertEquals(users[0].getId().toString(), postPreviews.get(0).getUser_id());
         assertEquals(users[0].getId().toString(), postPreviews.get(1).getUser_id());
+        assertEquals(subreddits[0].getId().toString(), postPreviews.get(0).getSubreddit_id());
+        assertEquals(subreddits[0].getId().toString(), postPreviews.get(1).getSubreddit_id());
 
         SecurityContextHolder.getContext().setAuthentication(
                 new UsernamePasswordAuthenticationToken(new CustomUserDetails(users[1], userAuthentications[0])
@@ -439,6 +441,10 @@ public class PostServiceIntegrationTest {
         assertEquals(users[0].getId().toString(), postPreviews.get(0).getUser_id());
         assertEquals(users[1].getId().toString(), postPreviews.get(1).getUser_id());
         assertEquals(users[2].getId().toString(), postPreviews.get(2).getUser_id());
+        assertEquals(subreddits[1].getId().toString(), postPreviews.get(0).getSubreddit_id());
+        assertEquals(subreddits[1].getId().toString(), postPreviews.get(1).getSubreddit_id());
+        assertEquals(subreddits[1].getId().toString(), postPreviews.get(2).getSubreddit_id());
+        assertEquals(subreddits[1].getId().toString(), postPreviews.get(3).getSubreddit_id());
     }
 
     @Test
@@ -447,10 +453,16 @@ public class PostServiceIntegrationTest {
         assertEquals(2, postPreviews.size());
         assertTrue(postPreviews.get(0).getUser_voted_for_post() == 0);
         assertTrue(postPreviews.get(1).getUser_voted_for_post() == 0);
+        assertEquals(subreddits[0].getId().toString(), postPreviews.get(0).getSubreddit_id());
+        assertEquals(subreddits[0].getId().toString(), postPreviews.get(1).getSubreddit_id());
 
         postPreviews = postService.getAllPostPreviewsBySubreddit(subreddits[1].getId().toString());
         assertEquals(4, postPreviews.size());
         assertTrue(postPreviews.get(0).getUser_voted_for_post() == 0);
         assertTrue(postPreviews.get(1).getUser_voted_for_post() == 0);
+        assertEquals(subreddits[1].getId().toString(), postPreviews.get(0).getSubreddit_id());
+        assertEquals(subreddits[1].getId().toString(), postPreviews.get(1).getSubreddit_id());
+        assertEquals(subreddits[1].getId().toString(), postPreviews.get(2).getSubreddit_id());
+        assertEquals(subreddits[1].getId().toString(), postPreviews.get(3).getSubreddit_id());
     }
 }

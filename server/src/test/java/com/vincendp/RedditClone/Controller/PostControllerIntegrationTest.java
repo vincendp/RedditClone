@@ -1,7 +1,10 @@
 package com.vincendp.RedditClone.Controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.CollectionType;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.vincendp.RedditClone.Dto.CreatePostRequest;
+import com.vincendp.RedditClone.Dto.GetPostPreviewDTO;
 import com.vincendp.RedditClone.Model.Post;
 import com.vincendp.RedditClone.Model.PostType;
 import com.vincendp.RedditClone.Model.Subreddit;
@@ -11,6 +14,7 @@ import com.vincendp.RedditClone.Repository.PostTypeRepository;
 import com.vincendp.RedditClone.Repository.SubredditRepository;
 import com.vincendp.RedditClone.Repository.UserRepository;
 import com.vincendp.RedditClone.Service.PostService;
+import com.vincendp.RedditClone.Utility.SuccessResponse;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,13 +26,17 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -61,11 +69,11 @@ public class PostControllerIntegrationTest {
     @Autowired
     private PostTypeRepository postTypeRepository;
 
-    private Subreddit subreddit;
+    private Subreddit[] subreddits;
 
-    private User user;
+    private User[] users;
 
-    private Post post;
+    private Post[] posts;
 
     private CreatePostRequest createPostRequest;
 
@@ -75,21 +83,29 @@ public class PostControllerIntegrationTest {
 
     @BeforeEach
     void setup(){
-        subreddit = new Subreddit(null, "subreddit", new Date());
-        user = new User(null, "bob", new Date());
+        subreddits = new Subreddit[2];
+        users = new User[2];
+        posts = new Post[4];
 
-        subredditRepository.save(subreddit);
-        userRepository.save(user);
+        subreddits[0] = subredditRepository.save(new Subreddit(null, "subreddit", new Date()));
+        subreddits[1] = subredditRepository.save(new Subreddit(null, "subreddit2", new Date()));
+
+        users[0] = userRepository.save(new User(null, "bob", new Date()));
+        users[1] = userRepository.save(new User(null, "bob2", new Date()));
 
         PostType postType = postTypeRepository.findById(PostType.Type.TEXT.getValue()).get();
-        post = postRepository.save(new Post(null, "title", new Date(), user, subreddit, postType));
+
+        posts[0] = postRepository.save(new Post(null, "title", new Date(), users[0], subreddits[0], postType));
+        posts[1] = postRepository.save(new Post(null, "title", new Date(), users[0], subreddits[0], postType));
+        posts[2] = postRepository.save(new Post(null, "title", new Date(), users[0], subreddits[1], postType));
+        posts[3] = postRepository.save(new Post(null, "title", new Date(), users[1], subreddits[1], postType));
 
         params = new LinkedMultiValueMap<>();
         params.add("title", "title");
         params.add("description", "description");
         params.add("link", "https://www.google.com");
-        params.add("user_id", user.getId().toString());
-        params.add("subreddit_id", subreddit.getId().toString());
+        params.add("user_id", users[0].getId().toString());
+        params.add("subreddit_id", subreddits[0].getId().toString());
         params.add("post_type", PostType.Type.TEXT.getValue() + "");
     }
 
@@ -172,8 +188,94 @@ public class PostControllerIntegrationTest {
 
     @Test
     void when_get_post_should_return_response_success() throws Exception{
-        mockMvc.perform(get("/posts/{post_id}", post.getId().toString()))
+        mockMvc.perform(get("/posts/{post_id}", posts[0].getId().toString()))
                 .andExpect(status().isOk())
                 .andExpect(content().string(Matchers.containsString("Success: Got post")));
     }
+
+    @Test
+    void when_get_post_previews_ok_should_return_response_success() throws Exception{
+        MvcResult result = mockMvc.perform(get("/posts"))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        SuccessResponse successResponse = objectMapper.readValue(result.getResponse().getContentAsString(), SuccessResponse.class);
+        CollectionType typeReference = TypeFactory.defaultInstance().constructCollectionType(List.class, GetPostPreviewDTO.class);
+        List<GetPostPreviewDTO> postPreviews = objectMapper.convertValue(successResponse.getResult(), typeReference);
+        assertNotNull(postPreviews);
+        assertEquals(4, postPreviews.size());
+    }
+
+    @Test
+    void when_get_post_previews_by_user_and_no_posts_by_user_should_return_empty_list() throws Exception{
+        MvcResult result = mockMvc.perform(get("/posts/users/{user_id}", UUID.randomUUID().toString()))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        SuccessResponse successResponse = objectMapper.readValue(result.getResponse().getContentAsString(), SuccessResponse.class);
+        CollectionType typeReference = TypeFactory.defaultInstance().constructCollectionType(List.class, GetPostPreviewDTO.class);
+        List<GetPostPreviewDTO> postPreviews = objectMapper.convertValue(successResponse.getResult(), typeReference);
+        assertNotNull(postPreviews);
+        assertEquals(0, postPreviews.size());
+    }
+
+    @Test
+    void when_get_post_previews_by_user_should_return_response_success() throws Exception{
+        MvcResult result = mockMvc.perform(get("/posts/users/{user_id}", users[0].getId().toString()))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        SuccessResponse successResponse = objectMapper.readValue(result.getResponse().getContentAsString(), SuccessResponse.class);
+        CollectionType typeReference = TypeFactory.defaultInstance().constructCollectionType(List.class, GetPostPreviewDTO.class);
+        List<GetPostPreviewDTO> postPreviews = objectMapper.convertValue(successResponse.getResult(), typeReference);
+        assertNotNull(postPreviews);
+        assertEquals(3, postPreviews.size());
+
+        result = mockMvc.perform(get("/posts/users/{user_id}", users[1].getId().toString()))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        successResponse = objectMapper.readValue(result.getResponse().getContentAsString(), SuccessResponse.class);
+        typeReference = TypeFactory.defaultInstance().constructCollectionType(List.class, GetPostPreviewDTO.class);
+        postPreviews = objectMapper.convertValue(successResponse.getResult(), typeReference);
+        assertNotNull(postPreviews);
+        assertEquals(1, postPreviews.size());
+    }
+
+    @Test
+    void when_get_post_previews_by_subreddit_and_no_posts_in_subreddit_should_return_empty_list() throws Exception{
+        MvcResult result = mockMvc.perform(get("/posts/subreddits/{subreddit_id}", UUID.randomUUID().toString()))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        SuccessResponse successResponse = objectMapper.readValue(result.getResponse().getContentAsString(), SuccessResponse.class);
+        CollectionType typeReference = TypeFactory.defaultInstance().constructCollectionType(List.class, GetPostPreviewDTO.class);
+        List<GetPostPreviewDTO> postPreviews = objectMapper.convertValue(successResponse.getResult(), typeReference);
+        assertNotNull(postPreviews);
+        assertEquals(0, postPreviews.size());
+    }
+
+    @Test
+    void when_get_post_previews_by_subreddit_should_return_response_success() throws Exception{
+        MvcResult result = mockMvc.perform(get("/posts/subreddits/{subreddit_id}", subreddits[0].getId().toString()))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        SuccessResponse successResponse = objectMapper.readValue(result.getResponse().getContentAsString(), SuccessResponse.class);
+        CollectionType typeReference = TypeFactory.defaultInstance().constructCollectionType(List.class, GetPostPreviewDTO.class);
+        List<GetPostPreviewDTO> postPreviews = objectMapper.convertValue(successResponse.getResult(), typeReference);
+        assertNotNull(postPreviews);
+        assertEquals(2, postPreviews.size());
+
+        result = mockMvc.perform(get("/posts/subreddits/{subreddit_id}", subreddits[1].getId().toString()))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        successResponse = objectMapper.readValue(result.getResponse().getContentAsString(), SuccessResponse.class);
+        typeReference = TypeFactory.defaultInstance().constructCollectionType(List.class, GetPostPreviewDTO.class);
+        postPreviews = objectMapper.convertValue(successResponse.getResult(), typeReference);
+        assertNotNull(postPreviews);
+        assertEquals(2, postPreviews.size());
+    }
+
 }

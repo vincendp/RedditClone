@@ -7,6 +7,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.apache.commons.io.FilenameUtils;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
@@ -43,8 +44,8 @@ public class FileSystemStorageService implements StorageService {
     @Override
     public String store(MultipartFile file) {
         String originalFilename = file.getOriginalFilename();
-        String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
-        String newFilename = UUID.randomUUID().toString() + extension;
+        String extension = FilenameUtils.getExtension(originalFilename);
+        String newFilename = UUID.randomUUID().toString() + "." + extension;
         try{
             if(file.isEmpty()){
                 throw new StorageException("Error: File is empty");

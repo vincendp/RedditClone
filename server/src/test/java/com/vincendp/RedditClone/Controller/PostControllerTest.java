@@ -1,11 +1,13 @@
 package com.vincendp.RedditClone.Controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.CollectionType;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.vincendp.RedditClone.Config.TestSecurityConfiguration;
-import com.vincendp.RedditClone.Dto.CreatePostRequest;
-import com.vincendp.RedditClone.Dto.CreatePostResponse;
-import com.vincendp.RedditClone.Dto.GetPostDTO;
+import com.vincendp.RedditClone.Dto.*;
 import com.vincendp.RedditClone.Model.PostType;
 import com.vincendp.RedditClone.Service.PostService;
+import com.vincendp.RedditClone.Utility.SuccessResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,17 +19,18 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.hamcrest.Matchers;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 
-import java.util.Date;
-import java.util.UUID;
+import java.util.*;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.mockito.Mockito.*;
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 @WebMvcTest(PostController.class)
 @ExtendWith(MockitoExtension.class)
@@ -39,6 +42,9 @@ public class PostControllerTest {
 
     @MockBean
     private PostService postService;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     private MultiValueMap<String, String> params;
 
@@ -217,5 +223,128 @@ public class PostControllerTest {
                 .header("Content-Type", "application/json"))
                 .andExpect(status().isOk())
                 .andExpect(content().string(Matchers.containsString("Success: Got post")));
+    }
+
+    @Test
+    void when_get_all_post_previews_and_service_throws_error_should_throw_error(){
+        when(postService.getAllPostPreviews()).thenThrow(RuntimeException.class);
+        assertThatThrownBy(() -> {
+            mockMvc.perform(get("/posts")
+                    .header("Content-Type", "application/json"));
+        }).hasCauseInstanceOf(RuntimeException.class);
+    }
+
+    @Test
+    void when_get_all_post_previews_and_no_post_previews_should_return_response_with_empty_list() throws Exception{
+        when(postService.getAllPostPreviews()).thenReturn(new ArrayList<>());
+        MvcResult result = mockMvc.perform(get("/posts")
+                .header("Content-Type", "application/json"))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        SuccessResponse successResponse = objectMapper.readValue(result.getResponse().getContentAsString(), SuccessResponse.class);
+        CollectionType typeReference = TypeFactory.defaultInstance().constructCollectionType(List.class, GetPostPreviewDTO.class);
+        List<GetPostPreviewDTO> postPreviews = objectMapper.convertValue(successResponse.getResult(), typeReference);
+        assertNotNull(postPreviews);
+        assertThat(postPreviews.isEmpty());
+    }
+
+    @Test
+    void when_get_all_post_previews_and_has_posts_should_return_response_with_list() throws Exception{
+        when(postService.getAllPostPreviews()).thenReturn(new ArrayList<>(
+                Arrays.asList(new GetPostPreviewDTO(), new GetPostPreviewDTO(), new GetPostPreviewDTO())
+        ));
+        MvcResult result = mockMvc.perform(get("/posts")
+                .header("Content-Type", "application/json"))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        SuccessResponse successResponse = objectMapper.readValue(result.getResponse().getContentAsString(), SuccessResponse.class);
+        CollectionType typeReference = TypeFactory.defaultInstance().constructCollectionType(List.class, GetPostPreviewDTO.class);
+        List<GetPostPreviewDTO> postPreviews = objectMapper.convertValue(successResponse.getResult(), typeReference);
+        assertNotNull(postPreviews);
+        assertEquals(3, postPreviews.size());
+    }
+
+    @Test
+    void when_get_all_post_previews_by_specific_user_and_service_throws_error_should_throw_error(){
+        when(postService.getAllPostPreviewsByUser(anyString())).thenThrow(RuntimeException.class);
+        assertThatThrownBy(() -> {
+            mockMvc.perform(get("/posts/users/{user_id}", UUID.randomUUID().toString())
+                    .header("Content-Type", "application/json"));
+        }).hasCauseInstanceOf(RuntimeException.class);
+    }
+
+    @Test
+    void when_get_all_post_previews_by_specific_user_and_no_post_previews_should_return_response_with_empty_list() throws Exception{
+        when(postService.getAllPostPreviewsByUser(anyString())).thenReturn(new ArrayList<>());
+        MvcResult result = mockMvc.perform(get("/posts/users/{user_id}", UUID.randomUUID().toString())
+                .header("Content-Type", "application/json"))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        SuccessResponse successResponse = objectMapper.readValue(result.getResponse().getContentAsString(), SuccessResponse.class);
+        CollectionType typeReference = TypeFactory.defaultInstance().constructCollectionType(List.class, GetPostPreviewDTO.class);
+        List<GetPostPreviewDTO> postPreviews = objectMapper.convertValue(successResponse.getResult(), typeReference);
+        assertNotNull(postPreviews);
+        assertThat(postPreviews.isEmpty());
+    }
+
+    @Test
+    void when_get_all_post_previews_by_specific_user_and_has_posts_should_return_response_with_list() throws Exception{
+        when(postService.getAllPostPreviewsByUser(anyString())).thenReturn(new ArrayList<>(
+                Arrays.asList(new GetPostPreviewDTO(), new GetPostPreviewDTO())
+        ));
+        MvcResult result = mockMvc.perform(get("/posts/users/{user_id}", UUID.randomUUID().toString())
+                .header("Content-Type", "application/json"))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        SuccessResponse successResponse = objectMapper.readValue(result.getResponse().getContentAsString(), SuccessResponse.class);
+        CollectionType typeReference = TypeFactory.defaultInstance().constructCollectionType(List.class, GetPostPreviewDTO.class);
+        List<GetPostPreviewDTO> postPreviews = objectMapper.convertValue(successResponse.getResult(), typeReference);
+        assertNotNull(postPreviews);
+        assertEquals(2, postPreviews.size());
+    }
+
+    @Test
+    void when_get_all_post_previews_by_specific_subreddit_and_service_throws_error_should_throw_error(){
+        when(postService.getAllPostPreviewsBySubreddit(anyString())).thenThrow(RuntimeException.class);
+        assertThatThrownBy(() -> {
+            mockMvc.perform(get("/posts/subreddits/{subreddit_id}", UUID.randomUUID().toString())
+                    .header("Content-Type", "application/json"));
+        }).hasCauseInstanceOf(RuntimeException.class);
+    }
+
+    @Test
+    void when_get_all_post_previews_by_specific_subreddit_and_no_post_previews_should_return_response_with_empty_list() throws  Exception{
+        when(postService.getAllPostPreviewsBySubreddit(anyString())).thenReturn(new ArrayList<>());
+        MvcResult result = mockMvc.perform(get("/posts/subreddits/{subreddit_id}", UUID.randomUUID().toString())
+                .header("Content-Type", "application/json"))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        SuccessResponse successResponse = objectMapper.readValue(result.getResponse().getContentAsString(), SuccessResponse.class);
+        CollectionType typeReference = TypeFactory.defaultInstance().constructCollectionType(List.class, GetPostPreviewDTO.class);
+        List<GetPostPreviewDTO> postPreviews = objectMapper.convertValue(successResponse.getResult(), typeReference);
+        assertNotNull(postPreviews);
+        assertThat(postPreviews.isEmpty());
+    }
+
+    @Test
+    void when_get_all_post_previews_by_specific_subreddit_and_has_posts_should_return_response_with_list() throws Exception{
+        when(postService.getAllPostPreviewsBySubreddit(anyString())).thenReturn(new ArrayList<>(
+                Arrays.asList(new GetPostPreviewDTO())
+        ));
+        MvcResult result = mockMvc.perform(get("/posts/subreddits/{subreddit_id}", UUID.randomUUID().toString())
+                .header("Content-Type", "application/json"))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        SuccessResponse successResponse = objectMapper.readValue(result.getResponse().getContentAsString(), SuccessResponse.class);
+        CollectionType typeReference = TypeFactory.defaultInstance().constructCollectionType(List.class, GetPostPreviewDTO.class);
+        List<GetPostPreviewDTO> postPreviews = objectMapper.convertValue(successResponse.getResult(), typeReference);
+        assertNotNull(postPreviews);
+        assertEquals(1, postPreviews.size());
     }
 }
