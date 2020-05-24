@@ -1,27 +1,4 @@
 <div class="post">
-  <div class="post__create-post">
-    <button
-      class="post__create-post-button post__button"
-      (click)="setPostType(PostType.TEXT)"
-      #createTextButton
-    >
-      Create Post
-    </button>
-    <button
-      class="post__icon post__button"
-      (click)="setPostType(PostType.IMAGE)"
-      #createImageButton
-    >
-      <app-svg-icon icon_name="icon-panorama"> </app-svg-icon>
-    </button>
-    <button
-      class="post__icon post__button"
-      (click)="setPostType(PostType.LINK)"
-      #createLinkButton
-    >
-      <app-svg-icon icon_name="icon-linkinsert_link"> </app-svg-icon>
-    </button>
-  </div>
   <div class="post__filter">
     <button class="post__filter-button post__button">
       <div class="post__filter-button-icon">
@@ -44,12 +21,13 @@
     <div
       class="post__post"
       lazyLoad
-      (loadedElement)="hi()"
+      (loadedElement)="postPreview.in_view = true"
       *ngFor="let postPreview of postPreviews"
     >
       <div class="post__vote-container">
         <button
           class="post__post-icon post__button"
+          (click)="castVote(postPreview, true)"
           [ngClass]="{
             'post__button--user-upvoted': postPreview.user_voted_for_post > 0
           }"
@@ -61,6 +39,7 @@
         </div>
         <button
           class="post__post-icon post__button"
+          (click)="castVote(postPreview, false)"
           [ngClass]="{
             'post__button--user-downvoted': postPreview.user_voted_for_post < 0
           }"
@@ -100,7 +79,12 @@
           src="{{ apiUrl }}/image/{{ postPreview.image_path }}"
           alt=""
           class="post__post-image"
+          *ngIf="postPreview.in_view"
         />
+
+        <div class="post__post-icon" *ngIf="!postPreview.in_view">
+          <app-svg-icon icon_name="icon-linkinsert_link"> </app-svg-icon>
+        </div>
       </a>
 
       <div class="post__post-info-container">
@@ -136,168 +120,6 @@
           </a>
         </div>
       </div>
-    </div>
-  </div>
-</div>
-
-<div
-  class="create-post-modal"
-  [ngClass]="{ 'create-post-modal--show': createPostType }"
->
-  <div class="create-post-modal__content" #createPostContent>
-    <div class="create-post-modal__post-type-select">
-      <button
-        class="create-post-modal__type-button"
-        (click)="setPostType(PostType.TEXT)"
-        [ngClass]="{
-          'create-post-modal__type-button--selected':
-            createPostType == PostType.TEXT
-        }"
-      >
-        <div class="create-post-modal__icon">
-          <app-svg-icon icon_name="icon-mode_comment"> </app-svg-icon>
-        </div>
-        <span class="create-post-modal__text">
-          Text
-        </span>
-      </button>
-
-      <button
-        class="create-post-modal__type-button"
-        (click)="setPostType(PostType.IMAGE)"
-        [ngClass]="{
-          'create-post-modal__type-button--selected':
-            createPostType == PostType.IMAGE
-        }"
-      >
-        <div class="create-post-modal__icon">
-          <app-svg-icon icon_name="icon-panorama"> </app-svg-icon>
-        </div>
-        <span class="create-post-modal__text">
-          Image
-        </span>
-      </button>
-
-      <button
-        class="create-post-modal__type-button"
-        (click)="setPostType(PostType.LINK)"
-        [ngClass]="{
-          'create-post-modal__type-button--selected':
-            createPostType == PostType.LINK
-        }"
-      >
-        <div class="create-post-modal__icon">
-          <app-svg-icon icon_name="icon-linkinsert_link"> </app-svg-icon>
-        </div>
-        <span class="create-post-modal__text">
-          Link
-        </span>
-      </button>
-    </div>
-
-    <form [formGroup]="createPostForm" class="create-post-modal__form">
-      <div class="create-post-modal__title-container">
-        <textarea
-          type="text"
-          formControlName="title"
-          id="title"
-          class="create-post-modal__title"
-          placeholder="Title"
-          maxlength="300"
-        >
-        </textarea>
-        <div class="create-post-modal__title--length">
-          <span *ngIf="createPostForm.value.title"
-            >{{ createPostForm.value.title.length }}/300</span
-          >
-          <span *ngIf="!createPostForm.value.title">0/300</span>
-        </div>
-      </div>
-
-      <div
-        class="create-post-modal__textarea-container"
-        *ngIf="createPostType == PostType.TEXT"
-      >
-        <textarea
-          type="text"
-          formControlName="description"
-          id="description"
-          class="create-post-modal__textarea create-post-modal__textarea--description"
-          placeholder="Optional Description"
-        >
-        </textarea>
-      </div>
-
-      <div
-        *ngIf="createPostType == PostType.IMAGE"
-        class="create-post-modal__file-container"
-      >
-        <input
-          type="file"
-          id="img"
-          name="img"
-          (change)="onChangeFile()"
-          class="create-post-modal__file-display-none"
-          #fileUpload
-        />
-        <button
-          class="create-post-modal__upload-button post__button"
-          (click)="onClickUploadButton()"
-          *ngIf="!fileSrc"
-        >
-          Upload Image
-        </button>
-        <img
-          *ngIf="fileSrc"
-          [src]="fileSrc"
-          alt=""
-          class="create-post-modal__image-preview"
-        />
-        <div
-          class="create-post-modal__file-close"
-          (click)="deleteFile()"
-          [ngClass]="{ 'create-post-modal__file-display-none': !fileSrc }"
-        >
-          <app-svg-icon icon_name="icon-delete"> </app-svg-icon>
-        </div>
-      </div>
-
-      <div
-        class="create-post-modal__textarea-container"
-        *ngIf="createPostType == PostType.LINK"
-      >
-        <textarea
-          type="text"
-          formControlName="link"
-          id="link"
-          class="create-post-modal__textarea create-post-modal__textarea--link"
-          placeholder="Link"
-        >
-        </textarea>
-      </div>
-    </form>
-
-    <div class="create-post-modal__complete-buttons">
-      <button
-        class="create-post-modal__complete-button create-post-modal__complete-button--cancel post__button"
-        (click)="closePostForm()"
-      >
-        Cancel
-      </button>
-
-      <button
-        class="create-post-modal__complete-button create-post-modal__complete-button--create post__button"
-        [disabled]="
-          createPostForm.controls.title.errors ||
-          (createPostType == PostType.IMAGE &&
-            createPostForm.controls.image.errors) ||
-          (createPostType == PostType.LINK &&
-            createPostForm.controls.link.errors)
-        "
-        (click)="createPost()"
-      >
-        Create
-      </button>
     </div>
   </div>
 </div>

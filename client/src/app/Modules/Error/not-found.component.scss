@@ -1,0 +1,22 @@
+@import "src/assets/abstracts/_variables.scss";
+
+.error-container {
+  height: 95vh;
+  width: 100%;
+  position: relative;
+
+  &__error {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    background-color: $color-grey-lighter;
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 20%;
+    height: 20%;
+    box-shadow: 0 0.3rem 1rem $color-grey-dark;
+    color: $color-primary;
+  }
+}

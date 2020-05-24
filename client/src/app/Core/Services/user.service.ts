@@ -14,6 +14,8 @@ export class UserService {
   private isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
   public isAuthenticated = this.isAuthenticatedSubject.asObservable();
 
+  private redirectUrl: string;
+
   constructor(
     private apiService: ApiService,
     private router: Router,
@@ -27,7 +29,12 @@ export class UserService {
         this.userSubject.next(<User>data["result"]);
         this.isAuthenticatedSubject.next(true);
 
-        this.router.navigateByUrl("/");
+        if (this.redirectUrl && this.redirectUrl.length > 0) {
+          this.router.navigateByUrl(this.redirectUrl);
+          this.redirectUrl = null;
+        } else {
+          this.router.navigateByUrl("/");
+        }
       },
       (err) => {
         console.log(err);
@@ -76,5 +83,15 @@ export class UserService {
         console.log(err);
       }
     );
+  }
+
+  setRedirectUrl(url: string) {
+    console.log("Setting...");
+    console.log(url);
+    this.redirectUrl = url;
+  }
+
+  getRedirectUrl() {
+    return this.redirectUrl;
   }
 }

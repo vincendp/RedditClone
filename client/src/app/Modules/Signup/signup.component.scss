@@ -16,14 +16,14 @@
     width: 25%;
     height: 50%;
     box-shadow: 0 0.3rem 1rem $color-grey-dark;
-    color: $color-primary-darker;
+    color: $color-primary-light;
   }
   &__title {
     text-align: center;
     font-weight: 700;
     font-size: 3rem;
     text-transform: uppercase;
-    color: $color-primary-darker;
+    color: $color-primary-light;
   }
   &__form {
     display: flex;
@@ -44,7 +44,7 @@
 
     &:active,
     &:focus {
-      border: 1px solid $color-primary;
+      border: 1px solid $color-primary-light;
     }
   }
 

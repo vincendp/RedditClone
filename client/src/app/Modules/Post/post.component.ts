@@ -8,9 +8,9 @@ import { Comment } from "src/app/Core/Model/comment.model";
 import { PostType } from "src/app/Core/Model/post-type.enum";
 import { ApiService } from "src/app/Core/Http/api.service";
 import { FormControl, Validators } from "@angular/forms";
-import { Subscription, throwError } from "rxjs";
+import { throwError, Subject } from "rxjs";
 import { UserService } from "src/app/Core/Services/user.service";
-import { switchMap, catchError } from "rxjs/operators";
+import { switchMap, catchError, takeUntil } from "rxjs/operators";
 
 @Component({
   selector: "app-post",
@@ -21,7 +21,7 @@ export class PostComponent implements OnInit, OnDestroy {
   apiUrl: string = environment.apiUrl;
 
   commentForm: FormControl;
-  userSubscription: Subscription;
+  destroy: Subject<Boolean> = new Subject();
 
   PostType = PostType;
 
@@ -46,7 +46,7 @@ export class PostComponent implements OnInit, OnDestroy {
     this.post = {} as Post;
     this.comments = [] as Array<Comment>;
 
-    this.userService.user.subscribe((user) => {
+    this.userService.user.pipe(takeUntil(this.destroy)).subscribe((user) => {
       this.user = user as User;
     });
 
@@ -57,10 +57,6 @@ export class PostComponent implements OnInit, OnDestroy {
           this.subreddit = subreddit["result"] as Subreddit;
 
           return this.apiService.get(`/posts/${postId}`, null);
-        }),
-        catchError((err) => {
-          this.router.navigateByUrl("/error/not-found");
-          return throwError(err);
         })
       )
       .subscribe(
@@ -72,8 +68,7 @@ export class PostComponent implements OnInit, OnDestroy {
           }
         },
         (err) => {
-          console.log(err);
-          this.router.navigateByUrl("/error/not-found");
+          if (err.status == 404) this.router.navigateByUrl("/error/not-found");
         }
       );
 
@@ -90,7 +85,10 @@ export class PostComponent implements OnInit, OnDestroy {
     this.commentForm.setValidators([Validators.required]);
   }
 
-  ngOnDestroy(): void {}
+  ngOnDestroy(): void {
+    this.destroy.next(true);
+    this.destroy.unsubscribe();
+  }
 
   submitComment(): void {
     if (

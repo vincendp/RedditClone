@@ -31,33 +31,10 @@
     }
   }
 
-  // CREATE POST
-
-  &__create-post {
-    display: flex;
-    align-items: center;
-    min-height: 6vh;
-    padding: 0 1rem;
-    background-color: $color-grey-lighter;
-    margin-bottom: 1rem;
-  }
-
-  &__create-post-button {
-    flex: 1;
-    padding: 1rem 2rem;
-    margin-right: 1rem;
-    border: 1px solid $color-primary-darker;
-    border-radius: 4px;
-    background-color: $color-white;
-    color: $color-primary-darker;
-    font-size: 1.5rem;
-    text-align: start;
-  }
-
   &__icon {
     height: 3rem;
     width: 3rem;
-    color: $color-primary-darker;
+    color: $color-primary;
   }
 
   // FILTER
@@ -75,7 +52,7 @@
     display: flex;
     align-items: center;
     min-width: 5rem;
-    color: $color-primary-darker;
+    color: $color-primary;
     margin: 0 1rem;
   }
 
@@ -129,7 +106,7 @@
   &__post-icon {
     height: 2.2rem;
     width: 2.2rem;
-    color: $color-primary-darker;
+    color: $color-primary;
   }
 
   &__post-image {
@@ -180,189 +157,5 @@
   &__post-button-text {
     margin-left: 0.5rem;
     font-size: 1.4rem;
-  }
-}
-
-.create-post-modal {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgb(0, 0, 0);
-  background-color: rgba(0, 0, 0, 0.4);
-  z-index: 100;
-
-  &--show {
-    display: block;
-  }
-
-  &__content {
-    margin: 5% auto;
-    width: 40%;
-    overflow: auto;
-    background-color: $color-white;
-  }
-
-  &__post-type-select {
-    display: flex;
-    margin-bottom: 1rem;
-  }
-
-  &__type-button {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border: none;
-    background-color: $color-white;
-    color: $color-grey-light;
-
-    &:hover {
-      cursor: pointer;
-      background-color: darken($color-grey-lighter, 5%);
-    }
-
-    &--selected {
-      color: $color-primary-darker;
-      border-bottom: 1px solid $color-primary-darker;
-    }
-
-    &:not(:first-child) {
-      border-left: 1px solid darken($color-grey-lighter, 5%);
-    }
-  }
-
-  &__icon {
-    height: 5rem;
-    width: 5rem;
-  }
-
-  &__text {
-    text-transform: uppercase;
-    letter-spacing: 0.1rem;
-    font-size: 2rem;
-  }
-
-  &__form {
-    width: 100%;
-    padding: 0 1rem;
-  }
-
-  &__title-container {
-    position: relative;
-    width: 100%;
-  }
-
-  &__title {
-    width: 100%;
-    height: 8rem;
-    border: 1px solid $color-grey-light;
-    font-size: 1.5rem;
-    font-family: inherit;
-    padding: 0.1rem 0.5rem;
-    resize: none;
-    margin-bottom: 1rem;
-
-    &:focus {
-      outline: 1px solid $color-primary-darker;
-    }
-  }
-
-  &__title--length {
-    position: absolute;
-    font-size: 1.5rem;
-    color: $color-grey-darker;
-    right: 0.5%;
-    bottom: 10%;
-  }
-
-  &__textarea-container {
-    position: relative;
-    width: 100%;
-  }
-
-  &__textarea {
-    width: 100%;
-    border: 1px solid $color-grey-light;
-    font-size: 1.5rem;
-    font-family: inherit;
-    padding: 0.1rem 0.5rem;
-    resize: none;
-    margin-bottom: 1rem;
-
-    &:focus {
-      outline: 1px solid $color-primary-darker;
-    }
-
-    &--description {
-      height: 40rem;
-    }
-
-    &--link {
-      height: 15rem;
-    }
-  }
-
-  &__file-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    align-items: flex-end;
-    margin-bottom: 1.2rem;
-  }
-
-  &__upload-button {
-    @extend .button;
-    padding: 0.8rem 4rem;
-    font-size: 1.5rem;
-    border: 1px solid $color-primary-dark;
-    color: $color-primary-dark;
-  }
-
-  &__file-display-none {
-    display: none;
-  }
-
-  &__file-close {
-    height: 2.5rem;
-    width: 2.5rem;
-    cursor: pointer;
-  }
-
-  &__image-preview {
-    height: 15rem;
-    max-width: 100%;
-  }
-
-  &__complete-buttons {
-    display: flex;
-    justify-content: flex-end;
-    margin-bottom: 2rem;
-  }
-
-  &__complete-button {
-    @extend .button;
-    padding: 0.8rem 4rem;
-    font-size: 1.5rem;
-    margin-right: 1rem;
-
-    &--cancel {
-      border: 1px solid $color-primary;
-      color: $color-primary;
-    }
-
-    &--create {
-      border: 1px solid $color-primary-darker;
-      color: $color-primary-darker;
-    }
-
-    &:disabled {
-      border: 1px solid $color-grey-lighter;
-      color: $color-grey-dark;
-      background-color: $color-grey-lighter;
-      cursor: not-allowed;
-    }
   }
 }

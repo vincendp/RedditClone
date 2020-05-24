@@ -21,7 +21,7 @@
   }
 
   &__post-icon {
-    color: $color-primary-darker;
+    color: $color-primary;
 
     &--regular {
       height: 2.2rem;
@@ -121,7 +121,7 @@
     }
 
     &__link {
-      color: $color-primary-darker;
+      color: $color-primary;
     }
 
     &__link-container {
@@ -157,7 +157,7 @@
       margin-top: 1rem;
 
       &:focus {
-        outline: 1px solid $color-primary-darker;
+        outline: 1px solid $color-primary;
       }
     }
 

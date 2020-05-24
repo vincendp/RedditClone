@@ -12,4 +12,5 @@ export interface PostPreview {
   user_voted_for_post: number;
   votes: number;
   comments: number;
+  in_view: boolean;
 }

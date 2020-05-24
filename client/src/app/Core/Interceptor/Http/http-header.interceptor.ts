@@ -8,10 +8,12 @@ import {
 } from "@angular/common/http";
 import { Observable, throwError } from "rxjs";
 import { catchError } from "rxjs/operators";
+import { Router } from "@angular/router";
+import { UserService } from "../../Services/user.service";
 
 @Injectable()
 export class HttpHeaderInterceptor implements HttpInterceptor {
-  constructor() {}
+  constructor(private router: Router, private userService: UserService) {}
 
   intercept(
     request: HttpRequest<any>,
@@ -34,12 +36,22 @@ export class HttpHeaderInterceptor implements HttpInterceptor {
         if (error.error instanceof ErrorEvent) {
           message = "Error client: " + error.error.message;
         } else {
-          message = "Error server: " + error.status + "    " + error.message;
+          if (error.status == 403) {
+            if (!req.url.endsWith("users")) {
+              this.userService.setRedirectUrl(
+                this.router.routerState.snapshot.url
+              );
+              this.router.navigateByUrl("/login");
+              message = error.error.message;
+            }
+          } else {
+            message = error.error.message;
+          }
         }
 
         console.log(error);
-        alert(message);
-        return throwError(message);
+        if (message.length > 0) alert(message);
+        return throwError(error);
       })
     );
   }

@@ -8,8 +8,8 @@
     margin: 0 1rem;
     padding: 0.5rem 1rem;
     font-size: 3rem;
-    color: $color-grey-lighter;
-    background-color: $color-primary-dark;
+    background-color: $color-grey-lighter;
+    color: $color-primary-light;
   }
 
   &__rows {
@@ -23,7 +23,6 @@
     padding: 1.5rem 1rem;
     font-size: 2rem;
     background-color: $color-grey-lighter;
-    color: $color-black;
 
     &:hover {
       background-color: $color-grey-light;

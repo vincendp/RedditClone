@@ -40,19 +40,12 @@
         [ngClass]="{ 'dropdown__content--active': dropdownIsActive }"
       >
         <ul class="dropdown__ul" (click)="onToggleDropdown()">
-          <li class="dropdown__li">All</li>
           <li class="dropdown__li" [routerLink]="['/subreddits']">
             Subreddits
           </li>
         </ul>
       </div>
     </div>
-  </div>
-
-  <div class="nav__search">
-    <button class="nav__svg-button nav__icon nav__hover">
-      <app-svg-icon icon_name="icon-search"> </app-svg-icon>
-    </button>
   </div>
 
   <div class="nav__user">
@@ -74,16 +67,12 @@
         Signup
       </button>
       <button
-        class="nav__text nav__user-button nav__user-login"
+        class="nav__text nav__user-button nav__user-login nav__hover"
         *ngIf="isLoggedIn"
         (click)="logout()"
       >
         Logout
       </button>
     </div>
-
-    <button class="nav__svg-button nav__icon nav__hover u-margin-right-s">
-      <app-svg-icon icon_name="icon-person"> </app-svg-icon>
-    </button>
   </div>
 </header>
