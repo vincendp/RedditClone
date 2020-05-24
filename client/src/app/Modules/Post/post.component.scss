@@ -2,6 +2,7 @@
 
 .post {
   display: flex;
+  background-color: $color-grey-lighter;
 
   &__link {
     text-decoration: none;
@@ -21,7 +22,7 @@
   }
 
   &__post-icon {
-    color: $color-primary;
+    color: $color-primary-light;
 
     &--regular {
       height: 2.2rem;
@@ -121,7 +122,7 @@
     }
 
     &__link {
-      color: $color-primary;
+      color: $color-primary-light;
     }
 
     &__link-container {
@@ -157,14 +158,14 @@
       margin-top: 1rem;
 
       &:focus {
-        outline: 1px solid $color-primary;
+        outline: 1px solid $color-primary-light;
       }
     }
 
     &__submit {
       @extend .button;
-      border: 1px solid $color-primary;
-      color: $color-primary;
+      border: 1px solid $color-primary-light;
+      color: $color-primary-light;
       padding: 0.8rem 4rem;
       font-size: 1.5rem;
       border-radius: 4px;

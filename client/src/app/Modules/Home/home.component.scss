@@ -2,11 +2,10 @@
 
 .home {
   width: 100%;
-  margin-top: 1rem;
+  background-color: $color-grey-lighter;
 
   &__main {
     margin: 0 1rem;
-    margin-top: 1rem;
     padding: 0rem 1rem;
     background-color: $color-grey-lighter;
   }
