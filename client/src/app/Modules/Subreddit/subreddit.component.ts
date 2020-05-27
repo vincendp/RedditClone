@@ -68,7 +68,6 @@ export class SubredditComponent implements OnInit, OnDestroy {
       .pipe(
         switchMap((subreddit) => {
           this.subreddit = subreddit["result"] as Subreddit;
-          console.log(this.subreddit);
 
           return this.apiService.get(
             `/posts/subreddits/${this.subreddit.id}`,
@@ -79,7 +78,6 @@ export class SubredditComponent implements OnInit, OnDestroy {
       .subscribe(
         (postPreviews) => {
           this.postPreviews = postPreviews["result"] as Array<PostPreview>;
-          console.log(this.postPreviews);
         },
         (err) => {
           if (err.status == 404) {
@@ -144,8 +142,6 @@ export class SubredditComponent implements OnInit, OnDestroy {
     Object.keys(postForm).forEach((key) => {
       formData.append(key, postForm[key]);
     });
-
-    console.log(postForm);
 
     let options = {
       headers: { Accept: "application/json" },

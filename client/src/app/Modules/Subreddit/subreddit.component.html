@@ -35,7 +35,11 @@
   </div>
 
   <div class="subreddit__main">
-    <app-posts class="subreddit__posts" [postPreviews]="postPreviews">
+    <app-posts
+      class="subreddit__posts"
+      [postPreviews]="postPreviews"
+      [includeUser]="true"
+    >
     </app-posts>
 
     <div class="subreddit__sidebar">

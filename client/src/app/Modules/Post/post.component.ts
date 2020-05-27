@@ -111,7 +111,6 @@ export class PostComponent implements OnInit, OnDestroy {
         )
         .subscribe(
           (data) => {
-            console.log(data);
             window.location.reload();
           },
 

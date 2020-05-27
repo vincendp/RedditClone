@@ -98,11 +98,27 @@
           >
         </div>
         <div class="post__post-by">
-          Posted by
-          <a routerLink="/u/{{ postPreview.username }}" class="post__post-user">
-            u/{{ postPreview.username }}
-          </a>
-          {{ postPreview.created_at }}
+          <span *ngIf="includeSubreddit">
+            <a
+              routerLink="/r/{{ postPreview.subreddit }}"
+              class="post__post-link"
+            >
+              r/{{ postPreview.subreddit }}</a
+            >
+          </span>
+          <span *ngIf="includeUser">
+            <span> Posted by </span>
+            <a
+              routerLink="/u/{{ postPreview.username }}"
+              class="post__post-link"
+            >
+              u/{{ postPreview.username }}
+            </a>
+          </span>
+
+          <span>
+            {{ postPreview.created_at }}
+          </span>
         </div>
         <div class="post__post-buttons">
           <a

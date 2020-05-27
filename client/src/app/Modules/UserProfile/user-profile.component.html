@@ -1,0 +1,11 @@
+<div class="user-profile">
+  <h1 class="user-profile__header">u/{{ queryUser.username }}</h1>
+  <div class="user-profile__main">
+    <app-posts
+      class="user-profile__posts"
+      [postPreviews]="postPreviews"
+      [includeSubreddit]="true"
+    >
+    </app-posts>
+  </div>
+</div>

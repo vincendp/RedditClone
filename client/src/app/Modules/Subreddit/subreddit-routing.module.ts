@@ -4,7 +4,7 @@ import { SubredditComponent } from "./subreddit.component";
 
 const routes: Routes = [
   {
-    path: "",
+    path: ":subreddit",
     component: SubredditComponent,
   },
 ];

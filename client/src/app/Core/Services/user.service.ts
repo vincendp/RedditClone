@@ -25,7 +25,6 @@ export class UserService {
   login(credentials: {}) {
     this.apiService.post("/auth/login", credentials, {}).subscribe(
       (data: {}) => {
-        console.log(data);
         this.userSubject.next(<User>data["result"]);
         this.isAuthenticatedSubject.next(true);
 
@@ -45,7 +44,6 @@ export class UserService {
   logout() {
     this.apiService.post("/logout", null, {}).subscribe(
       (data: {}) => {
-        console.log(data);
         this.userSubject.next({} as User);
         this.isAuthenticatedSubject.next(false);
         this.router.navigateByUrl("/login");
@@ -59,7 +57,6 @@ export class UserService {
   signup(credentials: {}) {
     this.apiService.post("/users", credentials, {}).subscribe(
       (data: {}) => {
-        console.log(data);
         this.userSubject.next(<User>data["result"]);
         this.isAuthenticatedSubject.next(true);
 
@@ -74,8 +71,6 @@ export class UserService {
   populate() {
     this.apiService.get("/users", null).subscribe(
       (data: {}) => {
-        console.log(data);
-
         this.userSubject.next(<User>data["result"]);
         this.isAuthenticatedSubject.next(true);
       },
@@ -86,8 +81,6 @@ export class UserService {
   }
 
   setRedirectUrl(url: string) {
-    console.log("Setting...");
-    console.log(url);
     this.redirectUrl = url;
   }
 

@@ -23,14 +23,19 @@ const routes: Routes = [
       import("./Modules/Subreddits/subreddits.module").then((m) => m.SubredditsModule),
   },
   {
-    path: "r/:subreddit",
+    path: "r",
     loadChildren: () =>
       import("./Modules/Subreddit/subreddit.module").then((m) => m.SubredditModule),
   },
   {
-    path: "r/:subreddit/:postId",
+    path: "r/:subreddit",
     loadChildren: () =>
       import("./Modules/Post/post.module").then((m) => m.PostModule),
+  },
+  {
+    path: "u",
+    loadChildren: () =>
+      import("./Modules/UserProfile/user-profile.module").then((m) => m.UserProfileModule),
   },
   {
     path: "error",

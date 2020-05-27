@@ -27,7 +27,6 @@ export class SignupComponent implements OnInit {
   }
 
   signup() {
-    console.log(this.userSignup.value);
     this.userService.signup(this.userSignup.value);
   }
 }

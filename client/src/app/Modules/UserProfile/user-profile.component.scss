@@ -1,8 +1,15 @@
 @import "src/assets/abstracts/_variables.scss";
 
-.home {
+.user-profile {
   width: 100%;
   background-color: $color-grey-lighter;
+
+  &__header {
+    color: $color-primary;
+    font-size: 3rem;
+    margin: 1rem;
+    padding: 0rem 1rem;
+  }
 
   &__main {
     background-color: $color-grey-lighter;

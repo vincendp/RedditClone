@@ -23,7 +23,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.postPreviews = {} as Array<PostPreview>;
+    this.postPreviews = [] as Array<PostPreview>;
 
     this.userService.user.pipe(takeUntil(this.destroy)).subscribe((user) => {
       this.user = user as User;

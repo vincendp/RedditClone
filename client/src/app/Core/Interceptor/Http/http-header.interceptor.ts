@@ -28,8 +28,6 @@ export class HttpHeaderInterceptor implements HttpInterceptor {
     let req: HttpRequest<any>;
     req = request.clone({ setHeaders: headers, withCredentials: true });
 
-    console.log(req);
-
     return next.handle(req).pipe(
       catchError((error: HttpErrorResponse) => {
         let message = "";
@@ -45,12 +43,13 @@ export class HttpHeaderInterceptor implements HttpInterceptor {
               message = error.error.message;
             }
           } else {
-            message = error.error.message;
+            if (error.error && error.error.message)
+              message = error.error.message;
+            else message = error.message;
           }
         }
 
-        console.log(error);
-        if (message.length > 0) alert(message);
+        if (message && message.length > 0) alert(message);
         return throwError(error);
       })
     );

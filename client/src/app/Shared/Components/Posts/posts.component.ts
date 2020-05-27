@@ -17,6 +17,8 @@ export class PostsComponent implements OnInit, OnDestroy {
   PostType = PostType;
   apiUrl: string = environment.apiUrl;
 
+  @Input() includeUser: boolean;
+  @Input() includeSubreddit: boolean;
   @Input() postPreviews: Array<PostPreview>;
 
   destroy: Subject<Boolean> = new Subject();
@@ -37,10 +39,6 @@ export class PostsComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy.next(true);
     this.destroy.unsubscribe();
-  }
-
-  hi() {
-    console.log("IN VIEW");
   }
 
   castVote(postPreview: PostPreview, vote: boolean) {
