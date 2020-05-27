@@ -5,7 +5,7 @@ import com.vincendp.RedditClone.Dto.LoginResponse;
 import com.vincendp.RedditClone.Model.CustomUserDetails;
 import com.vincendp.RedditClone.Model.User;
 import com.vincendp.RedditClone.Repository.UserRepository;
-import com.vincendp.RedditClone.Utility.JWTUtility;
+import com.vincendp.RedditClone.Utility.AuthenticationUtility;
 import com.vincendp.RedditClone.Utility.SuccessResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,26 +19,23 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
-import java.util.Map;
 
 @RestController
 @RequestMapping("auth")
 public class AuthenticationController {
 
     private AuthenticationManager authenticationManager;
-    private JWTUtility jwtUtility;
     private UserRepository userRepository;
+    private AuthenticationUtility authenticationUtility;
 
     @Autowired
     public AuthenticationController(AuthenticationManager authenticationManager,
-                                    JWTUtility jwtUtility, UserRepository userRepository){
+                                    AuthenticationUtility authenticationUtility, UserRepository userRepository){
         this.authenticationManager = authenticationManager;
-        this.jwtUtility = jwtUtility;
         this.userRepository = userRepository;
+        this.authenticationUtility = authenticationUtility;
     }
 
 
@@ -60,14 +57,7 @@ public class AuthenticationController {
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("id", customUserDetails.getId());
-        String jws = jwtUtility.generateJWS(claims, customUserDetails.getUsername());
-
-        Cookie cookie = new Cookie("jws", jws);
-        cookie.setPath("/");
-        cookie.setHttpOnly(true);
-        response.addCookie(cookie);
+        authenticationUtility.setCookie(customUserDetails, response);
 
         User user = userRepository.findByUsername(loginRequest.getUsername());
 

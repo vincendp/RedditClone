@@ -32,17 +32,28 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public LoginResponse getUser(String id) {
+    public LoginResponse getUserById(String id) {
         User user = null;
         try{
             UUID uuid = UUID.fromString(id);
             user = userRepository.getById(uuid);
         }
         catch(IllegalArgumentException e){
-            throw new IllegalArgumentException("Error: invalid user");
+            throw new IllegalArgumentException("Error: Invalid user");
         }
         if(user == null){
-            throw new ResourceNotFoundException("Error: user not found");
+            throw new ResourceNotFoundException("Error: User not found");
+        }
+
+        return new LoginResponse(user.getId().toString(), user.getUsername(), user.getCreated_at());
+    }
+
+    @Override
+    public LoginResponse getUserByName(String username) {
+        User user = userRepository.findByUsername(username);
+
+        if(user == null){
+            throw new ResourceNotFoundException("Error: User not found");
         }
 
         return new LoginResponse(user.getId().toString(), user.getUsername(), user.getCreated_at());

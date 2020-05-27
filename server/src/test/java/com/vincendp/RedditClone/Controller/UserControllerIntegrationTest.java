@@ -1,11 +1,17 @@
 package com.vincendp.RedditClone.Controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.CollectionType;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.vincendp.RedditClone.Dto.CreateUserRequest;
+import com.vincendp.RedditClone.Dto.GetPostPreviewDTO;
+import com.vincendp.RedditClone.Dto.LoginResponse;
 import com.vincendp.RedditClone.Model.User;
 import com.vincendp.RedditClone.Model.UserAuthentication;
 import com.vincendp.RedditClone.Repository.UserAuthenticationRepository;
+import com.vincendp.RedditClone.Utility.ErrorResponse;
 import com.vincendp.RedditClone.Utility.JWTUtility;
+import com.vincendp.RedditClone.Utility.SuccessResponse;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +27,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -146,4 +153,36 @@ public class UserControllerIntegrationTest {
                 .andExpect(content().string(Matchers.containsString("Success: Got user")));
     }
 
+    @Test
+    void when_get_user_by_name_and_user_does_not_exist_should_return_error_response() throws Exception{
+        MvcResult result = mockMvc.perform(get("/users/{username}", "username1")
+                    .header("Content-Type", "application/json"))
+                    .andReturn();
+
+        ErrorResponse errorResponse = objectMapper.readValue(result.getResponse().getContentAsString(), ErrorResponse.class);
+        assertNotNull(errorResponse);
+        assertEquals(404, errorResponse.getStatus());
+    }
+
+    @Test
+    void when_get_user_by_name_and_found_should_return_success_response() throws Exception{
+        User user = new User();
+        user.setUsername("bob");
+        UserAuthentication userAuthentication = new UserAuthentication();
+        userAuthentication.setPassword("1234");
+        userAuthentication.setUser(user);
+        userAuthenticationRepository.save(userAuthentication);
+
+        MvcResult result = mockMvc.perform(get("/users/{username}", "bob")
+                .header("Content-Type", "application/json"))
+                .andReturn();
+
+        SuccessResponse successResponse = objectMapper.readValue(result.getResponse().getContentAsString(), SuccessResponse.class);
+        LoginResponse loginResponse = objectMapper.convertValue(successResponse.getResult(), LoginResponse.class);
+
+        assertNotNull(successResponse);
+        assertEquals(200, successResponse.getStatus());
+        assertNotNull(loginResponse);
+        assertEquals(user.getId().toString(), loginResponse.getId());
+    }
 }

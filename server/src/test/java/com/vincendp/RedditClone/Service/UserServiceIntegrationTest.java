@@ -85,16 +85,24 @@ public class UserServiceIntegrationTest {
     @Test
     void when_user_not_found_throws_error(){
         assertThrows(ResourceNotFoundException.class, () -> {
-            userService.getUser(UUID.randomUUID().toString());
+            userService.getUserById(UUID.randomUUID().toString());
         });
     }
 
     @Test
     void when_user_found_returns_login_response(){
-        LoginResponse loginResponse = userService.getUser(user.getId().toString());
+        LoginResponse loginResponse = userService.getUserById(user.getId().toString());
         assertNotNull(loginResponse);
         assertNotNull(loginResponse.getId());
         assertEquals(user.getUsername(), loginResponse.getUsername());
     }
 
+    @Test
+    void when_get_user_by_name_and_found_should_return_dto(){
+        LoginResponse loginResponse = userService.getUserByName("bob");
+        assertNotNull(loginResponse);
+        assertEquals(user.getId().toString(), loginResponse.getId());
+        assertEquals(user.getUsername(), loginResponse.getUsername());
+        assertEquals(user.getCreated_at(), loginResponse.getCreated_at());
+    }
 }

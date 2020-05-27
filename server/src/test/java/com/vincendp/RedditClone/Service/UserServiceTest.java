@@ -15,11 +15,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Date;
-import java.util.NoSuchElementException;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -85,7 +83,7 @@ public class UserServiceTest {
         when(userRepository.getById(any())).thenThrow(IllegalArgumentException.class);
 
         assertThrows(IllegalArgumentException.class, () -> {
-            userService.getUser(user.getId().toString());
+            userService.getUserById(user.getId().toString());
         });
     }
 
@@ -94,7 +92,7 @@ public class UserServiceTest {
         when(userRepository.getById(any())).thenReturn(null);
 
         assertThrows(ResourceNotFoundException.class, () -> {
-            userService.getUser(user.getId().toString());
+            userService.getUserById(user.getId().toString());
         });
     }
 
@@ -102,7 +100,25 @@ public class UserServiceTest {
     void when_valid_returns_login_response(){
         when(userRepository.getById(any())).thenReturn(user);
 
-        assertTrue(userService.getUser(user.getId().toString()) instanceof LoginResponse);
-        assertEquals(createUserRequest.getUsername(),  userService.getUser(user.getId().toString()).getUsername());
+        assertTrue(userService.getUserById(user.getId().toString()) instanceof LoginResponse);
+        assertEquals(createUserRequest.getUsername(),  userService.getUserById(user.getId().toString()).getUsername());
+    }
+
+    @Test
+    void when_get_user_by_name_and_not_found_should_throw_error(){
+        when(userRepository.findByUsername(anyString())).thenReturn(null);
+        assertThrows(ResourceNotFoundException.class, () -> {
+            userService.getUserByName("username1");
+        });
+    }
+
+    @Test
+    void when_get_user_by_name_and_found_should_return_dto() throws Exception{
+        when(userRepository.findByUsername(anyString())).thenReturn(user);
+        LoginResponse loginResponse = userService.getUserByName("bob");
+        assertNotNull(loginResponse);
+        assertEquals(user.getId().toString(), loginResponse.getId());
+        assertEquals(user.getUsername(), loginResponse.getUsername());
+        assertEquals(user.getCreated_at(), loginResponse.getCreated_at());
     }
 }

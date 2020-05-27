@@ -7,6 +7,7 @@ import com.vincendp.RedditClone.Model.CustomUserDetails;
 import com.vincendp.RedditClone.Model.User;
 import com.vincendp.RedditClone.Model.UserAuthentication;
 import com.vincendp.RedditClone.Repository.UserRepository;
+import com.vincendp.RedditClone.Utility.AuthenticationUtility;
 import com.vincendp.RedditClone.Utility.JWTUtility;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,6 +22,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 import java.util.UUID;
 
@@ -48,6 +51,9 @@ public class AuthenticationControllerTest {
 
     @MockBean
     private UserRepository userRepository;
+
+    @MockBean
+    private AuthenticationUtility authenticationUtility;
 
     @Test
     void when_authenticate_fails_then_status_4xx() throws Exception{
@@ -85,7 +91,11 @@ public class AuthenticationControllerTest {
 
         when(authenticationManager.authenticate(any())).thenReturn(new UsernamePasswordAuthenticationToken(
                 customUserDetails, null, null));
-        when(jwtUtility.generateJWS(any(), anyString())).thenReturn(jws);
+        doAnswer((i) -> {
+            HttpServletResponse response = (HttpServletResponse) i.getArgument(1);
+            response.addCookie(new Cookie("jws", jws));
+            return null;
+        }).when(authenticationUtility).setCookie(any(CustomUserDetails.class), any(HttpServletResponse.class));
         when(userRepository.findByUsername(anyString())).thenReturn(user);
 
         MvcResult result = mockMvc.perform(post("/auth/login")

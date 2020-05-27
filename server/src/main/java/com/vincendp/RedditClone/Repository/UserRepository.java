@@ -5,6 +5,7 @@ import com.vincendp.RedditClone.Model.CustomUserDetails;
 import com.vincendp.RedditClone.Model.User;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.UUID;
@@ -14,7 +15,7 @@ public interface UserRepository extends CrudRepository<User, UUID> {
 
     @Query("SELECT new com.vincendp.RedditClone.Model.CustomUserDetails(u, ua)" +
             "FROM User u, UserAuthentication ua WHERE u.id=ua.user_id and u.username = :username")
-    CustomUserDetails findUserAndUserAuthentication(String username);
+    CustomUserDetails findUserAndUserAuthentication(@Param("username") String username);
 
     User findByUsername(String username);
 

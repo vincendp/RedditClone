@@ -29,6 +29,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -58,6 +59,26 @@ public class UserControllerTest {
 
     @MockBean
     private JWTUtility jwtUtility;
+
+    @Test
+    void when_get_user_by_name_and_service_throws_error_should_throw_error(){
+        when(userService.getUserByName(anyString())).thenThrow(RuntimeException.class);
+
+        assertThatThrownBy(() -> {
+            mockMvc.perform(get("/users/{username}", "username1")
+                    .header("Content-Type", "application/json"));
+        }).hasCauseInstanceOf(RuntimeException.class);
+    }
+
+    @Test
+    void when_get_user_by_name_success_returns_response_ok() throws Exception{
+        when(userService.getUserByName(anyString())).thenReturn(new LoginResponse());
+
+        mockMvc.perform(get("/users/{username}", "username1")
+                .header("Content-Type", "application/json"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(Matchers.containsString("Success: Got user")));
+    }
 
     @Test
     void null_username_should_throw_error() throws Exception{
@@ -198,9 +219,8 @@ public class UserControllerTest {
         CreateUserRequest createUserRequest = new CreateUserRequest("bob", "123", "123");
         String json = objectMapper.writeValueAsString(createUserRequest);
 
-        when(authenticationUtility.authenticateUser(any(UserDetails.class), any(HttpServletRequest.class)))
-                .thenThrow(IllegalArgumentException.class)
-                .thenThrow(NullPointerException.class);
+        doThrow(IllegalArgumentException.class).doThrow(NullPointerException.class).when(authenticationUtility)
+                .setCookie(any(CustomUserDetails.class), any(HttpServletResponse.class));
 
         assertThatThrownBy(() -> {
             mockMvc.perform(post("/users")
@@ -273,7 +293,7 @@ public class UserControllerTest {
     @Test
     void when_user_invalid_should_throw_error(){
         when(jwtUtility.getIdFromClaims(any())).thenReturn("id");
-        when(userService.getUser(anyString())).thenThrow(ResourceNotFoundException.class);
+        when(userService.getUserById(anyString())).thenThrow(ResourceNotFoundException.class);
 
         assertThatThrownBy(() -> {
             mockMvc.perform(get("/users")
@@ -288,7 +308,7 @@ public class UserControllerTest {
     @Test
     void when_valid_cookie_and_user_should_return_success() throws Exception{
         when(jwtUtility.getIdFromClaims(any())).thenReturn("id");
-        when(userService.getUser(anyString())).thenReturn(new LoginResponse("id", "bob", new Date()));
+        when(userService.getUserById(anyString())).thenReturn(new LoginResponse("id", "bob", new Date()));
 
         mockMvc.perform(get("/users")
                     .with(request -> {

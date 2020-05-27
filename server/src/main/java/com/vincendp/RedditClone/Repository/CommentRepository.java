@@ -4,6 +4,7 @@ import com.vincendp.RedditClone.Dto.GetCommentDTO;
 import com.vincendp.RedditClone.Model.Comment;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -25,6 +26,6 @@ public interface CommentRepository extends CrudRepository<Comment, UUID> {
     "LEFT JOIN VoteComment vc ON (vc.voteCommentId.comment.id = c.id) " +
     "WHERE c.post.id = :post_id " +
     "GROUP BY c.id")
-    List<GetCommentDTO> getCommentsFromPost(UUID post_id, UUID user_id);
+    List<GetCommentDTO> getCommentsFromPost(@Param("post_id") UUID post_id, @Param("user_id") UUID user_id);
 
 }

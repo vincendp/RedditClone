@@ -4,6 +4,7 @@ import com.vincendp.RedditClone.Dto.GetPostDTO;
 import com.vincendp.RedditClone.Model.Post;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -28,7 +29,7 @@ public interface PostRepository extends CrudRepository<Post, UUID> {
     "WHERE p.id = :post_id " +
     "GROUP BY p.id"
     )
-    GetPostDTO getPost(UUID post_id, UUID auth_user_id);
+    GetPostDTO getPost(@Param("post_id") UUID post_id, @Param("auth_user_id") UUID auth_user_id);
 
 
     @Query(value =
@@ -45,7 +46,7 @@ public interface PostRepository extends CrudRepository<Post, UUID> {
     "GROUP BY p.id"
     , nativeQuery= true
     )
-    List<Object[]> getAllPostPreviews(UUID auth_user_id);
+    List<Object[]> getAllPostPreviews(@Param("auth_user_id") UUID auth_user_id);
 
 
     @Query(value =
@@ -63,7 +64,7 @@ public interface PostRepository extends CrudRepository<Post, UUID> {
     "GROUP BY p.id"
     , nativeQuery= true
     )
-    List<Object[]> getAllPostPreviewsByUser(UUID posted_by_user_id, UUID auth_user_id);
+    List<Object[]> getAllPostPreviewsByUser(@Param("posted_by_user_id") UUID posted_by_user_id, @Param("auth_user_id") UUID auth_user_id);
 
 
     @Query(value =
@@ -81,6 +82,6 @@ public interface PostRepository extends CrudRepository<Post, UUID> {
     "GROUP BY p.id"
     , nativeQuery= true
     )
-    List<Object[]> getAllPostPreviewsBySubreddit(UUID subreddit_id, UUID auth_user_id);
+    List<Object[]> getAllPostPreviewsBySubreddit(@Param("subreddit_id") UUID subreddit_id, @Param("auth_user_id") UUID auth_user_id);
 
 }
