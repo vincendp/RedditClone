@@ -24,7 +24,7 @@ Open a new terminal
 
 **Step 3:**
 ```
-cd /Reddit-Clone/client
+cd Reddit-Clone/client
 ```
 
 **Step 4:**
@@ -55,7 +55,7 @@ Open another new terminal
 
 **Step 9:**
 ```
-cd /Reddit-Clone/server
+cd Reddit-Clone/server
 ```
 
 **Step 10:**
@@ -74,7 +74,7 @@ To run Java unit tests and integration tests, open up a terminal
 
 **Step 2:**
 ```
-cd /Reddit-Clone/server
+cd Reddit-Clone/server
 ```
 
 **Step 3:**
