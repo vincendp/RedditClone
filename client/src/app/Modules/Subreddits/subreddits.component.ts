@@ -1,5 +1,4 @@
 import { Component, OnInit } from "@angular/core";
-import { ApiService } from "src/app/Core/Http/api.service";
 
 @Component({
   selector: "app-subreddits",
@@ -7,22 +6,7 @@ import { ApiService } from "src/app/Core/Http/api.service";
   styleUrls: ["./subreddits.component.scss"],
 })
 export class SubredditsComponent implements OnInit {
-  subreddits: Object[];
+  constructor() {}
 
-  constructor(private apiService: ApiService) {}
-
-  ngOnInit(): void {
-    this.loadSubreddits();
-  }
-
-  loadSubreddits(): void {
-    this.apiService.get("/subreddits", null).subscribe(
-      (data) => {
-        this.subreddits = data["result"];
-      },
-      (err) => {
-        console.log(err);
-      }
-    );
-  }
+  ngOnInit(): void {}
 }

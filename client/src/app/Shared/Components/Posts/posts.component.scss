@@ -42,7 +42,8 @@
   &__filter {
     display: flex;
     align-items: center;
-    min-height: 6vh;
+    height: 5vh;
+    min-height: 6rem;
     padding: 0 1rem;
     margin-bottom: 1rem;
     background-color: $color-grey-lighter;

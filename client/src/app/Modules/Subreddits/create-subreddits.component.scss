@@ -1,0 +1,37 @@
+@import "src/styles.scss";
+
+.create-subreddits {
+  width: 100%;
+  background-color: $color-grey-lighter;
+
+  &__form {
+    margin-left: 1rem;
+    padding: 1.5rem 1rem;
+    font-size: 2rem;
+  }
+
+  &__input {
+    padding: 1rem 2rem;
+    font-size: 1.2rem;
+    border: 1px solid $color-primary-light;
+    border-radius: 3px;
+    background-color: $color-grey-lighter;
+    color: $color-black;
+    width: 20%;
+  }
+
+  &__button {
+    @extend .button;
+    border: 1px solid $color-primary-lighter;
+    font-size: 1.2rem;
+    border-radius: 3px;
+    color: $color-primary-lighter;
+    padding: 1rem 2rem;
+    margin-left: 1rem;
+
+    &:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+  }
+}

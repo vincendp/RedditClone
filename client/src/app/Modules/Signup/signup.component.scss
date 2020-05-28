@@ -1,7 +1,7 @@
 @import "src/assets/abstracts/_variables.scss";
 
 .signup {
-  height: 95vh;
+  height: calc(100vh - 6rem);
   width: 100%;
   position: relative;
 
@@ -10,11 +10,13 @@
     flex-direction: column;
     position: absolute;
     background-color: $color-grey-lighter;
-    top: 30%;
+    top: 40%;
     left: 50%;
     transform: translate(-50%, -50%);
     width: 25%;
     height: 50%;
+    min-height: 45rem;
+    z-index: 1000;
     box-shadow: 0 0.3rem 1rem $color-grey-dark;
     color: $color-primary-light;
   }
@@ -31,11 +33,12 @@
     align-items: center;
 
     & > * {
-      margin: 0.2rem 0;
+      margin: 0.4rem 0;
     }
   }
   &__input {
     padding: 1rem 2rem;
+    font-size: 1.1rem;
     border: 1px solid $color-grey-dark;
     border-radius: 3px;
     background-color: $color-grey-lighter;
@@ -50,11 +53,13 @@
 
   &__input-label {
     color: $color-primary-light;
+    font-size: 1.2rem;
     font-weight: 400;
   }
 
   &__submit {
     border: none;
+    font-size: 1.1rem;
     padding: 1rem 2rem;
     background-color: $color-primary-light;
     color: $color-white;

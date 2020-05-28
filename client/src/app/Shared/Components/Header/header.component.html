@@ -2,8 +2,7 @@
   <div class="nav__home">
     <button
       class="nav__svg-with-text nav__svg-button nav__hover"
-      [routerLink]="['/']"
-      routerLinkActive
+      routerLink="/"
     >
       <div class="nav__icon">
         <app-svg-icon icon_name="icon-home"> </app-svg-icon>
@@ -40,7 +39,7 @@
         [ngClass]="{ 'dropdown__content--active': dropdownIsActive }"
       >
         <ul class="dropdown__ul" (click)="onToggleDropdown()">
-          <li class="dropdown__li" [routerLink]="['/subreddits']">
+          <li class="dropdown__li" routerLink="/subreddits/view">
             Subreddits
           </li>
         </ul>
@@ -52,16 +51,14 @@
     <div class="nav__user-buttons">
       <button
         class="nav__text nav__user-button nav__user-login nav__hover"
-        [routerLink]="['/login']"
-        routerLinkActive
+        routerLink="/login"
         *ngIf="!isLoggedIn"
       >
         Login
       </button>
       <button
         class="nav__text nav__user-button nav__user-signup nav__hover"
-        [routerLink]="['/signup']"
-        routerLinkActive
+        routerLink="/signup"
         *ngIf="!isLoggedIn"
       >
         Signup

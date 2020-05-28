@@ -1,0 +1,9 @@
+<div class="view-subreddits">
+  <ul class="view-subreddits__rows">
+    <li class="view-subreddits__row" *ngFor="let subreddit of subreddits">
+      <a [routerLink]="['/r/' + subreddit.name]" class="view-subreddits__link">
+        r/{{ subreddit.name }}
+      </a>
+    </li>
+  </ul>
+</div>

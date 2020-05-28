@@ -1,0 +1,21 @@
+<div class="create-subreddits">
+  <form
+    class="create-subreddits__form"
+    [formGroup]="subredditForm"
+    (submit)="onSubmitCreateSubreddit()"
+  >
+    <input
+      type="text"
+      class="create-subreddits__input"
+      placeholder="New Subreddit"
+      formControlName="name"
+    />
+    <button
+      type="submit"
+      class="create-subreddits__button"
+      [disabled]="subredditForm.get('name').invalid"
+    >
+      Submit
+    </button>
+  </form>
+</div>

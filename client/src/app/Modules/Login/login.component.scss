@@ -10,11 +10,13 @@
     flex-direction: column;
     position: absolute;
     background-color: $color-grey-lighter;
-    top: 30%;
+    top: 40%;
     left: 50%;
     transform: translate(-50%, -50%);
     width: 25%;
     height: 45%;
+    min-height: 45rem;
+    z-index: 1000;
     box-shadow: 0 0.3rem 1rem $color-grey-dark;
     color: $color-primary-light;
   }
@@ -31,11 +33,12 @@
     align-items: center;
 
     & > * {
-      margin: 0.2rem 0;
+      margin: 0.4rem 0;
     }
   }
   &__input {
     padding: 1rem 2rem;
+    font-size: 1.2rem;
     border: 1px solid $color-grey-dark;
     border-radius: 3px;
     background-color: $color-grey-lighter;
@@ -50,6 +53,7 @@
 
   &__input-label {
     color: $color-primary-light;
+    font-size: 1.3rem;
     font-weight: 400;
   }
 
