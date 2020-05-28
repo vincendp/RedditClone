@@ -24,6 +24,8 @@ export class CreateSubredditsComponent implements OnInit {
   onSubmitCreateSubreddit() {
     this.apiService
       .post("/subreddits", this.subredditForm.value, {})
-      .subscribe((data) => {});
+      .subscribe((data) => {
+        this.subredditForm.reset();
+      });
   }
 }
